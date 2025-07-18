@@ -1,526 +1,389 @@
 ---
 title: Forms
-description: 'Submit forms with user authentication and metadata tracking'
+description: 'Create, manage, and handle form submissions with Gately'
 ---
 
-Submit forms with user authentication and metadata tracking using the Gately SDK.
+# Forms
 
-## Form Submission
+Gately provides a complete form management system that allows you to create, customize, and handle form submissions with built-in analytics and user tracking.
 
-Submit forms with automatic user tracking and metadata collection.
+## Overview
+
+The forms system includes:
+- **Form Builder**: Create custom forms with various field types
+- **Form Submissions**: Handle and process form data
+- **Analytics**: Track form performance and user interactions
+- **Notifications**: Get notified of new submissions
+- **Customization**: Style forms to match your design
+
+## Creating Forms
+
+Forms can be created through the Gately dashboard or programmatically via the API.
+
+### Dashboard Form Builder
+
+1. Go to your Gately dashboard
+2. Navigate to **Forms** section
+3. Click **Create New Form**
+4. Add fields and configure settings
+5. Copy the form ID for SDK integration
+
+### Form Field Types
+
+<CardGroup cols={2}>
+  <Card title="Text Input" icon="type">
+    Single line text input
+  </Card>
+  <Card title="Email" icon="mail">
+    Email address with validation
+  </Card>
+  <Card title="Textarea" icon="align-left">
+    Multi-line text input
+  </Card>
+  <Card title="Select" icon="list">
+    Dropdown selection
+  </Card>
+  <Card title="Checkbox" icon="check-square">
+    Boolean selection
+  </Card>
+  <Card title="Radio" icon="circle">
+    Single choice from options
+  </Card>
+  <Card title="Number" icon="hash">
+    Numeric input
+  </Card>
+  <Card title="Date" icon="calendar">
+    Date picker
+  </Card>
+  <Card title="File Upload" icon="upload">
+    File attachment
+  </Card>
+</CardGroup>
+
+## SDK Integration
+
+### Submit Form Data
 
 ```javascript
 import { GatelyBrowserClient } from '@gately/sdk'
 
 const gately = new GatelyBrowserClient('your-project-id')
 
-// Submit a form
-async function submitForm(formId, formData) {
+// Submit form data
+async function handleFormSubmit(formData) {
   try {
-    const response = await gately.submitForm({
-      formId,
-      data: formData,
-      metadata: {
-        ip_address: await getClientIP(),
-        user_agent: navigator.userAgent,
-        referrer: document.referrer,
-        page_url: window.location.href
-      }
+    const response = await gately.submitForm('your-form-id', {
+      name: formData.name,
+      email: formData.email,
+      message: formData.message,
+      // Add any other form fields
     })
-
-    if (response.success) {
-      console.log('Form submitted successfully:', response.submission_id)
-      
-      if (response.redirect_url) {
-        window.location.href = response.redirect_url
-      }
-      
-      return response
+    
+    console.log('Form submitted successfully:', response)
+    
+    // Handle success (redirect, show message, etc.)
+    if (response.redirect_url) {
+      window.location.href = response.redirect_url
     }
   } catch (error) {
-    console.error('Form submission failed:', error.message)
-    throw error
-  }
-}
-
-// Get client IP address
-async function getClientIP() {
-  try {
-    const response = await fetch('https://api.ipify.org?format=json')
-    const data = await response.json()
-    return data.ip
-  } catch (error) {
-    console.warn('Could not get client IP:', error)
-    return null
+    console.error('Form submission failed:', error)
   }
 }
 ```
 
-## Contact Form Example
-
-Complete contact form with authentication and submission tracking.
+### Form with Validation
 
 ```html
-<form id="contact-form">
-  <div class="form-group">
-    <label for="name">Name</label>
-    <input type="text" id="name" name="name" required>
-  </div>
-  
-  <div class="form-group">
-    <label for="email">Email</label>
-    <input type="email" id="email" name="email" required>
-  </div>
-  
-  <div class="form-group">
-    <label for="subject">Subject</label>
-    <input type="text" id="subject" name="subject" required>
-  </div>
-  
-  <div class="form-group">
-    <label for="message">Message</label>
-    <textarea id="message" name="message" rows="5" required></textarea>
-  </div>
-  
+<form id="contact-form" onsubmit="handleSubmit(event)">
+  <input 
+    type="text" 
+    name="name" 
+    placeholder="Your Name" 
+    required
+  />
+  <input 
+    type="email" 
+    name="email" 
+    placeholder="Your Email" 
+    required
+  />
+  <textarea 
+    name="message" 
+    placeholder="Your Message" 
+    required
+  ></textarea>
   <button type="submit">Send Message</button>
 </form>
-```
 
-```javascript
-// Handle contact form submission
-document.getElementById('contact-form').addEventListener('submit', async (e) => {
-  e.preventDefault()
-  const formData = new FormData(e.target)
+<script>
+async function handleSubmit(event) {
+  event.preventDefault()
+  
+  const form = event.target
+  const formData = new FormData(form)
+  
+  // Convert FormData to object
+  const data = Object.fromEntries(formData.entries())
   
   try {
-    const response = await gately.submitForm({
-      formId: 'contact-form',
-      data: {
-        name: formData.get('name'),
-        email: formData.get('email'),
-        subject: formData.get('subject'),
-        message: formData.get('message')
-      },
-      metadata: {
-        timestamp: new Date().toISOString(),
-        user_agent: navigator.userAgent,
-        page_url: window.location.href,
-        referrer: document.referrer
-      }
-    })
+    const response = await gately.submitForm('contact-form-id', data)
     
-    if (response.success) {
-      alert('Message sent successfully!')
-      e.target.reset()
-    }
+    // Show success message
+    alert(response.message || 'Thank you for your submission!')
+    form.reset()
   } catch (error) {
-    alert('Failed to send message. Please try again.')
-    console.error('Form submission error:', error)
+    alert('Submission failed: ' + error.message)
   }
-})
+}
+</script>
 ```
 
-## Newsletter Signup
-
-Newsletter subscription form with user preferences.
-
-```html
-<form id="newsletter-form">
-  <div class="form-group">
-    <label for="newsletter-email">Email Address</label>
-    <input type="email" id="newsletter-email" name="email" required>
-  </div>
-  
-  <div class="form-group">
-    <label>Preferences</label>
-    <div class="checkbox-group">
-      <label>
-        <input type="checkbox" name="preferences" value="weekly-digest">
-        Weekly Digest
-      </label>
-      <label>
-        <input type="checkbox" name="preferences" value="product-updates">
-        Product Updates
-      </label>
-      <label>
-        <input type="checkbox" name="preferences" value="marketing">
-        Marketing & Promotions
-      </label>
-    </div>
-  </div>
-  
-  <button type="submit">Subscribe</button>
-</form>
-```
-
-```javascript
-// Handle newsletter signup
-document.getElementById('newsletter-form').addEventListener('submit', async (e) => {
-  e.preventDefault()
-  const formData = new FormData(e.target)
-  
-  try {
-    const response = await gately.submitForm({
-      formId: 'newsletter-signup',
-      data: {
-        email: formData.get('email'),
-        preferences: formData.getAll('preferences'),
-        source: 'website'
-      },
-      metadata: {
-        signup_date: new Date().toISOString(),
-        user_id: gately.getUser()?.id || null,
-        page_url: window.location.href
-      }
-    })
-    
-    if (response.success) {
-      alert('Successfully subscribed to newsletter!')
-      e.target.reset()
-    }
-  } catch (error) {
-    alert('Failed to subscribe. Please try again.')
-    console.error('Newsletter signup error:', error)
-  }
-})
-```
-
-## React Form Component
-
-Complete React form component with validation and submission.
+## React Integration
 
 ```jsx
 import React, { useState } from 'react'
 import { useGately } from '@gately/sdk'
 
 function ContactForm() {
-  const { submitForm, user } = useGately('your-project-id')
+  const { submitForm } = useGately('your-project-id')
   const [formData, setFormData] = useState({
     name: '',
     email: '',
-    subject: '',
     message: ''
   })
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [submitStatus, setSubmitStatus] = useState(null)
+  const [loading, setLoading] = useState(false)
+  const [message, setMessage] = useState('')
 
-  const handleInputChange = (e) => {
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    setLoading(true)
+    setMessage('')
+
+    try {
+      const response = await submitForm('contact-form-id', formData)
+      setMessage(response.message || 'Thank you for your submission!')
+      setFormData({ name: '', email: '', message: '' })
+    } catch (error) {
+      setMessage('Submission failed: ' + error.message)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleChange = (e) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value
     })
   }
 
-  const handleSubmit = async (e) => {
-    e.preventDefault()
-    setIsSubmitting(true)
-    setSubmitStatus(null)
-
-    try {
-      const response = await submitForm({
-        formId: 'contact-form',
-        data: {
-          ...formData,
-          user_id: user?.id || null
-        },
-        metadata: {
-          timestamp: new Date().toISOString(),
-          user_agent: navigator.userAgent,
-          page_url: window.location.href,
-          authenticated: !!user
-        }
-      })
-
-      if (response.success) {
-        setSubmitStatus({ type: 'success', message: 'Message sent successfully!' })
-        setFormData({ name: '', email: '', subject: '', message: '' })
-      }
-    } catch (error) {
-      setSubmitStatus({ 
-        type: 'error', 
-        message: 'Failed to send message. Please try again.' 
-      })
-      console.error('Form submission error:', error)
-    } finally {
-      setIsSubmitting(false)
-    }
-  }
-
   return (
-    <form onSubmit={handleSubmit} className="contact-form">
-      <div className="form-group">
-        <label htmlFor="name">Name</label>
-        <input
-          type="text"
-          id="name"
-          name="name"
-          value={formData.name}
-          onChange={handleInputChange}
-          required
-        />
-      </div>
-
-      <div className="form-group">
-        <label htmlFor="email">Email</label>
-        <input
-          type="email"
-          id="email"
-          name="email"
-          value={formData.email}
-          onChange={handleInputChange}
-          required
-        />
-      </div>
-
-      <div className="form-group">
-        <label htmlFor="subject">Subject</label>
-        <input
-          type="text"
-          id="subject"
-          name="subject"
-          value={formData.subject}
-          onChange={handleInputChange}
-          required
-        />
-      </div>
-
-      <div className="form-group">
-        <label htmlFor="message">Message</label>
-        <textarea
-          id="message"
-          name="message"
-          rows="5"
-          value={formData.message}
-          onChange={handleInputChange}
-          required
-        />
-      </div>
-
-      <button type="submit" disabled={isSubmitting}>
-        {isSubmitting ? 'Sending...' : 'Send Message'}
+    <form onSubmit={handleSubmit}>
+      <input
+        type="text"
+        name="name"
+        placeholder="Your Name"
+        value={formData.name}
+        onChange={handleChange}
+        required
+      />
+      <input
+        type="email"
+        name="email"
+        placeholder="Your Email"
+        value={formData.email}
+        onChange={handleChange}
+        required
+      />
+      <textarea
+        name="message"
+        placeholder="Your Message"
+        value={formData.message}
+        onChange={handleChange}
+        required
+      />
+      <button type="submit" disabled={loading}>
+        {loading ? 'Sending...' : 'Send Message'}
       </button>
-
-      {submitStatus && (
-        <div className={`status-message ${submitStatus.type}`}>
-          {submitStatus.message}
-        </div>
-      )}
+      {message && <p>{message}</p>}
     </form>
   )
-}
-
-export default ContactForm
-```
-
-## Form Validation
-
-Client-side validation with custom error handling.
-
-```javascript
-class FormValidator {
-  constructor() {
-    this.rules = {}
-  }
-
-  addRule(fieldName, validator, errorMessage) {
-    if (!this.rules[fieldName]) {
-      this.rules[fieldName] = []
-    }
-    this.rules[fieldName].push({ validator, errorMessage })
-  }
-
-  validate(formData) {
-    const errors = {}
-
-    for (const [fieldName, value] of Object.entries(formData)) {
-      if (this.rules[fieldName]) {
-        for (const rule of this.rules[fieldName]) {
-          if (!rule.validator(value)) {
-            if (!errors[fieldName]) {
-              errors[fieldName] = []
-            }
-            errors[fieldName].push(rule.errorMessage)
-          }
-        }
-      }
-    }
-
-    return {
-      isValid: Object.keys(errors).length === 0,
-      errors
-    }
-  }
-}
-
-// Usage example
-const validator = new FormValidator()
-
-// Add validation rules
-validator.addRule('email', (value) => /\S+@\S+\.\S+/.test(value), 'Invalid email format')
-validator.addRule('name', (value) => value.length >= 2, 'Name must be at least 2 characters')
-validator.addRule('message', (value) => value.length >= 10, 'Message must be at least 10 characters')
-
-// Validate form before submission
-const formData = {
-  name: 'John Doe',
-  email: 'john@example.com',
-  message: 'Hello world!'
-}
-
-const validation = validator.validate(formData)
-if (validation.isValid) {
-  // Submit form
-  await submitForm('contact-form', formData)
-} else {
-  // Show validation errors
-  console.log('Validation errors:', validation.errors)
 }
 ```
 
 ## Form Analytics
 
-Track form interactions and conversion rates.
+Gately automatically tracks form submissions and provides analytics:
 
 ```javascript
-class FormAnalytics {
-  constructor(gately) {
-    this.gately = gately
-    this.interactions = {}
-  }
+// Form submission is automatically tracked
+await gately.submitForm('form-id', data)
 
-  trackFormView(formId) {
-    this.gately.submitForm({
-      formId: 'form-analytics',
-      data: {
-        event: 'form_view',
-        form_id: formId,
-        user_id: this.gately.getUser()?.id || null
-      },
-      metadata: {
-        timestamp: new Date().toISOString(),
-        page_url: window.location.href
-      }
-    })
-  }
+// You can also manually track form interactions
+gately.trackEvent('form_view', {
+  form_id: 'contact-form',
+  page_url: window.location.href
+})
 
-  trackFieldInteraction(formId, fieldName) {
-    const key = `${formId}-${fieldName}`
-    if (!this.interactions[key]) {
-      this.interactions[key] = true
-      
-      this.gately.submitForm({
-        formId: 'form-analytics',
-        data: {
-          event: 'field_interaction',
-          form_id: formId,
-          field_name: fieldName,
-          user_id: this.gately.getUser()?.id || null
-        },
-        metadata: {
-          timestamp: new Date().toISOString(),
-          page_url: window.location.href
-        }
-      })
-    }
-  }
+gately.trackEvent('form_start', {
+  form_id: 'contact-form'
+})
+```
 
-  trackFormSubmission(formId, success) {
-    this.gately.submitForm({
-      formId: 'form-analytics',
-      data: {
-        event: 'form_submission',
-        form_id: formId,
-        success: success,
-        user_id: this.gately.getUser()?.id || null
-      },
-      metadata: {
-        timestamp: new Date().toISOString(),
-        page_url: window.location.href
-      }
-    })
+### Available Analytics Events
+
+<ResponseField name="form_view" type="string">
+  When a user views a form
+</ResponseField>
+
+<ResponseField name="form_start" type="string">
+  When a user starts filling out a form
+</ResponseField>
+
+<ResponseField name="form_submission" type="string">
+  When a form is successfully submitted
+</ResponseField>
+
+<ResponseField name="form_error" type="string">
+  When a form submission fails
+</ResponseField>
+
+## Form Settings
+
+### Success Message
+
+Configure custom success messages in your form settings:
+
+```javascript
+// Form will return this message on successful submission
+const response = await gately.submitForm('form-id', data)
+console.log(response.message) // "Thank you for contacting us!"
+```
+
+### Redirect After Submission
+
+Set up automatic redirects after form submission:
+
+```javascript
+// Form settings can include a redirect URL
+const response = await gately.submitForm('form-id', data)
+
+if (response.redirect_url) {
+  window.location.href = response.redirect_url
+}
+```
+
+### Email Notifications
+
+Enable email notifications for new form submissions in your dashboard settings.
+
+## Advanced Usage
+
+### Custom Form Validation
+
+```javascript
+async function validateAndSubmit(formData) {
+  // Custom validation
+  if (formData.email && !formData.email.includes('@')) {
+    throw new Error('Invalid email address')
+  }
+  
+  if (formData.message && formData.message.length < 10) {
+    throw new Error('Message must be at least 10 characters')
+  }
+  
+  // Submit if validation passes
+  return await gately.submitForm('form-id', formData)
+}
+```
+
+### File Uploads
+
+```javascript
+// Handle file uploads
+async function handleFileUpload(file) {
+  // Upload file to your storage service
+  const uploadedUrl = await uploadToStorage(file)
+  
+  // Submit form with file URL
+  await gately.submitForm('form-id', {
+    ...formData,
+    file_url: uploadedUrl
+  })
+}
+```
+
+### Conditional Form Fields
+
+```javascript
+// Show/hide fields based on user input
+function toggleFieldVisibility() {
+  const fieldType = document.getElementById('field-type').value
+  const customField = document.getElementById('custom-field')
+  
+  if (fieldType === 'custom') {
+    customField.style.display = 'block'
+  } else {
+    customField.style.display = 'none'
   }
 }
+```
 
-// Usage
-const analytics = new FormAnalytics(gately)
+## Error Handling
 
-// Track form view
-analytics.trackFormView('contact-form')
-
-// Track field interactions
-document.querySelectorAll('input, textarea, select').forEach(field => {
-  field.addEventListener('focus', () => {
-    analytics.trackFieldInteraction('contact-form', field.name)
-  })
-})
-
-// Track form submission
-document.getElementById('contact-form').addEventListener('submit', async (e) => {
-  e.preventDefault()
-  
-  try {
-    await submitForm('contact-form', formData)
-    analytics.trackFormSubmission('contact-form', true)
-  } catch (error) {
-    analytics.trackFormSubmission('contact-form', false)
+```javascript
+try {
+  const response = await gately.submitForm('form-id', data)
+  // Handle success
+} catch (error) {
+  switch (error.code) {
+    case 'FORM_NOT_FOUND':
+      console.error('Form does not exist')
+      break
+    case 'VALIDATION_ERROR':
+      console.error('Form validation failed:', error.details)
+      break
+    case 'RATE_LIMITED':
+      console.error('Too many submissions, please try again later')
+      break
+    default:
+      console.error('Form submission failed:', error.message)
   }
-})
+}
 ```
 
 ## Best Practices
 
-<AccordionGroup>
-  <Accordion title="Form Design">
-    - Keep forms simple and focused
-    - Use clear labels and placeholders
-    - Provide real-time validation feedback
-    - Make required fields obvious
-  </Accordion>
-  
-  <Accordion title="Data Collection">
-    - Only collect necessary information
-    - Be transparent about data usage
-    - Provide privacy policy links
-    - Allow users to opt-out of tracking
-  </Accordion>
-  
-  <Accordion title="Error Handling">
-    - Provide clear error messages
-    - Highlight problematic fields
-    - Allow users to retry submissions
-    - Log errors for debugging
-  </Accordion>
-  
-  <Accordion title="Performance">
-    - Validate on client-side first
-    - Use debounced validation
-    - Show loading states during submission
-    - Cache form data locally
-  </Accordion>
-</AccordionGroup>
+<CardGroup cols={2}>
+  <Card title="Validate Input" icon="shield">
+    Always validate form data on both client and server side
+  </Card>
+  <Card title="Show Loading States" icon="loader">
+    Provide visual feedback during form submission
+  </Card>
+  <Card title="Handle Errors Gracefully" icon="alert-triangle">
+    Display user-friendly error messages
+  </Card>
+  <Card title="Track Analytics" icon="bar-chart">
+    Use built-in analytics to improve form performance
+  </Card>
+</CardGroup>
 
 ## Next Steps
 
-<CardGroup cols={3}>
+<CardGroup cols={2}>
   <Card
-    title="User Management"
-    icon="user"
-    href="/user-management"
+    title="Form Analytics"
+    icon="bar-chart"
+    href="/analytics"
   >
-    Manage user profiles and data
+    Learn about form performance tracking
   </Card>
   <Card
-    title="Authentication"
-    icon="key"
-    href="/authentication"
+    title="Custom Styling"
+    icon="palette"
+    href="/ui-components"
   >
-    Learn about authentication methods
-  </Card>
-  <Card
-    title="Examples"
-    icon="code"
-    href="/examples"
-  >
-    View form submission examples
+    Style your forms to match your design
   </Card>
 </CardGroup>
