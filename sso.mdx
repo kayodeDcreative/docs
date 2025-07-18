@@ -1,6 +1,6 @@
 ---
-title: SSO Integration
-description: 'Single Sign-On with Google, GitHub, and other OAuth providers'
+title: "SSO Integration"
+description: "Single Sign-On with Google, GitHub, and other OAuth providers"
 ---
 
 Single Sign-On (SSO) allows users to authenticate using their existing accounts from popular providers like Google and GitHub. The Gately SDK supports both popup and redirect modes.
@@ -107,7 +107,7 @@ await gately.loginWithGoogle({
     - Can handle authentication errors gracefully
   </Card>
   <Card title="Disadvantages" icon="thumbs-down">
-    - May be blocked by popup blockers
+    - May be blocked by pop-up blockers
     - Limited screen space on mobile devices
   </Card>
 </CardGroup>
@@ -127,12 +127,12 @@ await gately.loginWithGoogle({
 <CardGroup cols={2}>
   <Card title="Advantages" icon="thumbs-up">
     - Works on all devices
-    - Not blocked by popup blockers
+    - Not blocked by pop-up blockers
     - Better for mobile applications
   </Card>
   <Card title="Disadvantages" icon="thumbs-down">
     - Page reload required
-    - User leaves your application temporarily
+    - The user leaves your application temporarily
     - Need to handle redirect parameters
   </Card>
 </CardGroup>
@@ -260,14 +260,14 @@ export default SSOLogin
 ## SSO Configuration
 
 <Warning>
-Before using SSO, you need to configure your OAuth providers in the Gately dashboard.
+  Before using SSO, you need to configure your OAuth providers in the Gately dashboard.
 </Warning>
 
 ### Google OAuth Setup
 
 1. Go to the Google Cloud Console
 2. Create a new project or select an existing one
-3. Enable the Google+ API
+3. Enable the Google\+ API
 4. Create OAuth 2.0 credentials
 5. Add authorized redirect URIs: `https://sdk.usegately.com/api/sdk/auth/google`
 6. Copy the Client ID and Client Secret to your Gately dashboard
@@ -313,19 +313,16 @@ Before using SSO, you need to configure your OAuth providers in the Gately dashb
     - Use redirect mode for mobile applications
     - Consider user experience and popup blockers
   </Accordion>
-  
   <Accordion title="Error Handling">
     - Always handle authentication errors gracefully
     - Provide fallback authentication methods
     - Show appropriate error messages to users
   </Accordion>
-  
   <Accordion title="Security">
     - Validate redirect URLs to prevent open redirects
     - Use HTTPS in production
     - Implement proper session management
   </Accordion>
-  
   <Accordion title="User Experience">
     - Show loading states during authentication
     - Provide clear instructions for users
@@ -336,25 +333,13 @@ Before using SSO, you need to configure your OAuth providers in the Gately dashb
 ## Next Steps
 
 <CardGroup cols={3}>
-  <Card
-    title="Authentication"
-    icon="key"
-    href="/authentication"
-  >
+  <Card title="Authentication" icon="key" href="/authentication">
     Learn about basic authentication
   </Card>
-  <Card
-    title="User Management"
-    icon="user"
-    href="/user-management"
-  >
+  <Card title="User Management" icon="user" href="/user-management">
     Manage user profiles and data
   </Card>
-  <Card
-    title="Examples"
-    icon="code"
-    href="/examples"
-  >
+  <Card title="Examples" icon="code" href="/examples">
     View SSO integration examples
   </Card>
 </CardGroup>

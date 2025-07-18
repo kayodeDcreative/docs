@@ -1,0 +1,102 @@
+{
+  "$schema": "https://mintlify.com/schema.json",
+  "name": "Gately SDK",
+  "logo": {
+    "dark": "/logo/dark.svg",
+    "light": "/logo/light.svg"
+  },
+  "favicon": "/favicon.svg",
+  "colors": {
+    "primary": "#FFC599",
+    "light": "#FFB17A",
+    "dark": "#FFC599",
+    "anchors": {
+      "from": "#FFC599",
+      "to": "#FFB17A"
+    }
+  },
+  "topbarLinks": [
+    {
+      "name": "Support",
+      "url": "mailto:support@gately.com"
+    }
+  ],
+  "topbarCtaButton": {
+    "name": "Dashboard",
+    "url": "https://dashboard.gately.com"
+  },
+  "tabs": [
+    {
+      "name": "API Reference",
+      "url": "api-reference"
+    }
+  ],
+  "anchors": [
+    {
+      "name": "Documentation",
+      "icon": "book-open-cover",
+      "url": "https://docs.gately.com"
+    },
+    {
+      "name": "Community",
+      "icon": "slack",
+      "url": "https://gately.com/community"
+    },
+    {
+      "name": "Blog",
+      "icon": "newspaper",
+      "url": "https://gately.com/blog"
+    }
+  ],
+  "navigation": [
+    {
+      "group": "Get Started",
+      "pages": [
+        "introduction",
+        "installation",
+        "quickstart"
+      ]
+    },
+    {
+      "group": "Core Features",
+      "pages": [
+        "authentication",
+        "user-management",
+        "sso",
+        "ui-components",
+        "forms",
+        "plans"
+      ]
+    },
+    {
+      "group": "Framework Integration",
+      "pages": [
+        "framework-adapters",
+        "framer"
+      ]
+    },
+    {
+      "group": "Examples & Guides",
+      "pages": [
+        "examples",
+        "best-practices",
+        "troubleshooting"
+      ]
+    },
+    {
+      "group": "API Documentation",
+      "pages": [
+        "api-reference/introduction",
+        "api-reference/authentication",
+        "api-reference/user-management",
+        "api-reference/sso",
+        "api-reference/types"
+      ]
+    }
+  ],
+  "footerSocials": {
+    "x": "https://x.com/gately",
+    "github": "https://github.com/gately",
+    "linkedin": "https://www.linkedin.com/company/gately"
+  }
+}

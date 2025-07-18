@@ -1,0 +1,477 @@
+---
+title: "User Management"
+description: "Manage user profiles, update account information, and handle user data with the Gately SDK"
+---
+
+Manage user profiles, update account information, and handle user data with the Gately SDK.
+
+## User Profile Management
+
+Get and update user profile information, including personal details and metadata.
+
+```javascript
+import { GatelyBrowserClient } from '@gately/sdk'
+
+const gately = new GatelyBrowserClient('your-project-id')
+
+// Get current user's profile
+async function getUserProfile() {
+  try {
+    const profile = await gately.getUserProfile()
+    if (profile) {
+      console.log('User Profile:', {
+        id: profile.id,
+        email: profile.email,
+        firstName: profile.first_name,
+        lastName: profile.last_name,
+        displayName: profile.display_name,
+        bio: profile.bio,
+        company: profile.company,
+        website: profile.website,
+        location: profile.location,
+        phone: profile.phone,
+        jobTitle: profile.job_title,
+        createdAt: profile.created_at,
+        updatedAt: profile.updated_at
+      })
+    }
+    return profile
+  } catch (error) {
+    console.error('Failed to get profile:', error.message)
+    return null
+  }
+}
+
+// Update user profile
+async function updateProfile(updates) {
+  try {
+    const updatedProfile = await gately.updateUserProfile({
+      first_name: updates.firstName,
+      last_name: updates.lastName,
+      display_name: updates.displayName,
+      bio: updates.bio,
+      company: updates.company,
+      website: updates.website,
+      location: updates.location,
+      phone: updates.phone,
+      job_title: updates.jobTitle,
+      user_metadata: {
+        preferences: updates.preferences,
+        newsletter: updates.newsletter
+      }
+    })
+    
+    console.log('Profile updated successfully:', updatedProfile)
+    return updatedProfile
+  } catch (error) {
+    console.error('Failed to update profile:', error.message)
+    throw error
+  }
+}
+```
+
+## Password Management
+
+Allow users to change their passwords securely.
+
+```javascript
+// Change user password
+async function changePassword(currentPassword, newPassword) {
+  try {
+    await gately.changePassword(currentPassword, newPassword)
+    console.log('Password changed successfully')
+    return true
+  } catch (error) {
+    console.error('Failed to change password:', error.message)
+    return false
+  }
+}
+
+// Password change form handler
+document.getElementById('password-form').onsubmit = async (e) => {
+  e.preventDefault()
+  const formData = new FormData(e.target)
+  
+  const currentPassword = formData.get('currentPassword')
+  const newPassword = formData.get('newPassword')
+  const confirmPassword = formData.get('confirmPassword')
+  
+  // Validate passwords match
+  if (newPassword !== confirmPassword) {
+    alert('New passwords do not match')
+    return
+  }
+  
+  // Validate password strength
+  if (newPassword.length < 8) {
+    alert('Password must be at least 8 characters long')
+    return
+  }
+  
+  const success = await changePassword(currentPassword, newPassword)
+  if (success) {
+    alert('Password changed successfully')
+    e.target.reset()
+  } else {
+    alert('Failed to change password. Please check your current password.')
+  }
+}
+```
+
+## Account Deletion
+
+Allow users to delete their accounts permanently.
+
+<Warning>
+  Account deletion is permanent and cannot be undone. All user data will be permanently removed.
+</Warning>
+
+```javascript
+// Delete user account
+async function deleteAccount() {
+  try {
+    await gately.deleteUserAccount()
+    console.log('Account deleted successfully')
+    return true
+  } catch (error) {
+    console.error('Failed to delete account:', error.message)
+    return false
+  }
+}
+
+// Account deletion with confirmation
+document.getElementById('delete-account-btn').onclick = async () => {
+  const confirmed = confirm(
+    'Are you sure you want to delete your account? ' +
+    'This action cannot be undone and all your data will be permanently removed.'
+  )
+  
+  if (confirmed) {
+    const success = await deleteAccount()
+    if (success) {
+      alert('Your account has been deleted successfully')
+      // Redirect to home page or show goodbye message
+      window.location.href = '/'
+    } else {
+      alert('Failed to delete account. Please try again.')
+    }
+  }
+}
+```
+
+## React Hook Usage
+
+Use the React hook for reactive user management.
+
+```jsx
+import React, { useState, useEffect } from 'react'
+import { useGately } from '@gately/sdk'
+
+function UserProfile() {
+  const { 
+    user, 
+    profile, 
+    getUserProfile, 
+    updateUserProfile, 
+    changePassword, 
+    deleteAccount,
+    loading, 
+    error 
+  } = useGately('your-project-id')
+
+  const [isEditing, setIsEditing] = useState(false)
+  const [formData, setFormData] = useState({
+    firstName: '',
+    lastName: '',
+    displayName: '',
+    bio: '',
+    company: '',
+    website: '',
+    location: '',
+    phone: '',
+    jobTitle: ''
+  })
+
+  // Load profile on component mount
+  useEffect(() => {
+    if (user) {
+      getUserProfile()
+    }
+  }, [user])
+
+  // Update form data when profile loads
+  useEffect(() => {
+    if (profile) {
+      setFormData({
+        firstName: profile.first_name || '',
+        lastName: profile.last_name || '',
+        displayName: profile.display_name || '',
+        bio: profile.bio || '',
+        company: profile.company || '',
+        website: profile.website || '',
+        location: profile.location || '',
+        phone: profile.phone || '',
+        jobTitle: profile.job_title || ''
+      })
+    }
+  }, [profile])
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    
+    try {
+      await updateUserProfile({
+        first_name: formData.firstName,
+        last_name: formData.lastName,
+        display_name: formData.displayName,
+        bio: formData.bio,
+        company: formData.company,
+        website: formData.website,
+        location: formData.location,
+        phone: formData.phone,
+        job_title: formData.jobTitle
+      })
+      
+      setIsEditing(false)
+      alert('Profile updated successfully!')
+    } catch (error) {
+      alert('Failed to update profile: ' + error.message)
+    }
+  }
+
+  const handleInputChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    })
+  }
+
+  if (loading) return <div>Loading profile...</div>
+  if (!user) return <div>Please log in to view your profile</div>
+
+  return (
+    <div className="user-profile">
+      <h2>User Profile</h2>
+      
+      {error && <p className="error">{error}</p>}
+      
+      <form onSubmit={handleSubmit}>
+        <div className="form-group">
+          <label>First Name</label>
+          <input
+            type="text"
+            name="firstName"
+            value={formData.firstName}
+            onChange={handleInputChange}
+            disabled={!isEditing}
+          />
+        </div>
+
+        <div className="form-group">
+          <label>Last Name</label>
+          <input
+            type="text"
+            name="lastName"
+            value={formData.lastName}
+            onChange={handleInputChange}
+            disabled={!isEditing}
+          />
+        </div>
+
+        <div className="form-group">
+          <label>Display Name</label>
+          <input
+            type="text"
+            name="displayName"
+            value={formData.displayName}
+            onChange={handleInputChange}
+            disabled={!isEditing}
+          />
+        </div>
+
+        <div className="form-group">
+          <label>Bio</label>
+          <textarea
+            name="bio"
+            value={formData.bio}
+            onChange={handleInputChange}
+            disabled={!isEditing}
+          />
+        </div>
+
+        {isEditing ? (
+          <div className="form-actions">
+            <button type="submit">Save Changes</button>
+            <button type="button" onClick={() => setIsEditing(false)}>
+              Cancel
+            </button>
+          </div>
+        ) : (
+          <button type="button" onClick={() => setIsEditing(true)}>
+            Edit Profile
+          </button>
+        )}
+      </form>
+    </div>
+  )
+}
+
+export default UserProfile
+```
+
+## User Data Types
+
+```typescript
+interface User {
+  id: string
+  email: string
+  name?: string
+  avatar_url?: string
+  created_at: string
+  project_id?: string
+  last_sign_in_at?: string
+  user_metadata?: Record<string, any>
+  app_metadata?: Record<string, any>
+}
+
+interface UserProfile {
+  id: string
+  email: string
+  first_name?: string
+  last_name?: string
+  display_name?: string
+  avatar_url?: string
+  bio?: string
+  phone?: string
+  website?: string
+  location?: string
+  company?: string
+  job_title?: string
+  created_at: string
+  updated_at: string
+  user_metadata?: Record<string, any>
+}
+
+interface UpdateProfileRequest {
+  first_name?: string
+  last_name?: string
+  display_name?: string
+  avatar_url?: string
+  bio?: string
+  phone?: string
+  website?: string
+  location?: string
+  company?: string
+  job_title?: string
+  user_metadata?: Record<string, any>
+}
+```
+
+## Best Practices
+
+<AccordionGroup>
+  <Accordion title="Profile Management">
+    - Always validate user input before updating profiles
+    - Provide clear feedback for successful/failed operations
+    - Use appropriate form validation for different fields
+    - Consider implementing profile completion tracking
+  </Accordion>
+  <Accordion title="Password Security">
+    - Enforce strong password requirements
+    - Provide password strength indicators
+    - Implement rate limiting for password changes
+    - Send confirmation emails for password changes
+  </Accordion>
+  <Accordion title="Account Deletion">
+    - Require explicit confirmation before deletion
+    - Explain the consequences of account deletion
+    - Consider offering account deactivation instead
+    - Provide data export options before deletion
+  </Accordion>
+  <Accordion title="Data Privacy">
+    - Only collect necessary user information
+    - Provide clear privacy policies
+    - Allow users to control their data
+    - Implement data retention policies
+  </Accordion>
+</AccordionGroup>
+
+## Error Handling
+
+Handle common errors in user management operations.
+
+```javascript
+// Comprehensive error handling for user management
+class UserManagementErrorHandler {
+  static handleProfileError(error) {
+    switch (error.code) {
+      case 'PROFILE_NOT_FOUND':
+        return 'User profile not found. Please contact support.'
+      
+      case 'INVALID_PROFILE_DATA':
+        return 'Invalid profile data provided. Please check your input.'
+      
+      case 'PROFILE_UPDATE_FAILED':
+        return 'Failed to update profile. Please try again.'
+      
+      case 'UNAUTHORIZED':
+        return 'You are not authorized to perform this action.'
+      
+      default:
+        return error.message || 'An unexpected error occurred.'
+    }
+  }
+
+  static handlePasswordError(error) {
+    switch (error.code) {
+      case 'INVALID_CURRENT_PASSWORD':
+        return 'Current password is incorrect.'
+      
+      case 'WEAK_PASSWORD':
+        return 'Password does not meet security requirements.'
+      
+      case 'PASSWORD_CHANGE_FAILED':
+        return 'Failed to change password. Please try again.'
+      
+      default:
+        return error.message || 'Password change failed.'
+    }
+  }
+
+  static handleAccountDeletionError(error) {
+    switch (error.code) {
+      case 'ACCOUNT_DELETION_FAILED':
+        return 'Failed to delete account. Please try again.'
+      
+      case 'PENDING_ACTIONS':
+        return 'Cannot delete account with pending actions.'
+      
+      default:
+        return error.message || 'Account deletion failed.'
+    }
+  }
+}
+
+// Usage example
+try {
+  await gately.updateUserProfile(updates)
+  showSuccess('Profile updated successfully!')
+} catch (error) {
+  const message = UserManagementErrorHandler.handleProfileError(error)
+  showError(message)
+}
+```
+
+## Next Steps
+
+<CardGroup cols={3}>
+  <Card title="Authentication" icon="key" href="/authentication">
+    Learn about authentication methods
+  </Card>
+  <Card title="Plans & Tiers" icon="crown" href="/plans">
+    Manage user plans and subscriptions
+  </Card>
+  <Card title="Examples" icon="code" href="/examples">
+    View user management examples
+  </Card>
+</CardGroup>
