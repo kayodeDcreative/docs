@@ -1,335 +1,184 @@
 ---
 title: SSO Integration
-description: 'Single Sign-On with Google, GitHub, and other OAuth providers'
+description: 'Let users sign in with their Google, GitHub, and other social accounts'
 ---
 
-Single Sign-On (SSO) allows users to authenticate using their existing accounts from popular providers like Google and GitHub. The Gately SDK supports both popup and redirect modes.
+Single Sign-On (SSO) allows your users to sign in using their existing accounts from popular providers like Google and GitHub. This makes registration and login faster and more convenient for your users.
 
-## Google OAuth
+## Available SSO Providers
 
-Authenticate users with their Google accounts using OAuth 2.0.
-
-```javascript
-import { GatelyBrowserClient } from 'https://cdn.usegately.com/gately-sdk.esm.min.js'
-
-const gately = new GatelyBrowserClient('your-project-id')
-
-// Popup mode (default)
-try {
-  await gately.loginWithGoogle()
-  console.log('Google login successful')
-} catch (error) {
-  console.error('Google login failed:', error.message)
-}
-
-// Redirect mode
-try {
-  await gately.loginWithGoogle({
-    mode: 'redirect',
-    redirectUrl: 'https://yourapp.com/dashboard'
-  })
-  // User will be redirected to Google
-} catch (error) {
-  console.error('Google login failed:', error.message)
-}
-
-// Custom popup options
-try {
-  await gately.loginWithGoogle({
-    mode: 'popup',
-    popupOptions: {
-      width: 600,
-      height: 700,
-      scrollbars: true,
-      resizable: true
-    }
-  })
-} catch (error) {
-  console.error('Google login failed:', error.message)
-}
-```
-
-## GitHub OAuth
-
-Authenticate users with their GitHub accounts using OAuth 2.0.
-
-```javascript
-// GitHub SSO with popup mode
-try {
-  await gately.loginWithGithubSSO({
-    mode: 'popup',
-    popupOptions: {
-      width: 500,
-      height: 600
-    }
-  })
-  console.log('GitHub login successful')
-} catch (error) {
-  console.error('GitHub login failed:', error.message)
-}
-
-// GitHub SSO with redirect mode
-try {
-  await gately.loginWithGithubSSO({
-    mode: 'redirect',
-    redirectUrl: window.location.href
-  })
-  // User will be redirected to GitHub
-} catch (error) {
-  console.error('GitHub login failed:', error.message)
-}
-```
-
-## SSO Modes
-
-### Popup Mode
-
-Opens a popup window for authentication. The user stays on your page and the popup closes automatically after authentication.
-
-```javascript
-// Popup mode example
-await gately.loginWithGoogle({
-  mode: 'popup',
-  popupOptions: {
-    width: 500,      // Popup width in pixels
-    height: 600,     // Popup height in pixels
-    scrollbars: true, // Show scrollbars
-    resizable: true   // Allow resizing
-  }
-})
-```
+Gately supports multiple social login providers that you can enable through the dashboard:
 
 <CardGroup cols={2}>
-  <Card title="Advantages" icon="thumbs-up">
-    - User stays on your page
-    - No page reload required
-    - Better user experience
-    - Can handle authentication errors gracefully
-  </Card>
-  <Card title="Disadvantages" icon="thumbs-down">
-    - May be blocked by popup blockers
-    - Limited screen space on mobile devices
-  </Card>
-</CardGroup>
-
-### Redirect Mode
-
-Redirects the entire page to the OAuth provider. After authentication, the user is redirected back to your application.
-
-```javascript
-// Redirect mode example
-await gately.loginWithGoogle({
-  mode: 'redirect',
-  redirectUrl: 'https://yourapp.com/dashboard'
-})
-```
-
-<CardGroup cols={2}>
-  <Card title="Advantages" icon="thumbs-up">
+  <Card title="Google OAuth" icon="google">
+    Let users sign in with their Google accounts.
+    
+    - Gmail and Google Workspace accounts
+    - Automatic profile information sync
+    - Trusted by billions of users
     - Works on all devices
-    - Not blocked by popup blockers
-    - Better for mobile applications
   </Card>
-  <Card title="Disadvantages" icon="thumbs-down">
-    - Page reload required
-    - User leaves your application temporarily
-    - Need to handle redirect parameters
+  
+  <Card title="GitHub OAuth" icon="github">
+    Perfect for developer-focused websites and applications.
+    
+    - GitHub personal and organization accounts
+    - Developer profile information
+    - Popular with technical audiences
+    - Secure OAuth 2.0 implementation
+  </Card>
+  
+  <Card title="Custom OAuth" icon="key">
+    Connect any OAuth 2.0 provider to your site.
+    
+    - Facebook, Twitter, LinkedIn
+    - Microsoft Azure AD
+    - Custom enterprise providers
+    - SAML 2.0 support
+  </Card>
+  
+  <Card title="Enterprise SSO" icon="building">
+    Enterprise-grade authentication for business users.
+    
+    - Active Directory integration
+    - SAML 2.0 providers
+    - Custom enterprise solutions
+    - Role-based access control
   </Card>
 </CardGroup>
 
-## OAuth Redirect Handling
+## How SSO Works
 
-When using redirect mode, you need to handle the OAuth callback on your page.
+Once you enable SSO providers in your Gately dashboard, users will automatically see social login buttons on your authentication forms:
 
-```javascript
-// Handle OAuth redirect on page load
-function handleOAuthRedirect() {
-  const url = new URL(window.location.href)
-  const authSuccess = url.searchParams.get('gately_auth_success')
-  const sessionParam = url.searchParams.get('gately_session')
-  const userParam = url.searchParams.get('gately_user')
+### User Experience
+1. **User clicks social login button** (e.g., "Sign in with Google")
+2. **Redirected to provider** - User goes to Google/GitHub to authenticate
+3. **User authorizes your app** - User grants permission to access their profile
+4. **Automatic account creation** - Gately creates an account if it's their first time
+5. **User returns to your site** - Logged in and ready to use your application
 
-  if (authSuccess === 'true' && sessionParam && userParam) {
-    try {
-      // The SDK automatically handles session restoration
-      console.log('OAuth authentication successful')
-      
-      // Clean up URL parameters
-      url.searchParams.delete('gately_auth_success')
-      url.searchParams.delete('gately_session')
-      url.searchParams.delete('gately_user')
-      
-      // Update URL without parameters
-      window.history.replaceState({}, '', url.toString())
-      
-      // Redirect to dashboard or show success message
-      showSuccessMessage('Successfully logged in!')
-    } catch (error) {
-      console.error('Failed to handle OAuth redirect:', error)
-      showErrorMessage('Authentication failed. Please try again.')
-    }
-  }
-}
+### Automatic Features
+- **Profile sync** - User's name, email, and avatar are automatically imported
+- **Account linking** - If user already has an account, SSO gets linked to it
+- **Session management** - User stays logged in across visits
+- **Security** - All OAuth flows are handled securely by Gately
 
-// Call this function on page load
-document.addEventListener('DOMContentLoaded', handleOAuthRedirect)
+## Dashboard Configuration
 
-// Or in React
-useEffect(() => {
-  handleOAuthRedirect()
-}, [])
-```
+Set up SSO providers through the Gately dashboard without any coding:
 
-## React SSO Example
+### Step 1: Enable SSO Providers
+1. Go to **Settings** → **Authentication** → **Social Login**
+2. **Toggle on** the providers you want to use (Google, GitHub, etc.)
+3. **Configure each provider** with your OAuth credentials
 
-Complete React component with SSO integration.
+### Step 2: Configure Provider Settings
+- **Google OAuth** - Add your Google Client ID and Secret
+- **GitHub OAuth** - Add your GitHub Client ID and Secret  
+- **Custom Providers** - Configure any OAuth 2.0 provider
+- **Enterprise SSO** - Set up SAML or custom enterprise authentication
 
-```jsx
-import React, { useState } from 'react'
-import { useGately } from 'https://cdn.usegately.com/gately-sdk.esm.min.js'
+### Step 3: Customize User Experience
+- **Button styling** - Match your brand colors and fonts
+- **Button text** - Customize button labels ("Sign in with Google")
+- **Redirect URLs** - Set where users go after successful login
+- **Error handling** - Configure error messages and fallback options
 
-function SSOLogin() {
-  const { loginWithGoogle, loginWithGithubSSO, user, logout, loading, error } = useGately('your-project-id')
-  const [ssoLoading, setSsoLoading] = useState(false)
+## Authentication Modes
 
-  const handleGoogleLogin = async () => {
-    setSsoLoading(true)
-    try {
-      await loginWithGoogle({
-        mode: 'popup',
-        popupOptions: { width: 500, height: 600 }
-      })
-    } catch (error) {
-      console.error('Google login failed:', error)
-    } finally {
-      setSsoLoading(false)
-    }
-  }
+Gately automatically handles different authentication modes based on your users' devices and preferences:
 
-  const handleGithubLogin = async () => {
-    setSsoLoading(true)
-    try {
-      await loginWithGithubSSO({
-        mode: 'redirect',
-        redirectUrl: window.location.href
-      })
-    } catch (error) {
-      console.error('GitHub login failed:', error)
-      setSsoLoading(false)
-    }
-  }
+### Desktop Experience
+- **Popup windows** - Opens OAuth provider in a small popup window
+- **User stays on your page** - No page reload required
+- **Automatic popup closing** - Popup closes after successful authentication
+- **Error handling** - Graceful error messages if authentication fails
 
-  if (user) {
-    return (
-      <div className="user-info">
-        <h3>Welcome, {user.email}!</h3>
-        <p>You are logged in via SSO</p>
-        <button onClick={logout}>Logout</button>
-      </div>
-    )
-  }
+### Mobile Experience  
+- **Full page redirect** - Takes user to OAuth provider's mobile-optimized page
+- **Seamless return** - User automatically returns to your site after authentication
+- **Touch-friendly** - Optimized for mobile touch interactions
+- **No popup blockers** - Works reliably on all mobile browsers
 
-  return (
-    <div className="sso-login">
-      <h2>Sign in with SSO</h2>
-      
-      <button 
-        onClick={handleGoogleLogin}
-        disabled={ssoLoading || loading}
-        className="google-btn"
-      >
-        {ssoLoading ? 'Signing in...' : 'Sign in with Google'}
-      </button>
+## Platform Integration
 
-      <button 
-        onClick={handleGithubLogin}
-        disabled={ssoLoading || loading}
-        className="github-btn"
-      >
-        {ssoLoading ? 'Signing in...' : 'Sign in with GitHub'}
-      </button>
+SSO works seamlessly across all no-code platforms:
 
-      {error && <p className="error">{error}</p>}
-    </div>
-  )
-}
+### Framer Integration
+- **Automatic button generation** - SSO buttons appear automatically in your authentication forms
+- **Brand matching** - Buttons automatically match your Framer site's design
+- **Responsive design** - Works perfectly on all screen sizes
+- **Component integration** - Integrates with Framer's component system
 
-export default SSOLogin
-```
+### Webflow Integration
+- **Custom attributes** - Use Webflow's custom attributes to control SSO buttons
+- **CMS compatibility** - Works with Webflow CMS and dynamic content
+- **Interaction support** - Compatible with Webflow interactions and animations
+- **Symbol management** - Control SSO buttons through Webflow symbols
 
-## SSO Configuration
+### Universal Compatibility
+- **Any HTML platform** - Works with any website that supports custom HTML/JavaScript
+- **CSS framework support** - Compatible with Bootstrap, Tailwind, and other frameworks
+- **Custom styling** - Full control over button appearance and behavior
+
+## Provider Setup Guide
 
 <Warning>
-Before using SSO, you need to configure your OAuth providers in the Gately dashboard.
+You'll need to create OAuth applications with each provider before enabling them in Gately.
 </Warning>
 
 ### Google OAuth Setup
+1. **Go to Google Cloud Console** - Visit [console.cloud.google.com](https://console.cloud.google.com)
+2. **Create or select project** - Choose your project or create a new one
+3. **Enable Google+ API** - Enable the required APIs for authentication
+4. **Create OAuth credentials** - Generate Client ID and Client Secret
+5. **Set redirect URI** - Add `https://sdk.usegately.com/api/sdk/auth/google`
+6. **Add to Gately dashboard** - Copy credentials to your Gately settings
 
-1. Go to the Google Cloud Console
-2. Create a new project or select an existing one
-3. Enable the Google+ API
-4. Create OAuth 2.0 credentials
-5. Add authorized redirect URIs: `https://sdk.usegately.com/api/sdk/auth/google`
-6. Copy the Client ID and Client Secret to your Gately dashboard
+### GitHub OAuth Setup  
+1. **Go to GitHub Settings** - Navigate to Settings → Developer settings → OAuth Apps
+2. **Create new OAuth App** - Register your application with GitHub
+3. **Set callback URL** - Use `https://sdk.usegately.com/api/sdk/auth/github`
+4. **Get credentials** - Copy Client ID and Client Secret
+5. **Configure in Gately** - Add credentials to your dashboard settings
 
-### GitHub OAuth Setup
-
-1. Go to GitHub Settings → Developer settings → OAuth Apps
-2. Create a new OAuth App
-3. Set the Authorization callback URL to: `https://sdk.usegately.com/api/sdk/auth/github`
-4. Copy the Client ID and Client Secret to your Gately dashboard
-
-## SSO Options
-
-<ResponseField name="mode" type="'popup' | 'redirect'" default="'popup'">
-  Authentication mode
-</ResponseField>
-
-<ResponseField name="redirectUrl" type="string" default="window.location.href">
-  URL to redirect to after authentication
-</ResponseField>
-
-<ResponseField name="popupOptions.width" type="number" default="500">
-  Popup window width in pixels
-</ResponseField>
-
-<ResponseField name="popupOptions.height" type="number" default="600">
-  Popup window height in pixels
-</ResponseField>
-
-<ResponseField name="popupOptions.scrollbars" type="boolean" default="true">
-  Show scrollbars in popup
-</ResponseField>
-
-<ResponseField name="popupOptions.resizable" type="boolean" default="true">
-  Allow popup resizing
-</ResponseField>
+### Custom Provider Setup
+1. **Choose your provider** - Facebook, Twitter, LinkedIn, Microsoft, etc.
+2. **Create OAuth application** - Register with your chosen provider
+3. **Configure redirect URI** - Use Gately's callback URL for your provider
+4. **Get credentials** - Obtain Client ID and Client Secret
+5. **Add to dashboard** - Configure in Gately's custom provider settings
 
 ## Best Practices
 
 <AccordionGroup>
-  <Accordion title="Choose the Right Mode">
-    - Use popup mode for desktop applications
-    - Use redirect mode for mobile applications
-    - Consider user experience and popup blockers
-  </Accordion>
-  
-  <Accordion title="Error Handling">
-    - Always handle authentication errors gracefully
-    - Provide fallback authentication methods
-    - Show appropriate error messages to users
-  </Accordion>
-  
-  <Accordion title="Security">
-    - Validate redirect URLs to prevent open redirects
-    - Use HTTPS in production
-    - Implement proper session management
+  <Accordion title="Provider Selection">
+    - Choose providers your users already use
+    - Google is most universally accepted
+    - GitHub works well for developer audiences
+    - Consider your target demographic
   </Accordion>
   
   <Accordion title="User Experience">
-    - Show loading states during authentication
-    - Provide clear instructions for users
-    - Handle edge cases like popup blockers
+    - Always offer email/password as an alternative
+    - Use clear, recognizable button designs
+    - Test on both desktop and mobile devices
+    - Provide helpful error messages
+  </Accordion>
+  
+  <Accordion title="Security & Privacy">
+    - Only request necessary permissions from providers
+    - Use HTTPS for all authentication flows
+    - Keep OAuth credentials secure
+    - Regularly review and update provider settings
+  </Accordion>
+  
+  <Accordion title="Testing">
+    - Test each provider thoroughly before launch
+    - Verify profile information syncs correctly
+    - Test error scenarios and edge cases
+    - Monitor authentication success rates
   </Accordion>
 </AccordionGroup>
 
@@ -351,10 +200,10 @@ Before using SSO, you need to configure your OAuth providers in the Gately dashb
     Manage user profiles and data
   </Card>
   <Card
-    title="Examples"
-    icon="code"
-    href="/examples"
+    title="Dashboard"
+    icon="settings"
+    href="https://app.usegately.com"
   >
-    View SSO integration examples
+    Configure your SSO providers
   </Card>
 </CardGroup>

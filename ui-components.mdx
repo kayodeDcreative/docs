@@ -1,380 +1,110 @@
 ---
 title: UI Components
-description: 'Control UI elements based on authentication state with built-in methods'
+description: 'Automatically control what users see based on their authentication status'
 ---
 
-The Gately SDK provides built-in UI control methods to automatically show, hide, and style elements based on authentication state.
+Gately automatically manages your website's UI elements based on whether users are logged in or not. This means you can create personalized experiences without any coding.
 
-## Basic UI Control
+## How UI Control Works
 
-Automatically control element visibility based on authentication state.
+Once you add Gately to your site, it automatically:
 
-```javascript
-import { GatelyBrowserClient } from '@gately/sdk'
+- **Shows login forms** when users need to authenticate
+- **Hides login buttons** when users are already signed in
+- **Displays user dashboards** only to authenticated users
+- **Shows welcome messages** to new visitors
+- **Controls access** to premium content based on user plans
 
-const gately = new GatelyBrowserClient('your-project-id')
+## What Gets Controlled Automatically
 
-// Show element only when user is authenticated
-gately.showElementOnAuth('dashboard', {
-  hideIfLoggedOut: true
-})
+### Authentication Elements
+- **Login Forms** - Appear when users need to sign in
+- **Signup Forms** - Show when new users need to register
+- **Logout Buttons** - Display when users are signed in
+- **User Menus** - Appear in navigation for authenticated users
 
-// Show element only when user is not authenticated
-gately.showElementOnAuth('login-form', {
-  hideIfLoggedIn: true
-})
+### Content Areas
+- **User Dashboards** - Only visible to logged-in users
+- **Welcome Messages** - Show to visitors who aren't signed in
+- **Premium Content** - Controlled by user subscription status
+- **Profile Sections** - Display user-specific information
 
-// Hide element when user is authenticated
-gately.hideElementOnAuth('signup-button', {
-  hideIfLoggedIn: true
-})
+### Navigation Elements
+- **Member-only Links** - Show only to authenticated users
+- **Guest Navigation** - Display for non-authenticated visitors
+- **User Avatar/Name** - Show current user information
+- **Account Settings** - Access to user preferences
 
-// Show element when user is not authenticated
-gately.showElementOnNoAuth('welcome-message', {
-  hideIfLoggedIn: true
-})
-```
+## Customization Options
 
-## Advanced UI Control
+You can customize how UI elements appear through the Gately dashboard:
 
-Use custom classes and styles for more sophisticated UI control.
+### Visual Styling
+- **Colors** - Match your brand colors for authentication forms
+- **Typography** - Choose fonts and text sizes
+- **Spacing** - Adjust padding and margins
+- **Borders** - Customize border styles and radius
 
-```javascript
-// Add custom CSS classes based on auth state
-gately.showElementOnAuth('user-menu', {
-  hideIfLoggedOut: true,
-  customClass: 'auth-visible'
-})
+### Behavior Settings
+- **Animation Speed** - Control how fast elements appear/disappear
+- **Loading States** - Show spinners while checking authentication
+- **Transition Effects** - Smooth fade-in/out animations
+- **Mobile Responsiveness** - Automatic mobile optimization
 
-// Apply custom styles based on auth state
-gately.showElementOnAuth('premium-features', {
-  hideIfLoggedOut: true,
-  customStyle: {
-    opacity: '0.8',
-    filter: 'grayscale(50%)',
-    pointerEvents: 'none'
-  }
-})
+## Platform-Specific Features
 
-// Combine multiple options
-gately.showElementOnAuth('admin-panel', {
-  hideIfLoggedOut: true,
-  customClass: 'admin-only',
-  customStyle: {
-    border: '2px solid #ff6b6b',
-    backgroundColor: '#fff5f5'
-  }
-})
+### Framer Integration
+- **Automatic Detection** - Gately detects Framer components automatically
+- **Component Styling** - Matches your Framer design system
+- **Responsive Design** - Works perfectly on all screen sizes
+- **Animation Support** - Smooth transitions between states
 
-// Show loader while checking auth state
-gately.showElementOnAuth('content-area', {
-  showLoader: true,
-  customClass: 'content-loaded'
-})
-```
+### Webflow Integration
+- **Custom Attributes** - Use Webflow's custom attributes for control
+- **CMS Integration** - Works with Webflow CMS content
+- **Interaction Support** - Compatible with Webflow interactions
+- **Symbol Management** - Control symbols based on auth state
 
-## Complete UI Example
+### Other Platforms
+- **Universal Compatibility** - Works with any HTML-based platform
+- **CSS Framework Support** - Compatible with Bootstrap, Tailwind, etc.
+- **Custom Integration** - Flexible setup for any platform
 
-A complete example showing how to control an entire application UI.
+## Dashboard Configuration
 
-```javascript
-class UIController {
-  constructor() {
-    this.gately = new GatelyBrowserClient('your-project-id')
-    this.setupUIControls()
-  }
+Control all UI behavior through the Gately dashboard without any coding:
 
-  setupUIControls() {
-    // Navigation elements
-    this.gately.showElementOnAuth('nav-dashboard', { hideIfLoggedOut: true })
-    this.gately.showElementOnAuth('nav-profile', { hideIfLoggedOut: true })
-    this.gately.showElementOnAuth('nav-logout', { hideIfLoggedOut: true })
-    
-    this.gately.showElementOnAuth('nav-login', { hideIfLoggedIn: true })
-    this.gately.showElementOnAuth('nav-signup', { hideIfLoggedIn: true })
+### Element Visibility Rules
+- **Authentication-based** - Show/hide based on login status
+- **Plan-based** - Control access by subscription tier
+- **Role-based** - Different content for different user roles
+- **Time-based** - Show content based on user registration date
 
-    // Main content areas
-    this.gately.showElementOnAuth('dashboard-content', { 
-      hideIfLoggedOut: true,
-      customClass: 'authenticated-content'
-    })
-    
-    this.gately.showElementOnAuth('welcome-content', { 
-      hideIfLoggedIn: true,
-      customClass: 'unauthenticated-content'
-    })
+### Styling Options
+- **Theme Selection** - Choose from pre-built themes
+- **Color Customization** - Match your brand colors
+- **Font Settings** - Typography that matches your site
+- **Layout Options** - Spacing, borders, and positioning
 
-    // User-specific elements
-    this.gately.showElementOnAuth('user-welcome', { 
-      hideIfLoggedOut: true,
-      customClass: 'user-info'
-    })
-    
-    this.gately.showElementOnAuth('user-avatar', { 
-      hideIfLoggedOut: true,
-      customStyle: { borderRadius: '50%' }
-    })
+## Common Use Cases
 
-    // Feature access
-    this.gately.showElementOnAuth('premium-features', { 
-      hideIfLoggedOut: true,
-      customClass: 'feature-section',
-      customStyle: { 
-        opacity: '0.9',
-        borderLeft: '4px solid #6b7280'
-      }
-    })
+### Membership Sites
+- **Member Dashboard** - Show personalized content to logged-in members
+- **Guest Welcome** - Display signup prompts to visitors
+- **Tier-based Content** - Different content for different membership levels
+- **Profile Management** - User account settings and preferences
 
-    // Forms
-    this.gately.showElementOnAuth('login-form', { 
-      hideIfLoggedIn: true,
-      customClass: 'auth-form'
-    })
-    
-    this.gately.showElementOnAuth('signup-form', { 
-      hideIfLoggedIn: true,
-      customClass: 'auth-form'
-    })
+### E-commerce Sites
+- **User Account** - Order history and account management
+- **Guest Checkout** - Streamlined experience for non-members
+- **Wishlist Features** - Save items for logged-in users
+- **Personalized Recommendations** - Based on user history
 
-    // Loading states
-    this.gately.showElementOnAuth('loading-spinner', { 
-      showLoader: true,
-      customClass: 'loading-indicator'
-    })
-  }
-
-  updateUserInfo() {
-    const user = this.gately.getUser()
-    if (user) {
-      const welcomeElement = document.getElementById('user-welcome')
-      if (welcomeElement) {
-        welcomeElement.textContent = `Welcome, ${user.name || user.email}!`
-      }
-
-      const avatarElement = document.getElementById('user-avatar')
-      if (avatarElement && user.avatar_url) {
-        avatarElement.src = user.avatar_url
-      }
-    }
-  }
-}
-
-// Usage
-const uiController = new UIController()
-
-// Update UI when auth state changes
-gately.onAuthStateChange((user) => {
-  if (user) {
-    uiController.updateUserInfo()
-  }
-})
-```
-
-## CSS Styling
-
-CSS classes and styles that work with the UI control methods.
-
-```css
-/* Base styles for authenticated/unauthenticated states */
-.authenticated-content {
-  display: block;
-  animation: fadeIn 0.3s ease-in;
-}
-
-.unauthenticated-content {
-  display: block;
-  animation: slideIn 0.3s ease-out;
-}
-
-/* User-specific styling */
-.user-info {
-  background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
-  color: white;
-  padding: 1rem;
-  border-radius: 8px;
-  margin-bottom: 1rem;
-}
-
-/* Feature sections */
-.feature-section {
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
-  padding: 1.5rem;
-  margin: 1rem 0;
-}
-
-/* Auth forms */
-.auth-form {
-  max-width: 400px;
-  margin: 2rem auto;
-  padding: 2rem;
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-/* Loading indicator */
-.loading-indicator {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 2rem;
-}
-
-.loading-indicator::after {
-  content: '';
-  width: 20px;
-  height: 20px;
-  border: 2px solid #e2e8f0;
-  border-top: 2px solid #6b7280;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-}
-
-/* Animations */
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-@keyframes slideIn {
-  from { 
-    opacity: 0;
-    transform: translateY(-20px);
-  }
-  to { 
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-/* Responsive design */
-@media (max-width: 768px) {
-  .auth-form {
-    margin: 1rem;
-    padding: 1rem;
-  }
-  
-  .user-info {
-    padding: 0.75rem;
-    margin-bottom: 0.75rem;
-  }
-}
-```
-
-## React Integration
-
-Use UI control methods with React components.
-
-```jsx
-import React, { useEffect, useRef } from 'react'
-import { useGately } from '@gately/sdk'
-
-function App() {
-  const { user, loading } = useGately('your-project-id')
-  const uiControllerRef = useRef(null)
-
-  useEffect(() => {
-    if (uiControllerRef.current) {
-      // Setup UI controls when component mounts
-      const gately = uiControllerRef.current.gately
-      
-      gately.showElementOnAuth('dashboard', { hideIfLoggedOut: true })
-      gately.showElementOnAuth('login-form', { hideIfLoggedIn: true })
-      gately.showElementOnAuth('user-menu', { 
-        hideIfLoggedOut: true,
-        customClass: 'user-menu-visible'
-      })
-    }
-  }, [])
-
-  if (loading) {
-    return (
-      <div id="loading-spinner" className="loading-indicator">
-        Loading...
-      </div>
-    )
-  }
-
-  return (
-    <div className="app">
-      <header className="header">
-        <nav className="nav">
-          <div id="nav-dashboard" className="nav-item">Dashboard</div>
-          <div id="nav-profile" className="nav-item">Profile</div>
-          <div id="nav-login" className="nav-item">Login</div>
-          <div id="nav-signup" className="nav-item">Sign Up</div>
-          <div id="nav-logout" className="nav-item">Logout</div>
-        </nav>
-        
-        <div id="user-menu" className="user-menu">
-          <div id="user-welcome" className="user-welcome">
-            {user ? `Welcome, ${user.name || user.email}!` : ''}
-          </div>
-          <img 
-            id="user-avatar" 
-            className="user-avatar" 
-            src={user?.avatar_url} 
-            alt="User avatar"
-          />
-        </div>
-      </header>
-
-      <main className="main">
-        <div id="welcome-content" className="welcome-content">
-          <h1>Welcome to Our App</h1>
-          <p>Please log in to access your dashboard.</p>
-        </div>
-
-        <div id="dashboard-content" className="dashboard-content">
-          <h1>Dashboard</h1>
-          <p>Welcome to your personalized dashboard!</p>
-          
-          <div id="premium-features" className="premium-features">
-            <h2>Premium Features</h2>
-            <p>Access to exclusive content and features.</p>
-          </div>
-        </div>
-
-        <div id="login-form" className="auth-form">
-          <h2>Login</h2>
-          {/* Login form content */}
-        </div>
-      </main>
-    </div>
-  )
-}
-
-export default App
-```
-
-## UI Control Options
-
-<ResponseField name="hideIfLoggedOut" type="boolean" default="false">
-  Hide element when user is not authenticated
-</ResponseField>
-
-<ResponseField name="hideIfLoggedIn" type="boolean" default="false">
-  Hide element when user is authenticated
-</ResponseField>
-
-<ResponseField name="showLoader" type="boolean" default="false">
-  Show loading state while checking auth
-</ResponseField>
-
-<ResponseField name="customClass" type="string" default="undefined">
-  CSS class to add based on auth state
-</ResponseField>
-
-<ResponseField name="customStyle" type="object" default="undefined">
-  CSS styles to apply based on auth state
-</ResponseField>
+### Content Sites
+- **Premium Articles** - Paywall for exclusive content
+- **User Comments** - Show comment forms to authenticated users
+- **Reading Progress** - Track progress for logged-in users
+- **Bookmarks** - Save articles for later reading
 
 ## Best Practices
 
@@ -424,34 +154,13 @@ export default App
   </Accordion>
 </AccordionGroup>
 
-### Debugging UI Controls
+### Testing Your Setup
 
-```javascript
-// Debug UI controls
-function debugUIControls() {
-  const gately = new GatelyBrowserClient('your-project-id')
-  
-  // Check if element exists
-  const element = document.getElementById('dashboard')
-  console.log('Dashboard element exists:', !!element)
-  
-  // Check auth state
-  console.log('Is authenticated:', gately.isAuthenticated())
-  console.log('Current user:', gately.getUser())
-  
-  // Test UI control
-  gately.showElementOnAuth('dashboard', {
-    hideIfLoggedOut: true,
-    customClass: 'debug-test'
-  })
-  
-  // Check applied classes
-  setTimeout(() => {
-    const dashboard = document.getElementById('dashboard')
-    console.log('Dashboard classes:', dashboard?.className)
-  }, 100)
-}
-```
+1. **Visit your published site** (not the editor)
+2. **Test as a guest** - Verify guest elements appear
+3. **Sign up for an account** - Check member elements show
+4. **Log out and back in** - Ensure state changes work
+5. **Test on mobile** - Verify responsive behavior
 
 ## Next Steps
 
@@ -461,20 +170,20 @@ function debugUIControls() {
     icon="key"
     href="/authentication"
   >
-    Learn about authentication methods
+    Learn about authentication options
   </Card>
   <Card
-    title="Framework Adapters"
-    icon="react"
-    href="/framework-adapters"
+    title="User Management"
+    icon="users"
+    href="/user-management"
   >
-    React, Vue, Svelte integration
+    Set up user profiles and plans
   </Card>
   <Card
-    title="Examples"
-    icon="code"
-    href="/examples"
+    title="Dashboard"
+    icon="settings"
+    href="https://app.usegately.com"
   >
-    View UI control examples
+    Configure your UI settings
   </Card>
 </CardGroup>

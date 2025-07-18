@@ -1,457 +1,179 @@
 ---
-title: UI Components
-description: 'Control UI elements based on authentication state with built-in methods'
+title: User Management
+description: 'Complete user profile management and account settings for your website'
 ---
 
-The Gately SDK provides built-in UI control methods to automatically show, hide, and style elements based on authentication state.
+Gately provides comprehensive user management features that work automatically once you add it to your site. Users can manage their profiles, update account information, and control their preferences without any coding required.
 
-## Basic UI Control
+## What Users Get
 
-Automatically control element visibility based on authentication state.
+Once Gately is added to your site, your users automatically have access to:
 
-```javascript
-import { GatelyBrowserClient } from 'https://cdn.usegately.com/gately-sdk.esm.min.js'
-
-const gately = new GatelyBrowserClient('your-project-id')
-
-// Show element only when user is authenticated
-gately.showElementOnAuth('dashboard', {
-  hideIfLoggedOut: true
-})
-
-// Show element only when user is not authenticated
-gately.showElementOnAuth('login-form', {
-  hideIfLoggedIn: true
-})
-
-// Hide element when user is authenticated
-gately.hideElementOnAuth('signup-button', {
-  hideIfLoggedIn: true
-})
-
-// Show element when user is not authenticated
-gately.showElementOnNoAuth('welcome-message', {
-  hideIfLoggedIn: true
-})
-```
-
-## Advanced UI Control
-
-Use custom classes and styles for more sophisticated UI control.
-
-```javascript
-// Add custom CSS classes based on auth state
-gately.showElementOnAuth('user-menu', {
-  hideIfLoggedOut: true,
-  customClass: 'auth-visible'
-})
-
-// Apply custom styles based on auth state
-gately.showElementOnAuth('premium-features', {
-  hideIfLoggedOut: true,
-  customStyle: {
-    opacity: '0.8',
-    filter: 'grayscale(50%)',
-    pointerEvents: 'none'
-  }
-})
-
-// Combine multiple options
-gately.showElementOnAuth('admin-panel', {
-  hideIfLoggedOut: true,
-  customClass: 'admin-only',
-  customStyle: {
-    border: '2px solid #ff6b6b',
-    backgroundColor: '#fff5f5'
-  }
-})
-
-// Show loader while checking auth state
-gately.showElementOnAuth('content-area', {
-  showLoader: true,
-  customClass: 'content-loaded'
-})
-```
-
-## Complete UI Example
-
-A complete example showing how to control an entire application UI.
-
-```javascript
-class UIController {
-  constructor() {
-    this.gately = new GatelyBrowserClient('your-project-id')
-    this.setupUIControls()
-  }
-
-  setupUIControls() {
-    // Navigation elements
-    this.gately.showElementOnAuth('nav-dashboard', { hideIfLoggedOut: true })
-    this.gately.showElementOnAuth('nav-profile', { hideIfLoggedOut: true })
-    this.gately.showElementOnAuth('nav-logout', { hideIfLoggedOut: true })
+<CardGroup cols={2}>
+  <Card title="User Profiles" icon="user">
+    Complete profile management with customizable fields.
     
-    this.gately.showElementOnAuth('nav-login', { hideIfLoggedIn: true })
-    this.gately.showElementOnAuth('nav-signup', { hideIfLoggedIn: true })
-
-    // Main content areas
-    this.gately.showElementOnAuth('dashboard-content', { 
-      hideIfLoggedOut: true,
-      customClass: 'authenticated-content'
-    })
-    
-    this.gately.showElementOnAuth('welcome-content', { 
-      hideIfLoggedIn: true,
-      customClass: 'unauthenticated-content'
-    })
-
-    // User-specific elements
-    this.gately.showElementOnAuth('user-welcome', { 
-      hideIfLoggedOut: true,
-      customClass: 'user-info'
-    })
-    
-    this.gately.showElementOnAuth('user-avatar', { 
-      hideIfLoggedOut: true,
-      customStyle: { borderRadius: '50%' }
-    })
-
-    // Feature access
-    this.gately.showElementOnAuth('premium-features', { 
-      hideIfLoggedOut: true,
-      customClass: 'feature-section',
-      customStyle: { 
-        opacity: '0.9',
-        borderLeft: '4px solid #6b7280'
-      }
-    })
-
-    // Forms
-    this.gately.showElementOnAuth('login-form', { 
-      hideIfLoggedIn: true,
-      customClass: 'auth-form'
-    })
-    
-    this.gately.showElementOnAuth('signup-form', { 
-      hideIfLoggedIn: true,
-      customClass: 'auth-form'
-    })
-
-    // Loading states
-    this.gately.showElementOnAuth('loading-spinner', { 
-      showLoader: true,
-      customClass: 'loading-indicator'
-    })
-  }
-
-  updateUserInfo() {
-    const user = this.gately.getUser()
-    if (user) {
-      const welcomeElement = document.getElementById('user-welcome')
-      if (welcomeElement) {
-        welcomeElement.textContent = `Welcome, ${user.name || user.email}!`
-      }
-
-      const avatarElement = document.getElementById('user-avatar')
-      if (avatarElement && user.avatar_url) {
-        avatarElement.src = user.avatar_url
-      }
-    }
-  }
-}
-
-// Usage
-const uiController = new UIController()
-
-// Update UI when auth state changes
-gately.onAuthStateChange((user) => {
-  if (user) {
-    uiController.updateUserInfo()
-  }
-})
-```
-
-## CSS Styling
-
-CSS classes and styles that work with the UI control methods.
-
-```css
-/* Base styles for authenticated/unauthenticated states */
-.authenticated-content {
-  display: block;
-  animation: fadeIn 0.3s ease-in;
-}
-
-.unauthenticated-content {
-  display: block;
-  animation: slideIn 0.3s ease-out;
-}
-
-/* User-specific styling */
-.user-info {
-  background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
-  color: white;
-  padding: 1rem;
-  border-radius: 8px;
-  margin-bottom: 1rem;
-}
-
-/* Feature sections */
-.feature-section {
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
-  padding: 1.5rem;
-  margin: 1rem 0;
-}
-
-/* Auth forms */
-.auth-form {
-  max-width: 400px;
-  margin: 2rem auto;
-  padding: 2rem;
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-/* Loading indicator */
-.loading-indicator {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 2rem;
-}
-
-.loading-indicator::after {
-  content: '';
-  width: 20px;
-  height: 20px;
-  border: 2px solid #e2e8f0;
-  border-top: 2px solid #6b7280;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-}
-
-/* Animations */
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-@keyframes slideIn {
-  from { 
-    opacity: 0;
-    transform: translateY(-20px);
-  }
-  to { 
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-/* Responsive design */
-@media (max-width: 768px) {
-  .auth-form {
-    margin: 1rem;
-    padding: 1rem;
-  }
+    - Personal information (name, email, phone)
+    - Professional details (company, job title)
+    - Bio and description
+    - Profile pictures and avatars
+  </Card>
   
-  .user-info {
-    padding: 0.75rem;
-    margin-bottom: 0.75rem;
-  }
-}
-```
+  <Card title="Account Settings" icon="settings">
+    Full account control and security management.
+    
+    - Password changes
+    - Email preferences
+    - Privacy settings
+    - Account deletion
+  </Card>
+  
+  <Card title="Subscription Management" icon="credit-card">
+    Built-in subscription and plan management.
+    
+    - Current plan information
+    - Upgrade/downgrade options
+    - Billing history
+    - Payment methods
+  </Card>
+  
+  <Card title="Activity Tracking" icon="activity">
+    User activity and engagement tracking.
+    
+    - Login history
+    - Activity timeline
+    - Usage statistics
+    - Engagement metrics
+  </Card>
+</CardGroup>
 
-## React Integration
+## Dashboard Configuration
 
-Use UI control methods with React components.
+Configure user management settings through the Gately dashboard:
 
-```jsx
-import React, { useEffect, useRef } from 'react'
-import { useGately } from 'https://cdn.usegately.com/gately-sdk.esm.min.js'
+### Profile Fields Setup
+- **Required Fields** - Choose which fields users must fill out
+- **Optional Fields** - Additional information users can provide
+- **Custom Fields** - Add your own custom profile fields
+- **Field Validation** - Set validation rules for each field
 
-function App() {
-  const { user, loading } = useGately('your-project-id')
-  const uiControllerRef = useRef(null)
+### User Interface Customization
+- **Profile Page Layout** - Choose how user profiles are displayed
+- **Form Styling** - Match your brand colors and fonts
+- **Field Labels** - Customize field names and descriptions
+- **Success Messages** - Set custom success and error messages
 
-  useEffect(() => {
-    if (uiControllerRef.current) {
-      // Setup UI controls when component mounts
-      const gately = uiControllerRef.current.gately
-      
-      gately.showElementOnAuth('dashboard', { hideIfLoggedOut: true })
-      gately.showElementOnAuth('login-form', { hideIfLoggedIn: true })
-      gately.showElementOnAuth('user-menu', { 
-        hideIfLoggedOut: true,
-        customClass: 'user-menu-visible'
-      })
-    }
-  }, [])
+## Security & Privacy Features
 
-  if (loading) {
-    return (
-      <div id="loading-spinner" className="loading-indicator">
-        Loading...
-      </div>
-    )
-  }
+Gately automatically provides security features for user accounts:
 
-  return (
-    <div className="app">
-      <header className="header">
-        <nav className="nav">
-          <div id="nav-dashboard" className="nav-item">Dashboard</div>
-          <div id="nav-profile" className="nav-item">Profile</div>
-          <div id="nav-login" className="nav-item">Login</div>
-          <div id="nav-signup" className="nav-item">Sign Up</div>
-          <div id="nav-logout" className="nav-item">Logout</div>
-        </nav>
-        
-        <div id="user-menu" className="user-menu">
-          <div id="user-welcome" className="user-welcome">
-            {user ? `Welcome, ${user.name || user.email}!` : ''}
-          </div>
-          <img 
-            id="user-avatar" 
-            className="user-avatar" 
-            src={user?.avatar_url} 
-            alt="User avatar"
-          />
-        </div>
-      </header>
+### Password Security
+- **Strong Password Requirements** - Configurable password strength rules
+- **Secure Password Changes** - Users can safely update their passwords
+- **Password Reset** - Secure email-based password recovery
+- **Security Notifications** - Alert users of account changes
 
-      <main className="main">
-        <div id="welcome-content" className="welcome-content">
-          <h1>Welcome to Our App</h1>
-          <p>Please log in to access your dashboard.</p>
-        </div>
+### Account Control
+- **Account Deletion** - Users can permanently delete their accounts
+- **Data Export** - Users can download their data before deletion
+- **Privacy Controls** - Users control what information is visible
+- **Session Management** - Users can see and manage active sessions
 
-        <div id="dashboard-content" className="dashboard-content">
-          <h1>Dashboard</h1>
-          <p>Welcome to your personalized dashboard!</p>
-          
-          <div id="premium-features" className="premium-features">
-            <h2>Premium Features</h2>
-            <p>Access to exclusive content and features.</p>
-          </div>
-        </div>
+<Warning>
+Account deletion is permanent and cannot be undone. All user data will be permanently removed.
+</Warning>
 
-        <div id="login-form" className="auth-form">
-          <h2>Login</h2>
-          {/* Login form content */}
-        </div>
-      </main>
-    </div>
-  )
-}
+## User Experience Features
 
-export default App
-```
+Gately provides a seamless user experience with automatic features:
 
-## UI Control Options
+### Profile Management Interface
+- **Intuitive Forms** - Easy-to-use profile editing forms
+- **Real-time Validation** - Instant feedback on form inputs
+- **Auto-save** - Automatic saving of profile changes
+- **Mobile Responsive** - Works perfectly on all devices
 
-<ResponseField name="hideIfLoggedOut" type="boolean" default="false">
-  Hide element when user is not authenticated
-</ResponseField>
+### User Dashboard
+- **Account Overview** - Summary of user account information
+- **Activity History** - Track user login and activity
+- **Preferences** - User-controlled settings and preferences
+- **Subscription Status** - Current plan and billing information
 
-<ResponseField name="hideIfLoggedIn" type="boolean" default="false">
-  Hide element when user is authenticated
-</ResponseField>
+## Available User Data Fields
 
-<ResponseField name="showLoader" type="boolean" default="false">
-  Show loading state while checking auth
-</ResponseField>
+Configure which user information to collect and display:
 
-<ResponseField name="customClass" type="string" default="undefined">
-  CSS class to add based on auth state
-</ResponseField>
+### Basic Information
+- **Email Address** - Primary identifier (always required)
+- **Full Name** - First and last name fields
+- **Display Name** - Public name shown to other users
+- **Profile Picture** - Avatar or profile image
 
-<ResponseField name="customStyle" type="object" default="undefined">
-  CSS styles to apply based on auth state
-</ResponseField>
+### Contact Information
+- **Phone Number** - With validation and formatting
+- **Website URL** - Personal or business website
+- **Location** - City, state, or country
+- **Social Media** - Links to social profiles
+
+### Professional Information
+- **Company** - Current employer or business
+- **Job Title** - Professional role or position
+- **Bio/Description** - Personal or professional summary
+- **Industry** - Business sector or field
 
 ## Best Practices
 
 <AccordionGroup>
-  <Accordion title="Element Organization">
-    - Use descriptive element IDs for better maintainability
-    - Group related elements with similar auth requirements
-    - Consider using data attributes for additional metadata
+  <Accordion title="Profile Management">
+    - Always validate user input before updating profiles
+    - Provide clear feedback for successful/failed operations
+    - Use appropriate form validation for different fields
+    - Consider implementing profile completion tracking
   </Accordion>
   
-  <Accordion title="Performance">
-    - Set up UI controls once during initialization
-    - Avoid setting up controls in render loops
-    - Use CSS transitions for smooth state changes
+  <Accordion title="Password Security">
+    - Enforce strong password requirements
+    - Provide password strength indicators
+    - Implement rate limiting for password changes
+    - Send confirmation emails for password changes
   </Accordion>
   
-  <Accordion title="User Experience">
-    - Provide loading states for better perceived performance
-    - Use smooth animations for state transitions
-    - Ensure accessible navigation for all users
+  <Accordion title="Account Deletion">
+    - Require explicit confirmation before deletion
+    - Explain the consequences of account deletion
+    - Consider offering account deactivation instead
+    - Provide data export options before deletion
   </Accordion>
   
-  <Accordion title="Error Handling">
-    - Handle cases where elements don't exist
-    - Provide fallback content for missing elements
-    - Log errors for debugging purposes
-  </Accordion>
-</AccordionGroup>
-
-## Troubleshooting
-
-<AccordionGroup>
-  <Accordion title="Element not found">
-    Ensure element ID exists in DOM before setting up controls
-  </Accordion>
-  
-  <Accordion title="Controls not working">
-    Check if SDK is properly initialized and project ID is correct
-  </Accordion>
-  
-  <Accordion title="State not updating">
-    Verify auth state change listeners are properly set up
-  </Accordion>
-  
-  <Accordion title="CSS not applying">
-    Check if custom classes are defined in your stylesheet
+  <Accordion title="Data Privacy">
+    - Only collect necessary user information
+    - Provide clear privacy policies
+    - Allow users to control their data
+    - Implement data retention policies
   </Accordion>
 </AccordionGroup>
 
-### Debugging UI Controls
+## Admin Dashboard Features
 
-```javascript
-// Debug UI controls
-function debugUIControls() {
-  const gately = new GatelyBrowserClient('your-project-id')
-  
-  // Check if element exists
-  const element = document.getElementById('dashboard')
-  console.log('Dashboard element exists:', !!element)
-  
-  // Check auth state
-  console.log('Is authenticated:', gately.isAuthenticated())
-  console.log('Current user:', gately.getUser())
-  
-  // Test UI control
-  gately.showElementOnAuth('dashboard', {
-    hideIfLoggedOut: true,
-    customClass: 'debug-test'
-  })
-  
-  // Check applied classes
-  setTimeout(() => {
-    const dashboard = document.getElementById('dashboard')
-    console.log('Dashboard classes:', dashboard?.className)
-  }, 100)
-}
-```
+Manage all your users from the Gately admin dashboard:
+
+### User Overview
+- **User List** - View all registered users
+- **User Search** - Find users by email, name, or other fields
+- **User Filters** - Filter by registration date, plan, activity
+- **Export Data** - Download user data for analysis
+
+### User Management Actions
+- **View Profiles** - See complete user profile information
+- **Edit Users** - Update user information as needed
+- **Manage Plans** - Change user subscription levels
+- **Send Messages** - Communicate with users directly
+
+### Analytics & Insights
+- **User Growth** - Track registration and growth trends
+- **Activity Metrics** - See user engagement and activity
+- **Plan Distribution** - View subscription plan breakdown
+- **Geographic Data** - See where your users are located
 
 ## Next Steps
 
@@ -464,17 +186,17 @@ function debugUIControls() {
     Learn about authentication methods
   </Card>
   <Card
-    title="Framework Adapters"
-    icon="react"
-    href="/framework-adapters"
+    title="Plans & Tiers"
+    icon="crown"
+    href="/plans"
   >
-    React, Vue, Svelte integration
+    Manage user plans and subscriptions
   </Card>
   <Card
-    title="Examples"
-    icon="code"
-    href="/examples"
+    title="Dashboard"
+    icon="settings"
+    href="https://app.usegately.com"
   >
-    View UI control examples
+    Configure user management settings
   </Card>
 </CardGroup>
