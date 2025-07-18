@@ -63,18 +63,19 @@
           "quickstart"
         ]
       },
-          {
-      "group": "Core Features",
-      "pages": [
-        "authentication",
-        "user-management",
-        "sso",
-        "ui-components",
-        "forms",
-        "plans",
-        "components"
-      ]
-    },
+                {
+        "group": "Core Features",
+        "pages": [
+          "authentication",
+          "user-management",
+          "sso",
+          "ui-components",
+          "forms",
+          "plans",
+          "components",
+          "analytics"
+        ]
+      },
       {
         "group": "Advanced Integration",
         "pages": [
