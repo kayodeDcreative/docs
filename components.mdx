@@ -1,0 +1,603 @@
+---
+title: 'Components'
+description: 'Ready-to-use Framer components for authentication and user management'
+---
+
+# Components
+
+Ready-to-use Framer components that integrate seamlessly with Gately SDK. Simply copy the component URL and paste it into your Framer project to get started.
+
+## Available Components
+
+<CardGroup cols={2}>
+  <Card
+    title="Login Form"
+    icon="log-in"
+    href="https://framer.com/m/Login-Gbf7.js"
+  >
+    A complete login form with email and password fields, integrated with Gately authentication.
+  </Card>
+  <Card
+    title="Logout Button"
+    icon="log-out"
+    href="https://framer.com/m/Logout-button-B5IJ.js"
+  >
+    A styled logout button that handles user sign-out with proper state management.
+  </Card>
+  <Card
+    title="Signup Form"
+    icon="user-plus"
+    href="https://framer.com/m/Signup-dzKc.js"
+  >
+    User registration form with email, password, and confirmation fields.
+  </Card>
+  <Card
+    title="Magic Link"
+    icon="mail"
+    href="https://framer.com/m/Magic-link-59Rk.js"
+  >
+    Passwordless authentication form that sends magic links to user emails.
+  </Card>
+  <Card
+    title="Password Reset"
+    icon="key"
+    href="https://framer.com/m/Reset-password-4hAz.js"
+  >
+    Form for users to request password reset emails.
+  </Card>
+  <Card
+    title="Gately Override"
+    icon="shield"
+    href="#gately-override"
+  >
+    React HOCs for authentication state management and conditional rendering.
+  </Card>
+</CardGroup>
+
+## How to Use
+
+### Step 1: Copy Component URL
+
+Click on any component card above to copy its URL to your clipboard.
+
+### Step 2: Paste in Framer
+
+1. Open your Framer project
+2. Go to **Insert** → **From URL**
+3. Paste the component URL
+4. Click **Import**
+
+### Step 3: Configure Gately
+
+After importing, configure the component with your Gately project ID:
+
+```javascript
+// In your Framer component's code
+import { GatelyBrowserClient } from '@gately/sdk'
+
+const gately = new GatelyBrowserClient('your-project-id')
+```
+
+## Component Features
+
+### Login Form
+- **Fields**: Email, Password
+- **Validation**: Built-in form validation
+- **Integration**: Automatic Gately authentication
+- **Styling**: Responsive design with hover states
+
+### Logout Button
+- **Functionality**: One-click logout
+- **State Management**: Updates UI automatically
+- **Styling**: Destructive button styling
+- **Integration**: Clears user session
+
+### Signup Form
+- **Fields**: Email, Password, Confirm Password
+- **Validation**: Password strength and confirmation
+- **Integration**: Creates new user accounts
+- **Styling**: Clean, modern design
+
+### Magic Link
+- **Functionality**: Passwordless authentication
+- **Fields**: Email only
+- **Integration**: Sends magic link emails
+- **UX**: Clear success/error states
+
+### Password Reset
+- **Functionality**: Password recovery
+- **Fields**: Email
+- **Integration**: Sends reset emails
+- **Security**: Rate-limited requests
+
+### Gately Override
+- **Functionality**: React HOCs for auth state management
+- **Components**: withShowOnAuth, withShowOnNoAuth, withAuthLoading
+- **Integration**: Automatic Gately client initialization
+- **Features**: Conditional rendering based on authentication state
+
+## Customization
+
+All components are fully customizable in Framer:
+
+### Styling
+- Modify colors, fonts, and spacing
+- Adjust border radius and shadows
+- Change button styles and hover effects
+
+### Functionality
+- Add custom validation rules
+- Modify success/error messages
+- Integrate with your existing design system
+
+### Layout
+- Resize and reposition elements
+- Add additional fields or buttons
+- Modify responsive behavior
+
+## Gately Override
+
+The Gately Override component provides React Higher-Order Components (HOCs) for easy authentication state management and conditional rendering in your applications.
+
+### Copy the Component
+
+```typescript
+import React, {
+    forwardRef,
+    type ComponentType,
+    useEffect,
+    useState,
+} from "react"
+
+// Gately SDK import - using dynamic import to avoid TypeScript errors
+let GatelyClient: any = null
+
+// Get project ID from window object or script tag
+function getProjectId(): string {
+    // Try to get from window object first
+    if (typeof window !== "undefined" && (window as any).gatelyProjectId) {
+        return (window as any).gatelyProjectId
+    }
+
+    // Try to get from script tag data attribute
+    if (typeof document !== "undefined") {
+        const script = document.querySelector("script[data-project-id]")
+        if (script) {
+            return script.getAttribute("data-project-id") || ""
+        }
+    }
+
+    return ""
+}
+
+// Initialize Gately client
+let gately: any = null
+
+async function initializeGately() {
+    const projectId = getProjectId()
+
+    if (!projectId) {
+        console.error(
+            "Gately: No project ID found. Please set data-project-id on script tag or window.gatelyProjectId"
+        )
+        return null
+    }
+
+    if (!gately) {
+        try {
+            // Dynamic import to avoid TypeScript errors
+            if (!GatelyClient) {
+                try {
+                    // Try to get from window if available
+                    if (
+                        typeof window !== "undefined" &&
+                        (window as any).GatelyClient
+                    ) {
+                        GatelyClient = (window as any).GatelyClient
+                    } else {
+                        // Fallback to script tag loading
+                        const script = document.createElement("script")
+                        script.src =
+                            "https://cdn.usegately.com/gately-sdk.esm.min.js"
+                        script.type = "module"
+                        document.head.appendChild(script)
+
+                        // Wait for script to load
+                        await new Promise((resolve, reject) => {
+                            script.onload = resolve
+                            script.onerror = reject
+                        })
+
+                        GatelyClient = (window as any).GatelyClient
+                    }
+                } catch (importError) {
+                    console.error("Failed to load GatelyClient:", importError)
+                    return null
+                }
+            }
+            gately = new GatelyClient(projectId)
+            console.log("✅ Gately client initialized successfully")
+        } catch (error) {
+            console.error("Gately: Failed to initialize client:", error)
+            return null
+        }
+    }
+    return gately
+}
+
+// Show element only when user is authenticated
+export function withShowOnAuth(
+    Component: ComponentType<any>
+): ComponentType<any> {
+    return forwardRef((props: any, ref: any) => {
+        const [isAuthenticated, setIsAuthenticated] = useState(false)
+        const [isLoading, setIsLoading] = useState(true)
+
+        useEffect(() => {
+            const checkAuth = async () => {
+                const client = await initializeGately()
+                if (!client) {
+                    setIsLoading(false)
+                    return
+                }
+
+                // Check initial auth state - getSession returns Session | null, not Promise
+                const session = client.getSession()
+                setIsAuthenticated(!!session)
+                setIsLoading(false)
+
+                // Listen for auth state changes
+                client.onAuthStateChange((user: any) => {
+                    setIsAuthenticated(!!user)
+                })
+            }
+
+            checkAuth()
+        }, [])
+
+        if (isLoading) {
+            return null
+        }
+
+        if (!isAuthenticated) {
+            return null
+        }
+
+        return React.createElement(Component, { ...props, ref })
+    })
+}
+
+// Show element only when user is NOT authenticated
+export function withShowOnNoAuth(
+    Component: ComponentType<any>
+): ComponentType<any> {
+    return forwardRef((props: any, ref: any) => {
+        const [isAuthenticated, setIsAuthenticated] = useState(false)
+        const [isLoading, setIsLoading] = useState(true)
+
+        useEffect(() => {
+            const checkAuth = async () => {
+                const client = await initializeGately()
+                if (!client) {
+                    setIsLoading(false)
+                    return
+                }
+
+                // Check initial auth state
+                const session = client.getSession()
+                setIsAuthenticated(!!session)
+                setIsLoading(false)
+
+                // Listen for auth state changes
+                client.onAuthStateChange((user: any) => {
+                    setIsAuthenticated(!!user)
+                })
+            }
+
+            checkAuth()
+        }, [])
+
+        if (isLoading) {
+            return null
+        }
+
+        if (isAuthenticated) {
+            return null
+        }
+
+        return React.createElement(Component, { ...props, ref })
+    })
+}
+
+// Show element with loading state
+export function withAuthLoading(
+    Component: ComponentType<any>
+): ComponentType<any> {
+    return forwardRef((props: any, ref: any) => {
+        const [isLoading, setIsLoading] = useState(true)
+
+        useEffect(() => {
+            const checkAuth = async () => {
+                const client = await initializeGately()
+                if (!client) {
+                    setIsLoading(false)
+                    return
+                }
+
+                // Check initial auth state
+                const session = client.getSession()
+                setIsLoading(false)
+            }
+
+            checkAuth()
+        }, [])
+
+        if (isLoading) {
+            return (
+                <div
+                    style={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        padding: "20px",
+                        fontSize: "14px",
+                        color: "#666",
+                    }}
+                >
+                    Loading...
+                </div>
+            )
+        }
+
+        return React.createElement(Component, { ...props, ref })
+    })
+}
+
+// Utility function to get Gately client
+export async function useGately() {
+    return await initializeGately()
+}
+```
+
+### Setup
+
+Add your project ID to your HTML:
+
+```html
+<!-- Option 1: Set on window object -->
+<script>
+    window.gatelyProjectId = 'your-project-id'
+</script>
+
+<!-- Option 2: Set on script tag -->
+<script data-project-id="your-project-id" src="your-script.js"></script>
+```
+
+### Usage Examples
+
+#### Show Component Only When Authenticated
+
+```jsx
+import { withShowOnAuth } from './gately-override'
+
+const Dashboard = () => (
+    <div>
+        <h1>Welcome to your dashboard!</h1>
+        <p>This content is only visible to authenticated users.</p>
+    </div>
+)
+
+const ProtectedDashboard = withShowOnAuth(Dashboard)
+
+// Use in your app
+function App() {
+    return (
+        <div>
+            <ProtectedDashboard />
+        </div>
+    )
+}
+```
+
+#### Show Component Only When NOT Authenticated
+
+```jsx
+import { withShowOnNoAuth } from './gately-override'
+
+const LoginForm = () => (
+    <div>
+        <h1>Please log in</h1>
+        <p>This form is only visible to unauthenticated users.</p>
+    </div>
+)
+
+const PublicLoginForm = withShowOnNoAuth(LoginForm)
+
+// Use in your app
+function App() {
+    return (
+        <div>
+            <PublicLoginForm />
+        </div>
+    )
+}
+```
+
+#### Show Component with Loading State
+
+```jsx
+import { withAuthLoading } from './gately-override'
+
+const UserProfile = () => (
+    <div>
+        <h1>User Profile</h1>
+        <p>This component shows after authentication is checked.</p>
+    </div>
+)
+
+const LoadingUserProfile = withAuthLoading(UserProfile)
+
+// Use in your app
+function App() {
+    return (
+        <div>
+            <LoadingUserProfile />
+        </div>
+    )
+}
+```
+
+#### Get Gately Client Instance
+
+```jsx
+import { useGately } from './gately-override'
+
+function MyComponent() {
+    const [client, setClient] = useState(null)
+
+    useEffect(() => {
+        const initClient = async () => {
+            const gatelyClient = await useGately()
+            setClient(gatelyClient)
+        }
+        initClient()
+    }, [])
+
+    const handleLogout = async () => {
+        if (client) {
+            await client.logout()
+        }
+    }
+
+    return (
+        <button onClick={handleLogout}>
+            Logout
+        </button>
+    )
+}
+```
+
+### Features
+
+- **Automatic Initialization**: Automatically initializes Gately client
+- **Dynamic Loading**: Loads SDK from CDN if not available
+- **Project ID Detection**: Multiple ways to set project ID
+- **TypeScript Support**: Full TypeScript compatibility
+- **Error Handling**: Graceful error handling and logging
+- **Performance**: Efficient state management and re-renders
+
+## Integration Examples
+
+### Basic Authentication Flow
+
+```javascript
+// Initialize Gately in your Framer project
+import { GatelyBrowserClient } from '@gately/sdk'
+
+const gately = new GatelyBrowserClient('your-project-id')
+
+// Listen for authentication state changes
+gately.onAuthStateChange((user) => {
+  if (user) {
+    // User is logged in - show dashboard
+    console.log('User logged in:', user.email)
+  } else {
+    // User is logged out - show login form
+    console.log('User logged out')
+  }
+})
+```
+
+### Custom Styling
+
+```css
+/* Custom styles for your components */
+.login-form {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.login-button {
+  background: #4f46e5;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 24px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.login-button:hover {
+  background: #4338ca;
+  transform: translateY(-1px);
+}
+```
+
+## Coming Soon
+
+<CardGroup cols={2}>
+  <Card
+    title="Profile Settings"
+    icon="settings"
+    href="#"
+  >
+    Form for users to update their profile information and preferences.
+  </Card>
+  <Card
+    title="Accept Invite"
+    icon="mail-check"
+    href="#"
+  >
+    Component for users to accept team or project invitations.
+  </Card>
+  <Card
+    title="Email Verification"
+    icon="shield-check"
+    href="#"
+  >
+    Component to handle email verification flows.
+  </Card>
+  <Card
+    title="Two Factor Auth"
+    icon="shield"
+    href="#"
+  >
+    Two-factor authentication setup and verification.
+  </Card>
+  <Card
+    title="Delete Account"
+    icon="trash-2"
+    href="#"
+  >
+    Secure account deletion with confirmation flow.
+  </Card>
+</CardGroup>
+
+## Support
+
+Need help with components? Check out our:
+
+<CardGroup cols={3}>
+  <Card
+    title="Documentation"
+    icon="book"
+    href="/introduction"
+  >
+    Complete SDK documentation
+  </Card>
+  <Card
+    title="Examples"
+    icon="code"
+    href="/examples"
+  >
+    Real-world implementation examples
+  </Card>
+  <Card
+    title="Community"
+    icon="users"
+    href="https://usegately.com/community"
+  >
+    Get help from the community
+  </Card>
+</CardGroup> 
