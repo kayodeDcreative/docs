@@ -1,0 +1,109 @@
+{
+  "$schema": "https://mintlify.com/schema.json",
+  "theme": "maple",
+  "name": "Gately SDK",
+  "logo": {
+    "dark": "/logo/dark.svg",
+    "light": "/logo/light.svg"
+  },
+  "favicon": "/favicon.svg",
+  "colors": {
+    "primary": "#FFC599",
+    "light": "#FFB17A",
+    "dark": "#FFC599"
+  },
+  "fonts": {
+    "heading": {
+      "family": "Onest"
+    },
+    "body": {
+      "family": "Onest"
+    }
+  },
+  "topbarLinks": [
+    {
+      "name": "Support",
+      "url": "mailto:support@usegately.com"
+    }
+  ],
+  "topbarCtaButton": {
+    "name": "Dashboard",
+    "url": "https://app.usegately.com"
+  },
+  "tabs": [
+    {
+      "name": "API Reference",
+      "url": "api-reference"
+    }
+  ],
+  "anchors": [
+    {
+      "name": "Documentation",
+      "icon": "book-open-cover",
+      "url": "https://docs.usegately.com"
+    },
+    {
+      "name": "Community",
+      "icon": "slack",
+      "url": "https://usegately.com/community"
+    },
+    {
+      "name": "Blog",
+      "icon": "newspaper",
+      "url": "https://usegately.com/blog"
+    }
+  ],
+  "navigation": {
+    "pages": [
+      {
+        "group": "Get Started",
+        "pages": [
+          "introduction",
+          "framer",
+          "quickstart"
+        ]
+      },
+      {
+        "group": "Core Features",
+        "pages": [
+          "authentication",
+          "user-management",
+          "sso",
+          "ui-components",
+          "forms",
+          "plans"
+        ]
+      },
+      {
+        "group": "Advanced Integration",
+        "pages": [
+          "installation",
+          "framework-adapters"
+        ]
+      },
+      {
+        "group": "Examples & Guides",
+        "pages": [
+          "examples",
+          "best-practices",
+          "troubleshooting"
+        ]
+      },
+      {
+        "group": "API Documentation",
+        "pages": [
+          "api-reference/introduction",
+          "api-reference/authentication",
+          "api-reference/user-management",
+          "api-reference/sso",
+          "api-reference/types"
+        ]
+      }
+    ]
+  },
+  "footerSocials": {
+    "x": "https://x.com/usegately",
+    "github": "https://github.com/usegately",
+    "linkedin": "https://www.linkedin.com/company/usegately"
+  }
+}

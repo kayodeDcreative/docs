@@ -1,9 +1,13 @@
 ---
-title: "Installation"
-description: "Install and configure the Gately SDK across multiple environments and frameworks"
+title: "Advanced Installation"
+description: "SDK installation for developers who need programmatic access to Gately features"
 ---
 
-The Gately SDK is designed to work across multiple environments and frameworks. Choose the installation method that best fits your project.
+<Note>
+  **Most users don't need this\!** If you're using Framer, check out our [simple one-script installation](/framer) instead.
+</Note>
+
+The Gately SDK is for developers who need programmatic access to authentication features. Most Framer users should use our simple embed script instead.
 
 ## NPM Installation
 
@@ -42,10 +46,13 @@ For simple HTML pages or when you can't use a package manager:
 ```
 
 
-```html UMD Bundle
-<script src="https://cdn.usegately.com/sdk/latest/gately.min.js"></script>
-<script>
-  const gately = new Gately.GatelyBrowserClient('your-project-id')
+```html Widget Script
+<script 
+  src="https://cdn.usegately.com/gately.min.js" 
+  data-project-id="your-project-id"
+  data-domain="https://yoursite.com"
+  data-base-domain="yourdomain.com"
+  data-slug="your-slug">
 </script>
 ```
 

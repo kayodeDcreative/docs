@@ -1,6 +1,6 @@
 ---
 title: "Introduction"
-description: "The complete authentication and user management solution built for no-code platforms and modern web applications"
+description: "The complete authentication and user management solution built specifically for Framer sites"
 ---
 
 <img
@@ -11,96 +11,90 @@ description: "The complete authentication and user management solution built for
 
 <img
   className="hidden dark:block"
-  src="/hero-dark.png"
+  src="/739_1x_shots_so1.png"
   alt="Hero Dark"
-  title={true}
+  title=""
 />
 
 ## What is Gately?
 
-Gately is a comprehensive authentication and user management platform designed specifically for no-code and low-code environments. We bridge the gap between complex authentication systems and the simplicity that no-code platforms demand.
+Gately is the easiest way to add authentication and user management to your Framer sites. Built specifically for Framer users, Gately eliminates the complexity of user authentication while providing enterprise-grade security and features.
 
 <CardGroup cols={2}>
-  <Card title="Built for No-Code First" icon="sparkles" href="#no-code-first">
-    Visual authentication flows with drag-and-drop simplicity
+  <Card title="Built for Framer" icon="sparkles" href="#built-for-framer">
+    One script, instant authentication for any Framer site
   </Card>
-  <Card title="Why No-Code Matters" icon="rocket" href="#why-no-code">
-    Faster time-to-market for no-code applications
+  <Card title="No Coding Required" icon="zap" href="#no-coding">
+    Add powerful auth features without writing a single line of code
   </Card>
 </CardGroup>
 
-### Built for No-Code First
+### Built for Framer
 
-Unlike traditional authentication services that require extensive coding knowledge, Gately was designed from the ground up to work seamlessly with no-code platforms like Webflow, Bubble, Framer, and others. Our visual configuration interface and pre-built components make authentication accessible to everyone.
+Gately was designed from the ground up specifically for Framer users. Unlike complex authentication services that require coding knowledge, Gately works with just one simple script added to your Framer site.
 
-- **Visual authentication flows** with drag-and-drop simplicity
-- **Customizable UI components** that match your brand
-- **Pre-built integrations** for popular no-code platforms
+- **One-script installation** - Add to your site header and you're done
+- **Automatic integration** - Works seamlessly with your Framer design
+- **Visual customization** - Configure everything through our dashboard
+- **Instant activation** - Publish your site and authentication is live
 
-### Why No-Code Matters
+### No Coding Required
 
-The no-code revolution is democratizing software development, allowing entrepreneurs, designers, and business users to build powerful applications without writing code. However, authentication has remained a complex barrier until now.
+Perfect for designers, entrepreneurs, and anyone building with Framer who needs professional authentication without the technical complexity.
 
-- **Faster time-to-market** for no-code applications
-- **Accessible to non-technical teams** and founders
-- **Enterprise-grade security** without enterprise complexity
+- **Dashboard configuration** - Set up everything visually
+- **Automatic styling** - Matches your site's design automatically
+- **Enterprise security** - Bank-level security without the complexity
+- **User management** - Complete user profiles, plans, and billing
 
 ## Key Features
 
-<CardGroup cols={2}>
-  <Card title="Secure Authentication" icon="shield">
-    Built-in authentication with email/password, magic links, and SSO support
+<CardGroup cols={3}>
+  <Card title="One-Script Setup" icon="zap">
+    Add one script to your Framer site header and authentication is instantly active
+  </Card>
+  <Card title="Automatic Integration" icon="sparkles">
+    Works seamlessly with your existing Framer design and components
+  </Card>
+  <Card title="Visual Configuration" icon="palette">
+    Configure everything through our dashboard - no coding required
+  </Card>
+  <Card title="Complete Auth System" icon="shield">
+    Email/password, magic links, social logins, and password reset
   </Card>
   <Card title="User Management" icon="users">
-    Complete user profile management, roles, and permissions
+    User profiles, subscription plans, and billing management
   </Card>
-  <Card title="Fast Integration" icon="zap">
-    Get up and running in minutes with our simple API
-  </Card>
-  <Card title="No-Code Integration" icon="code">
-    Native support for Webflow, Bubble, Framer, and other no-code platforms
-  </Card>
-  <Card title="Universal" icon="globe">
-    Works in browsers, Node.js, and edge environments
-  </Card>
-  <Card title="Visual Builder" icon="palette">
-    Drag-and-drop authentication flows and customizable UI components
+  <Card title="Mobile Responsive" icon="smartphone">
+    Perfect experience on desktop, tablet, and mobile devices
   </Card>
 </CardGroup>
 
 ## Quick Start
 
-Get started with Gately in minutes, whether you're using no-code platforms or traditional development:
+Add authentication to your Framer site in under 2 minutes:
 
 <CodeGroup>
 
-```html No-Code Platforms
-<!-- Add to your no-code platform -->
-<script src="https://cdn.gately.com/widget.js"></script>
-<div id="gately-auth-widget"></div>
-
-<script>
-  GatelyWidget.init({
-    projectId: 'your-project-id',
-    theme: 'dark',
-    brandColor: '#FFC599'
-  })
+```html Framer Installation
+<!-- Get your personalized script from the dashboard -->
+<script 
+  src="https://cdn.usegately.com/gately.min.js" 
+  data-project-id="your-project-id"
+  data-domain="https://yoursite.framer.website"
+  data-base-domain="yourdomain.com"
+  data-slug="your-slug">
 </script>
 ```
 
 
-```javascript Developers
+```javascript Advanced Usage (Optional)
+// For developers who need programmatic access
 npm install @gately/sdk
 
 import { GatelyBrowserClient } from '@gately/sdk'
 
 const gately = new GatelyBrowserClient('your-project-id')
-
-// Sign up a user
-await gately.signup('user@example.com', 'password123')
-
-// Sign in a user
-await gately.login('user@example.com', 'password123')
 
 // Check authentication status
 if (gately.isAuthenticated()) {
@@ -109,6 +103,12 @@ if (gately.isAuthenticated()) {
 ```
 
 </CodeGroup>
+
+### Installation Steps
+
+1. **Get your script** from [app.usegately.com/dashboard/settings/installation](https://app.usegately.com/dashboard/settings/installation)
+2. **Add to Framer** - Go to Settings → Custom Code → paste in `<head>` section
+3. **Publish your site** - Authentication is now live\!
 
 ## What's Next?
 
