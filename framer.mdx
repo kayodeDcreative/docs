@@ -1,6 +1,6 @@
 ---
-title: Framer Integration
-description: 'Build beautiful authentication flows and user management directly in Framer'
+title: "Framer Integration"
+description: "Build beautiful authentication flows and user management directly in Framer"
 ---
 
 <img
@@ -8,10 +8,12 @@ description: 'Build beautiful authentication flows and user management directly 
   src="/images/framer-hero-dark.avif"
   alt="Framer Integration"
 />
+
 <img
   className="hidden dark:block"
-  src="/images/framer-hero-dark.avif"
+  src="/images/image187.png"
   alt="Framer Integration"
+  title=""
 />
 
 Build beautiful authentication flows and user management directly in Framer with Gately's powerful components and APIs.
@@ -46,34 +48,31 @@ Get started with Gately in Framer in just 2 simple steps:
 <CardGroup cols={2}>
   <Card title="Auth Forms" icon="shield">
     Pre-built sign up, sign in, and password reset forms with validation and error handling.
-    
+
     - Sign Up Form
-    - Sign In Form  
+    - Sign In Form
     - Password Reset
     - Email Verification
   </Card>
-  
   <Card title="User Management" icon="users">
     User profile components, account settings, and membership management.
-    
+
     - User Profile
     - Account Settings
     - Membership Cards
     - Plan Selection
   </Card>
-  
   <Card title="UI Elements" icon="palette">
     Reusable UI components for authentication and user management.
-    
+
     - Auth Buttons
     - User Avatars
     - Status Indicators
     - Loading States
   </Card>
-  
   <Card title="Custom Components" icon="code">
     Build custom authentication flows with our flexible component system.
-    
+
     - Custom Forms
     - Auth Modals
     - Protected Routes
@@ -87,7 +86,7 @@ Get started with Gately in Framer in just 2 simple steps:
 
 Get your personalized embed script from the Gately dashboard:
 
-1. Go to [https://app.usegately.com/dashboard/settings/installation](https://app.usegately.com/dashboard/settings/installation)
+1. Go to https://app.usegately.com/dashboard/settings/installation
 2. Select **Framer** as your platform
 3. Copy the generated embed script
 
@@ -96,8 +95,8 @@ Get your personalized embed script from the Gately dashboard:
 Install the script in your Framer site:
 
 1. In Framer, go to **Settings** → **Custom Code**
-2. Paste the script into the **`<head>` section**
-3. **Publish your site** - Gately will be active!
+2. Paste the script into the **`<head> section`**
+3. **Publish your site** - Gately will be active\!
 
 Your embed script will look like this:
 
@@ -112,13 +111,14 @@ Your embed script will look like this:
 ```
 
 The script automatically includes:
+
 - **`data-project-id`** - Your unique Gately project ID
 - **`data-domain`** - Your Framer site domain
 - **`data-base-domain`** - Your custom domain (if configured)
 - **`data-slug`** - Your site slug
 
 <Note>
-The dashboard will generate this script with your actual project details. The domain and slug are automatically configured based on your Framer site settings.
+  The dashboard will generate this script with your actual project details. The domain and slug are automatically configured based on your Framer site settings.
 </Note>
 
 ## How It Works
@@ -138,18 +138,21 @@ The script is lightweight and won't affect your site's performance.
 You can customize the appearance and behavior through the Gately dashboard:
 
 ### Theme Customization
+
 - **Colors** - Match your brand colors
-- **Typography** - Choose fonts and sizes  
+- **Typography** - Choose fonts and sizes
 - **Layout** - Adjust spacing and borders
 - **Components** - Select which features to show
 
 ### Authentication Options
+
 - **Sign-up fields** - Choose required information
 - **Social logins** - Enable Google, GitHub, etc.
 - **Email verification** - Configure verification flow
 - **Password requirements** - Set security rules
 
 ### User Experience
+
 - **Redirects** - Set post-login destinations
 - **Messages** - Customize success/error text
 - **Branding** - Add your logo and styling
@@ -165,7 +168,6 @@ You can customize the appearance and behavior through the Gately dashboard:
     - Ensure accessibility compliance
     - Test on multiple screen sizes
   </Card>
-  
   <Card title="Development Tips" icon="code">
     - Use environment variables for config
     - Implement proper error handling
@@ -180,7 +182,7 @@ You can customize the appearance and behavior through the Gately dashboard:
 Once installed, your Framer site will have:
 
 - **Automatic authentication** - Login/signup forms appear when needed
-- **User sessions** - Persistent login across page visits  
+- **User sessions** - Persistent login across page visits
 - **Profile management** - User can update their information
 - **Plan management** - Subscription and billing features (if enabled)
 - **Mobile responsive** - Works perfectly on all devices
@@ -204,19 +206,16 @@ After adding the script and publishing your site:
     - Verify internet connection
     - Ensure Framer has access to external resources
   </Accordion>
-  
   <Accordion title="Styling not applying">
     - Check theme object syntax
     - Verify CSS property names
     - Test with default theme first
   </Accordion>
-  
   <Accordion title="Authentication not working">
     - Verify domain is whitelisted in dashboard
     - Check browser console for errors
     - Test with different browsers
   </Accordion>
-  
   <Accordion title="Mobile responsiveness issues">
     - Test on actual devices
     - Check responsive breakpoints
@@ -229,10 +228,9 @@ After adding the script and publishing your site:
 <CardGroup cols={2}>
   <Card title="Documentation" icon="book">
     - [Authentication Guide](/authentication)
-    - [UI Components](/ui-components)  
+    - [UI Components](/ui-components)
     - [API Reference](/api-reference)
   </Card>
-  
   <Card title="External Links" icon="external-link">
     - [Framer Documentation](https://framer.com)
     - [GitHub Repository](https://github.com/your-org/gately-sdk)
@@ -243,25 +241,13 @@ After adding the script and publishing your site:
 ## Next Steps
 
 <CardGroup cols={3}>
-  <Card
-    title="Authentication"
-    icon="key"
-    href="/authentication"
-  >
+  <Card title="Authentication" icon="key" href="/authentication">
     Learn about authentication methods
   </Card>
-  <Card
-    title="User Management"
-    icon="user"
-    href="/user-management"
-  >
+  <Card title="User Management" icon="user" href="/user-management">
     Manage user profiles and data
   </Card>
-  <Card
-    title="Examples"
-    icon="code"
-    href="/examples"
-  >
+  <Card title="Examples" icon="code" href="/examples">
     View Framer integration examples
   </Card>
 </CardGroup>
