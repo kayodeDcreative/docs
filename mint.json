@@ -2,8 +2,8 @@
   "$schema": "https://mintlify.com/schema.json",
   "name": "Gately SDK",
   "logo": {
-    "dark": "/logo/icon.png",
-    "light": "/logo/icon.png"
+    "dark": "/logo/dark.svg",
+    "light": "/logo/light.svg"
   },
   "favicon": "/favicon.svg",
   "colors": {
@@ -15,6 +15,10 @@
       "to": "#FFB17A"
     }
   },
+  "font": {
+    "headings": "Onest",
+    "body": "Onest"
+  },
   "topbarLinks": [
     {
       "name": "Support",
@@ -22,8 +26,8 @@
     }
   ],
   "topbarCtaButton": {
-    "name": "Get started",
-    "url": "https://usegately.com"
+    "name": "Dashboard",
+    "url": "https://dashboard.gately.com"
   },
   "tabs": [
     {
@@ -35,7 +39,7 @@
     {
       "name": "Documentation",
       "icon": "book-open-cover",
-      "url": "https://docs.usegately.com"
+      "url": "https://docs.gately.com"
     },
     {
       "name": "Community",
