@@ -5,287 +5,222 @@ description: 'Get up and running with Gately in under 5 minutes'
 
 # Quick Start
 
-Get up and running with the Gately SDK in minutes.
+Get up and running with Gately in minutes - no coding required!
 
-## 1. Add the SDK
+## Overview
 
-Choose one of these methods to add the Gately SDK to your project:
+This guide will help you set up Gately on your website in just a few simple steps. Whether you're using Framer, Webflow, or any other platform, the process is straightforward.
 
-### Script Tag (Easiest)
+<CardGroup cols={3}>
+  <Card title="1. Dashboard Setup" icon="settings">
+    Configure your Gately project settings
+  </Card>
+  <Card title="2. Add to Website" icon="code">
+    Add the embed script to your site
+  </Card>
+  <Card title="3. Test & Customize" icon="check">
+    Test authentication and customize appearance
+  </Card>
+</CardGroup>
 
-```html
-<script src="https://cdn.usegately.com/gately.min.js"></script>
-```
+## Step 1: Dashboard Setup
 
-### ES Module Import
+### Create Your Project
 
-```javascript
-import { GatelyBrowserClient } from 'https://cdn.usegately.com/gately-sdk.esm.min.js'
-```
+1. Go to [https://app.usegately.com](https://app.usegately.com)
+2. **Sign up** for a free account
+3. **Create a new project** with your site name
+4. **Note your Project ID** - you'll need this later
 
-## 2. Initialize the Client
+### Configure Basic Settings
 
-```javascript
-// Get your project ID from the Gately dashboard
-const gately = new GatelyBrowserClient('your-project-id')
-```
+1. Go to **Settings** → **General**
+2. Set your **site domain** (e.g., `yoursite.com`)
+3. Choose your **default language**
+4. Set your **timezone**
 
-## 3. Basic Authentication
+### Enable Authentication
 
-### Login with Email/Password
+1. Go to **Settings** → **Authentication**
+2. Enable **Email/Password** authentication
+3. Optionally enable **Magic Link** or **Social Login**
+4. Configure **sign-up fields** (name, email, etc.)
 
-```javascript
-try {
-  const { user, session } = await gately.login('user@example.com', 'password')
-  console.log('Logged in:', user.email)
-} catch (error) {
-  console.error('Login failed:', error.message)
-}
-```
+## Step 2: Add to Your Website
 
-### Check Authentication Status
+### Get Your Embed Script
 
-```javascript
-if (gately.isAuthenticated()) {
-  const user = gately.getUser()
-  console.log('User is logged in:', user.email)
-} else {
-  console.log('User is not logged in')
-}
-```
+1. Go to **Settings** → **Installation**
+2. Select your platform (Framer, Webflow, etc.)
+3. Copy the generated embed script
 
-### Logout
+### Add to Your Platform
 
-```javascript
-await gately.logout()
-console.log('User logged out')
-```
+#### For Framer:
+1. Go to **Settings** → **Custom Code**
+2. Paste the script into the **`<head>` section**
+3. **Publish your site**
 
-## 4. React Integration
+#### For Webflow:
+1. Go to **Project Settings** → **Custom Code**
+2. Paste the script into the **`<head>` section**
+3. **Publish your site**
 
-### Using Script Tag
+#### For Other Platforms:
+1. Find your platform's custom code section
+2. Paste the script into the **`<head>` section**
+3. **Publish your site**
 
-```jsx
-// After loading the script tag
-function LoginForm() {
-  const { user, login, logout, isAuthenticated } = window.gately.useGately('your-project-id')
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
+<Note>
+The embed script is lightweight and won't affect your site's performance. It automatically detects when authentication is needed and shows the appropriate forms.
+</Note>
 
-  const handleLogin = async (e) => {
-    e.preventDefault()
-    try {
-      await login(email, password)
-    } catch (error) {
-      console.error('Login failed:', error)
-    }
-  }
+## Step 3: Test Your Setup
 
-  if (isAuthenticated) {
-    return (
-      <div>
-        <h1>Welcome, {user?.email}!</h1>
-        <button onClick={logout}>Logout</button>
-      </div>
-    )
-  }
+### Test Authentication
 
-  return (
-    <form onSubmit={handleLogin}>
-      <input
-        type="email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        placeholder="Email"
-        required
-      />
-      <input
-        type="password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        placeholder="Password"
-        required
-      />
-      <button type="submit">Login</button>
-    </form>
-  )
-}
-```
+1. **Visit your published site** (not the editor)
+2. **Look for authentication elements** - they'll appear automatically
+3. **Try signing up** with a test email
+4. **Check your dashboard** - the user should appear in your user list
 
-### Using ES Module
+### Test Different Flows
 
-```jsx
-import { useGately } from 'https://cdn.usegately.com/gately-sdk.esm.min.js'
+- **Sign up flow**: Create a new account
+- **Login flow**: Sign in with existing account
+- **Password reset**: Test the forgot password feature
+- **Email verification**: Check if verification emails are sent
 
-function LoginForm() {
-  const { user, login, logout, isAuthenticated } = useGately('your-project-id')
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
+## Step 4: Customize Appearance
 
-  const handleLogin = async (e) => {
-    e.preventDefault()
-    try {
-      await login(email, password)
-    } catch (error) {
-      console.error('Login failed:', error)
-    }
-  }
+### Branding
 
-  if (isAuthenticated) {
-    return (
-      <div>
-        <h1>Welcome, {user?.email}!</h1>
-        <button onClick={logout}>Logout</button>
-      </div>
-    )
-  }
+1. Go to **Settings** → **Branding**
+2. Upload your **logo**
+3. Set your **brand colors**
+4. Choose your **font family**
 
-  return (
-    <form onSubmit={handleLogin}>
-      <input
-        type="email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        placeholder="Email"
-        required
-      />
-      <input
-        type="password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        placeholder="Password"
-        required
-      />
-      <button type="submit">Login</button>
-    </form>
-  )
-}
-```
+### Authentication Forms
 
-## 5. Advanced Features
+1. Go to **Settings** → **Authentication**
+2. Customize **form fields** and **validation**
+3. Set **redirect URLs** for post-login/signup
+4. Configure **email templates**
 
-### Magic Link Authentication
+### User Experience
 
-```javascript
-// Send magic link
-await gately.sendMagicLink('user@example.com')
-console.log('Magic link sent!')
-```
+1. Go to **Settings** → **User Experience**
+2. Set **success and error messages**
+3. Configure **session duration**
+4. Set up **security settings**
 
-### SSO Authentication
+## What You Get
 
-```javascript
-// Google SSO
-await gately.loginWithSSO('google')
+Once you complete the setup, your site will have:
 
-// GitHub SSO
-await gately.loginWithSSO('github')
-```
-
-### Form Submissions
-
-```javascript
-import { GatelyFormsClient } from 'https://cdn.usegately.com/gately-sdk.esm.min.js'
-
-const forms = new GatelyFormsClient('your-project-id')
-
-// Submit a form
-const submission = await forms.submit('form-id', {
-  name: 'John Doe',
-  email: 'john@example.com',
-  message: 'Hello world!'
-})
-```
-
-### Analytics
-
-```javascript
-import { GatelyAnalyticsClient } from 'https://cdn.usegately.com/gately-sdk.esm.min.js'
-
-const analytics = new GatelyAnalyticsClient('your-project-id')
-
-// Track an event
-await analytics.track('page_view', {
-  page: '/home',
-  referrer: 'google.com'
-})
-```
-
-## 6. Complete Example
-
-Here's a complete working example:
-
-```html
-<!DOCTYPE html>
-<html>
-<head>
-  <title>Gately SDK Demo</title>
-</head>
-<body>
-  <div id="app">
-    <h1>Gately SDK Demo</h1>
-    <div id="auth-status">Loading...</div>
-    <div id="login-form" style="display: none;">
-      <input type="email" id="email" placeholder="Email" />
-      <input type="password" id="password" placeholder="Password" />
-      <button onclick="handleLogin()">Login</button>
-    </div>
-    <div id="user-info" style="display: none;">
-      <p>Welcome, <span id="user-email"></span>!</p>
-      <button onclick="handleLogout()">Logout</button>
-    </div>
-  </div>
-
-  <script src="https://cdn.usegately.com/gately.min.js"></script>
-  <script>
-    const gately = new window.GatelyBrowserClient('your-project-id')
+<CardGroup cols={2}>
+  <Card title="Authentication System" icon="shield">
+    Professional login and signup forms that automatically appear when needed.
     
-    // Check auth status on load
-    updateAuthStatus()
+    - Email/Password Authentication
+    - Magic Link Authentication
+    - Social Login (Google, GitHub)
+    - Password Reset
+  </Card>
+  
+  <Card title="User Management" icon="users">
+    Complete user interface for managing accounts and subscriptions.
     
-    async function handleLogin() {
-      const email = document.getElementById('email').value
-      const password = document.getElementById('password').value
-      
-      try {
-        await gately.login(email, password)
-        updateAuthStatus()
-      } catch (error) {
-        alert('Login failed: ' + error.message)
-      }
-    }
+    - User Profiles
+    - Account Settings
+    - Membership Cards
+    - Plan Selection
+  </Card>
+  
+  <Card title="Form Collection" icon="file-text">
+    Collect and manage form submissions from your site.
     
-    async function handleLogout() {
-      await gately.logout()
-      updateAuthStatus()
-    }
+    - Contact Forms
+    - Lead Generation
+    - File Uploads
+    - Data Export
+  </Card>
+  
+  <Card title="Analytics Dashboard" icon="bar-chart">
+    Track user behavior and site performance.
     
-    function updateAuthStatus() {
-      const authStatus = document.getElementById('auth-status')
-      const loginForm = document.getElementById('login-form')
-      const userInfo = document.getElementById('user-info')
-      const userEmail = document.getElementById('user-email')
-      
-      if (gately.isAuthenticated()) {
-        const user = gately.getUser()
-        authStatus.textContent = 'Authenticated'
-        loginForm.style.display = 'none'
-        userInfo.style.display = 'block'
-        userEmail.textContent = user.email
-      } else {
-        authStatus.textContent = 'Not authenticated'
-        loginForm.style.display = 'block'
-        userInfo.style.display = 'none'
-      }
-    }
-  </script>
-</body>
-</html>
-```
+    - User Analytics
+    - Conversion Tracking
+    - Form Submissions
+    - Performance Insights
+  </Card>
+</CardGroup>
+
+## Platform-Specific Guides
+
+### Framer Integration
+For detailed Framer setup instructions, see our [Framer Integration Guide](/docs/framer).
+
+### Webflow Integration
+For detailed Webflow setup instructions, see our [Webflow Integration Guide](/docs/webflow-integration).
+
+### Other Platforms
+For other platforms, see our [Other Platforms Guide](/docs/other-platforms).
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Script not loading">
+    - Check your project ID is correct
+    - Verify the script is in the `<head>` section
+    - Check browser console for errors
+    - Ensure your platform allows external scripts
+  </Accordion>
+  
+  <Accordion title="Authentication forms not appearing">
+    - Check your domain is whitelisted in dashboard
+    - Verify the script is loading correctly
+    - Test on the published site (not editor)
+    - Check browser console for errors
+  </Accordion>
+  
+  <Accordion title="Users not appearing in dashboard">
+    - Check your project ID is correct
+    - Verify domain settings in dashboard
+    - Test with a different email
+    - Check dashboard refresh
+  </Accordion>
+  
+  <Accordion title="Styling not applying">
+    - Check branding settings in dashboard
+    - Verify CSS is loading correctly
+    - Test with default theme first
+    - Check for CSS conflicts
+  </Accordion>
+</AccordionGroup>
 
 ## Next Steps
 
-- [Authentication Guide](/docs/authentication) - Learn about all authentication methods
-- [Forms Guide](/docs/forms) - Handle form submissions
-- [Analytics Guide](/docs/analytics) - Track user behavior
-- [API Reference](/docs/api-reference) - Complete API documentation
+<CardGroup cols={3}>
+  <Card
+    title="Authentication"
+    icon="key"
+    href="/authentication"
+  >
+    Learn about authentication options and customization
+  </Card>
+  <Card
+    title="User Management"
+    icon="users"
+    href="/user-management"
+  >
+    Set up user profiles and account management
+  </Card>
+  <Card
+    title="Dashboard"
+    icon="settings"
+    href="https://app.usegately.com"
+  >
+    Configure your Gately project settings
+  </Card>
+</CardGroup>

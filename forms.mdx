@@ -5,385 +5,561 @@ description: 'Create, manage, and handle form submissions with Gately'
 
 # Forms
 
-Gately provides a complete form management system that allows you to create, customize, and handle form submissions with built-in analytics and user tracking.
+Gately provides a complete form management system that allows you to create, customize, and handle form submissions with built-in analytics and user tracking - all through Framer components.
 
 ## Overview
 
 The forms system includes:
-- **Form Builder**: Create custom forms with various field types
-- **Form Submissions**: Handle and process form data
+- **Framer Components**: Pre-built form components for Framer
+- **Property Controls**: Visual customization through Framer's property panel
+- **Advanced Field Types**: Support for text, files, payments, and more
+- **Form Submissions**: Handle and process form data automatically
 - **Analytics**: Track form performance and user interactions
-- **Notifications**: Get notified of new submissions
-- **Customization**: Style forms to match your design
+- **Notifications**: Get notified of new submissions via email
+- **Customization**: Style forms to match your brand design
 
 ## Creating Forms
 
-Forms can be created through the Gately dashboard or programmatically via the API.
-
-### Dashboard Form Builder
+### Framer Component Setup
 
 1. Go to your Gately dashboard
 2. Navigate to **Forms** section
 3. Click **Create New Form**
-4. Add fields and configure settings
-5. Copy the form ID for SDK integration
+4. Configure your form settings
+5. Copy the form ID for use in Framer
+6. Add Gately form components to your Framer project
 
-### Form Field Types
+### Form Configuration
+
+Configure your form through the dashboard:
+
+- **Form Name**: Give your form a descriptive name
+- **Description**: Add context about the form's purpose
+- **Success Message**: Custom message shown after submission
+- **Redirect URL**: Where to send users after submission
+- **Email Notifications**: Get notified of new submissions
+- **Spam Protection**: Enable CAPTCHA and rate limiting
+
+## Framer Form Components
+
+Gately provides pre-built Framer components that you can add to your projects:
+
+### Form Container Component
+
+The main form wrapper that handles submissions and styling:
+
+- **Form ID**: Connect to your Gately form
+- **Styling**: Match your brand colors and typography
+- **Layout**: Control form spacing and arrangement
+- **Responsive**: Automatically adapts to different screen sizes
+
+### Field Components
+
+Individual field components for different input types:
+
+- **Text Input**: Single line text with validation
+- **Email Input**: Email field with format validation
+- **Textarea**: Multi-line text input
+- **Select Dropdown**: Dropdown selection with options
+- **Checkbox**: Boolean selection
+- **Radio Group**: Single choice from options
+- **File Upload**: File attachment with drag-and-drop
+- **Payment Button**: Stripe payment integration
+
+## Supported Field Types
+
+Gately supports a comprehensive range of field types through Framer components:
+
+### Basic Text Fields
 
 <CardGroup cols={2}>
   <Card title="Text Input" icon="type">
-    Single line text input
+    Single line text input for names, titles, etc.
+    
+    - **Use cases**: Names, titles, short answers
+    - **Validation**: Required, min/max length, patterns
+    - **Placeholder text**: Custom placeholder messages
+    - **Framer controls**: Width, height, styling, validation
   </Card>
+  
   <Card title="Email" icon="mail">
-    Email address with validation
+    Email address with automatic validation.
+    
+    - **Use cases**: Contact forms, newsletters, registrations
+    - **Validation**: Email format, required, unique
+    - **Auto-formatting**: Automatic email validation
+    - **Framer controls**: Styling, error states, validation
   </Card>
+  
   <Card title="Textarea" icon="align-left">
-    Multi-line text input
+    Multi-line text input for longer content.
+    
+    - **Use cases**: Messages, descriptions, comments
+    - **Validation**: Required, min/max length, word count
+    - **Resizable**: Users can resize the text area
+    - **Framer controls**: Rows, columns, styling, validation
   </Card>
-  <Card title="Select" icon="list">
-    Dropdown selection
-  </Card>
-  <Card title="Checkbox" icon="check-square">
-    Boolean selection
-  </Card>
-  <Card title="Radio" icon="circle">
-    Single choice from options
-  </Card>
+  
   <Card title="Number" icon="hash">
-    Numeric input
-  </Card>
-  <Card title="Date" icon="calendar">
-    Date picker
-  </Card>
-  <Card title="File Upload" icon="upload">
-    File attachment
+    Numeric input with validation.
+    
+    - **Use cases**: Ages, quantities, prices, ratings
+    - **Validation**: Min/max values, decimals, integers
+    - **Formatting**: Currency, percentage, decimal places
+    - **Framer controls**: Min/max values, step increments, styling
   </Card>
 </CardGroup>
 
-## SDK Integration
+### Selection Fields
 
-### Submit Form Data
-
-```javascript
-import { GatelyBrowserClient } from 'https://cdn.usegately.com/gately-sdk.esm.min.js'
-
-const gately = new GatelyBrowserClient('your-project-id')
-
-// Submit form data
-async function handleFormSubmit(formData) {
-  try {
-    const response = await gately.submitForm('your-form-id', {
-      name: formData.name,
-      email: formData.email,
-      message: formData.message,
-      // Add any other form fields
-    })
+<CardGroup cols={2}>
+  <Card title="Select Dropdown" icon="list">
+    Dropdown selection from predefined options.
     
-    console.log('Form submitted successfully:', response)
+    - **Use cases**: Categories, countries, preferences
+    - **Options**: Add unlimited options through property controls
+    - **Search**: Enable search within options
+    - **Multi-select**: Allow multiple selections
+    - **Framer controls**: Options list, styling, behavior
+  </Card>
+  
+  <Card title="Radio Buttons" icon="circle">
+    Single choice from multiple options.
     
-    // Handle success (redirect, show message, etc.)
-    if (response.redirect_url) {
-      window.location.href = response.redirect_url
-    }
-  } catch (error) {
-    console.error('Form submission failed:', error)
-  }
-}
-```
-
-### Form with Validation
-
-```html
-<form id="contact-form" onsubmit="handleSubmit(event)">
-  <input 
-    type="text" 
-    name="name" 
-    placeholder="Your Name" 
-    required
-  />
-  <input 
-    type="email" 
-    name="email" 
-    placeholder="Your Email" 
-    required
-  />
-  <textarea 
-    name="message" 
-    placeholder="Your Message" 
-    required
-  ></textarea>
-  <button type="submit">Send Message</button>
-</form>
-
-<script>
-async function handleSubmit(event) {
-  event.preventDefault()
+    - **Use cases**: Single choice questions, preferences
+    - **Layout**: Horizontal or vertical arrangement
+    - **Validation**: Required selection
+    - **Custom styling**: Match your brand colors
+    - **Framer controls**: Options, layout, styling, validation
+  </Card>
   
-  const form = event.target
-  const formData = new FormData(form)
-  
-  // Convert FormData to object
-  const data = Object.fromEntries(formData.entries())
-  
-  try {
-    const response = await gately.submitForm('contact-form-id', data)
+  <Card title="Checkboxes" icon="check-square">
+    Multiple choice selection.
     
-    // Show success message
-    alert(response.message || 'Thank you for your submission!')
-    form.reset()
-  } catch (error) {
-    alert('Submission failed: ' + error.message)
-  }
-}
-</script>
-```
+    - **Use cases**: Multiple selections, agreements
+    - **Validation**: Min/max selections
+    - **Layout**: Grid or list arrangement
+    - **Terms**: Include terms and conditions
+    - **Framer controls**: Options, layout, validation, styling
+  </Card>
+  
+  <Card title="Toggle Switch" icon="toggle-left">
+    On/off or yes/no selection.
+    
+    - **Use cases**: Settings, preferences, agreements
+    - **Styling**: Custom on/off labels
+    - **Default state**: Set default value
+    - **Accessibility**: Screen reader friendly
+    - **Framer controls**: Labels, default state, styling
+  </Card>
+</CardGroup>
 
-## React Integration
+### Date and Time Fields
 
-```jsx
-import React, { useState } from 'react'
-import { useGately } from 'https://cdn.usegately.com/gately-sdk.esm.min.js'
+<CardGroup cols={2}>
+  <Card title="Date Picker" icon="calendar">
+    Date selection with calendar interface.
+    
+    - **Use cases**: Birthdays, appointments, deadlines
+    - **Format**: MM/DD/YYYY, DD/MM/YYYY, etc.
+    - **Range**: Min/max date restrictions
+    - **Presets**: Today, tomorrow, next week
+    - **Framer controls**: Date format, range limits, styling
+  </Card>
+  
+  <Card title="Time Picker" icon="clock">
+    Time selection with hour/minute interface.
+    
+    - **Use cases**: Meeting times, schedules
+    - **Format**: 12/24 hour format
+    - **Intervals**: 15, 30, 60 minute intervals
+    - **Range**: Business hours, availability
+    - **Framer controls**: Time format, intervals, styling
+  </Card>
+  
+  <Card title="Date & Time" icon="calendar-clock">
+    Combined date and time selection.
+    
+    - **Use cases**: Appointments, events, deadlines
+    - **Timezone**: Automatic timezone handling
+    - **Duration**: Set appointment durations
+    - **Conflicts**: Check for scheduling conflicts
+    - **Framer controls**: Combined settings, styling
+  </Card>
+</CardGroup>
 
-function ContactForm() {
-  const { submitForm } = useGately('your-project-id')
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    message: ''
-  })
-  const [loading, setLoading] = useState(false)
-  const [message, setMessage] = useState('')
+### File Upload Fields
 
-  const handleSubmit = async (e) => {
-    e.preventDefault()
-    setLoading(true)
-    setMessage('')
+<CardGroup cols={2}>
+  <Card title="Single File Upload" icon="upload">
+    Upload one file with drag-and-drop interface.
+    
+    - **File types**: Images, documents, videos, audio
+    - **Size limits**: Configurable file size limits
+    - **Preview**: Image previews for supported files
+    - **Progress**: Upload progress indicator
+    - **Framer controls**: File types, size limits, styling
+  </Card>
+  
+  <Card title="Multiple File Upload" icon="folder-plus">
+    Upload multiple files at once.
+    
+    - **File count**: Set maximum number of files
+    - **Batch upload**: Upload all files together
+    - **Individual limits**: Per-file size limits
+    - **File types**: Restrict to specific formats
+    - **Framer controls**: Max files, file types, styling
+  </Card>
+  
+  <Card title="Image Upload" icon="image">
+    Specialized image upload with preview.
+    
+    - **Formats**: JPG, PNG, GIF, WebP, SVG
+    - **Dimensions**: Min/max width and height
+    - **Compression**: Automatic image optimization
+    - **Crop tool**: Built-in image cropping
+    - **Framer controls**: Image formats, dimensions, styling
+  </Card>
+  
+  <Card title="Document Upload" icon="file-text">
+    Document upload with format validation.
+    
+    - **Formats**: PDF, DOC, DOCX, TXT, etc.
+    - **Security**: Virus scanning for uploads
+    - **Preview**: Document preview for supported formats
+    - **OCR**: Text extraction from images
+    - **Framer controls**: Document types, security, styling
+  </Card>
+</CardGroup>
 
-    try {
-      const response = await submitForm('contact-form-id', formData)
-      setMessage(response.message || 'Thank you for your submission!')
-      setFormData({ name: '', email: '', message: '' })
-    } catch (error) {
-      setMessage('Submission failed: ' + error.message)
-    } finally {
-      setLoading(false)
-    }
-  }
+### Payment Fields
 
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    })
-  }
+<CardGroup cols={2}>
+  <Card title="Stripe Payment" icon="credit-card">
+    Secure payment processing with Stripe integration.
+    
+    - **Payment methods**: Credit cards, debit cards, digital wallets
+    - **Currencies**: Support for 135+ currencies
+    - **Security**: PCI compliant, encrypted data
+    - **Recurring**: One-time or subscription payments
+    - **Framer controls**: Payment amount, currency, styling
+  </Card>
+  
+  <Card title="Payment Amount" icon="dollar-sign">
+    Configurable payment amounts.
+    
+    - **Fixed amount**: Set specific payment amount
+    - **Variable amount**: Let users choose amount
+    - **Currency**: Select payment currency
+    - **Tax calculation**: Automatic tax handling
+    - **Framer controls**: Amount, currency, tax settings
+  </Card>
+  
+  <Card title="Payment Button" icon="shopping-cart">
+    Stripe-powered payment button.
+    
+    - **Integration**: Direct Stripe Checkout
+    - **Customization**: Match your brand styling
+    - **Success handling**: Automatic success redirects
+    - **Error handling**: Clear error messages
+    - **Framer controls**: Button text, styling, behavior
+  </Card>
+  
+  <Card title="Subscription Setup" icon="repeat">
+    Recurring payment configuration.
+    
+    - **Billing cycles**: Monthly, yearly, custom
+    - **Trial periods**: Free trial options
+    - **Proration**: Automatic proration handling
+    - **Cancellation**: Easy subscription management
+    - **Framer controls**: Billing cycle, trial settings, styling
+  </Card>
+</CardGroup>
 
-  return (
-    <form onSubmit={handleSubmit}>
-      <input
-        type="text"
-        name="name"
-        placeholder="Your Name"
-        value={formData.name}
-        onChange={handleChange}
-        required
-      />
-      <input
-        type="email"
-        name="email"
-        placeholder="Your Email"
-        value={formData.email}
-        onChange={handleChange}
-        required
-      />
-      <textarea
-        name="message"
-        placeholder="Your Message"
-        value={formData.message}
-        onChange={handleChange}
-        required
-      />
-      <button type="submit" disabled={loading}>
-        {loading ? 'Sending...' : 'Send Message'}
-      </button>
-      {message && <p>{message}</p>}
-    </form>
-  )
-}
-```
+### Advanced Fields
+
+<CardGroup cols={2}>
+  <Card title="Phone Number" icon="phone">
+    Phone number with international support.
+    
+    - **Formats**: International, national, local
+    - **Validation**: Country-specific validation
+    - **Auto-format**: Automatic formatting
+    - **Country codes**: Dropdown country selection
+    - **Framer controls**: Format, validation, styling
+  </Card>
+  
+  <Card title="Address" icon="map-pin">
+    Complete address input with validation.
+    
+    - **Components**: Street, city, state, zip, country
+    - **Auto-complete**: Address suggestions
+    - **Validation**: Postal code validation
+    - **Geocoding**: Convert to coordinates
+    - **Framer controls**: Address components, styling
+  </Card>
+  
+  <Card title="Signature" icon="pen-tool">
+    Digital signature capture.
+    
+    - **Input methods**: Mouse, touch, stylus
+    - **Validation**: Signature verification
+    - **Format**: PNG, SVG, PDF output
+    - **Legal**: Legally binding signatures
+    - **Framer controls**: Canvas size, styling, validation
+  </Card>
+  
+  <Card title="Rating" icon="star">
+    Star rating or numeric rating.
+    
+    - **Types**: Stars, numbers, emojis
+    - **Scale**: 1-5, 1-10, custom scales
+    - **Half ratings**: Allow half-star ratings
+    - **Average**: Calculate average ratings
+    - **Framer controls**: Rating type, scale, styling
+  </Card>
+</CardGroup>
+
+## Framer Property Controls
+
+Each Gately form component includes comprehensive property controls in Framer:
+
+### General Controls
+- **Form ID**: Connect to your Gately form
+- **Field Label**: Custom field labels
+- **Placeholder**: Custom placeholder text
+- **Required**: Make fields required
+- **Validation**: Set validation rules
+
+### Styling Controls
+- **Width/Height**: Control component dimensions
+- **Colors**: Primary, secondary, accent colors
+- **Typography**: Font family, size, weight
+- **Borders**: Border style, color, radius
+- **Spacing**: Padding and margins
+- **Background**: Background colors and images
+
+### Behavior Controls
+- **Default Value**: Set initial field values
+- **Validation Rules**: Min/max values, patterns
+- **Error Messages**: Custom error text
+- **Success States**: Custom success styling
+- **Loading States**: Loading indicators
+
+### Payment Controls
+- **Payment Amount**: Fixed or variable amounts
+- **Currency**: Select payment currency
+- **Payment Methods**: Enable/disable payment types
+- **Success URL**: Redirect after payment
+- **Error URL**: Redirect on payment error
 
 ## Form Analytics
 
-Gately automatically tracks form submissions and provides analytics:
+Gately automatically tracks form performance and provides detailed analytics:
 
-```javascript
-// Form submission is automatically tracked
-await gately.submitForm('form-id', data)
+### Automatic Tracking
 
-// You can also manually track form interactions
-gately.trackEvent('form_view', {
-  form_id: 'contact-form',
-  page_url: window.location.href
-})
+- **Form Views**: When users view your forms
+- **Form Starts**: When users begin filling out forms
+- **Form Completions**: Successful form submissions
+- **Form Abandonments**: Users who start but don't complete
+- **Field Interactions**: Which fields users interact with most
+- **Submission Times**: How long forms take to complete
 
-gately.trackEvent('form_start', {
-  form_id: 'contact-form'
-})
-```
+### Analytics Dashboard
 
-### Available Analytics Events
+View comprehensive analytics in your Gately dashboard:
 
-<ResponseField name="form_view" type="string">
-  When a user views a form
-</ResponseField>
+- **Conversion Rates**: Form completion percentages
+- **Popular Fields**: Most and least used fields
+- **Error Analysis**: Common validation errors
+- **Device Analytics**: Mobile vs desktop usage
+- **Time Analytics**: Peak submission times
+- **User Journey**: How users navigate through forms
 
-<ResponseField name="form_start" type="string">
-  When a user starts filling out a form
-</ResponseField>
+## Form Customization
 
-<ResponseField name="form_submission" type="string">
-  When a form is successfully submitted
-</ResponseField>
+### Visual Styling
 
-<ResponseField name="form_error" type="string">
-  When a form submission fails
-</ResponseField>
+Customize your forms through Framer's property controls:
 
-## Form Settings
+- **Colors**: Primary, secondary, and accent colors
+- **Typography**: Font family, size, and weight
+- **Layout**: Field spacing, alignment, and arrangement
+- **Borders**: Border styles, colors, and radius
+- **Shadows**: Drop shadows and depth effects
+- **Animations**: Hover effects and transitions
 
-### Success Message
+### Field Configuration
 
-Configure custom success messages in your form settings:
+Advanced field settings available through property controls:
 
-```javascript
-// Form will return this message on successful submission
-const response = await gately.submitForm('form-id', data)
-console.log(response.message) // "Thank you for contacting us!"
-```
+- **Validation Rules**: Required fields, formats, limits
+- **Conditional Logic**: Show/hide fields based on answers
+- **Default Values**: Pre-fill fields with default data
+- **Help Text**: Add explanatory text for complex fields
+- **Placeholder Text**: Custom placeholder messages
+- **Field Groups**: Organize related fields together
 
-### Redirect After Submission
+### Success Handling
 
-Set up automatic redirects after form submission:
+Configure what happens after form submission:
 
-```javascript
-// Form settings can include a redirect URL
-const response = await gately.submitForm('form-id', data)
+- **Success Messages**: Custom thank you messages
+- **Redirect URLs**: Send users to specific pages
+- **Email Confirmations**: Send confirmation emails to users
+- **Admin Notifications**: Notify you of new submissions
+- **Data Export**: Automatic data export to spreadsheets
+- **Integration**: Connect to other tools via webhooks
 
-if (response.redirect_url) {
-  window.location.href = response.redirect_url
-}
-```
+## File Upload Features
 
-### Email Notifications
+### Supported File Types
 
-Enable email notifications for new form submissions in your dashboard settings.
+**Images**: JPG, PNG, GIF, WebP, SVG, BMP, TIFF
+**Documents**: PDF, DOC, DOCX, TXT, RTF, ODT
+**Spreadsheets**: XLS, XLSX, CSV, ODS
+**Presentations**: PPT, PPTX, ODP
+**Archives**: ZIP, RAR, 7Z, TAR, GZ
+**Audio**: MP3, WAV, AAC, OGG, FLAC
+**Video**: MP4, AVI, MOV, WMV, FLV, WebM
 
-## Advanced Usage
+### File Management
 
-### Custom Form Validation
+- **Size Limits**: Configurable file size restrictions
+- **Storage**: Secure cloud storage with CDN
+- **Organization**: Automatic file organization
+- **Access Control**: Secure file access permissions
+- **Backup**: Automatic file backups
+- **Cleanup**: Automatic cleanup of old files
 
-```javascript
-async function validateAndSubmit(formData) {
-  // Custom validation
-  if (formData.email && !formData.email.includes('@')) {
-    throw new Error('Invalid email address')
-  }
-  
-  if (formData.message && formData.message.length < 10) {
-    throw new Error('Message must be at least 10 characters')
-  }
-  
-  // Submit if validation passes
-  return await gately.submitForm('form-id', formData)
-}
-```
+## Stripe Payment Integration
 
-### File Uploads
+### Payment Processing
 
-```javascript
-// Handle file uploads
-async function handleFileUpload(file) {
-  // Upload file to your storage service
-  const uploadedUrl = await uploadToStorage(file)
-  
-  // Submit form with file URL
-  await gately.submitForm('form-id', {
-    ...formData,
-    file_url: uploadedUrl
-  })
-}
-```
+Gately integrates seamlessly with Stripe for secure payments:
 
-### Conditional Form Fields
+- **Secure Processing**: PCI compliant payment handling
+- **Multiple Currencies**: Support for 135+ currencies
+- **Payment Methods**: Credit cards, debit cards, digital wallets
+- **Recurring Payments**: Subscription and installment plans
+- **Tax Handling**: Automatic tax calculation and collection
+- **Refunds**: Easy refund processing
 
-```javascript
-// Show/hide fields based on user input
-function toggleFieldVisibility() {
-  const fieldType = document.getElementById('field-type').value
-  const customField = document.getElementById('custom-field')
-  
-  if (fieldType === 'custom') {
-    customField.style.display = 'block'
-  } else {
-    customField.style.display = 'none'
-  }
-}
-```
+### Payment Field Types
 
-## Error Handling
+**Payment Button**: Direct Stripe Checkout integration
+**Card Input**: Custom card input with validation
+**Amount Field**: Configurable payment amounts
+**Currency Selector**: Multiple currency support
+**Billing Address**: Automatic billing address collection
+**Receipt Generation**: Automatic receipt emails
 
-```javascript
-try {
-  const response = await gately.submitForm('form-id', data)
-  // Handle success
-} catch (error) {
-  switch (error.code) {
-    case 'FORM_NOT_FOUND':
-      console.error('Form does not exist')
-      break
-    case 'VALIDATION_ERROR':
-      console.error('Form validation failed:', error.details)
-      break
-    case 'RATE_LIMITED':
-      console.error('Too many submissions, please try again later')
-      break
-    default:
-      console.error('Form submission failed:', error.message)
-  }
-}
-```
+### Payment Settings
+
+Configure payment behavior in your dashboard:
+
+- **Test Mode**: Test payments without charging
+- **Live Mode**: Process real payments
+- **Webhook URLs**: Custom webhook endpoints
+- **Success Pages**: Custom success page URLs
+- **Error Handling**: Custom error page URLs
+- **Email Receipts**: Automatic receipt emails
 
 ## Best Practices
 
 <CardGroup cols={2}>
-  <Card title="Validate Input" icon="shield">
-    Always validate form data on both client and server side
+  <Card title="Form Design" icon="palette">
+    - Keep forms simple and focused
+    - Use clear, descriptive labels
+    - Group related fields together
+    - Provide helpful placeholder text
+    - Test forms on mobile devices
   </Card>
-  <Card title="Show Loading States" icon="loader">
-    Provide visual feedback during form submission
+  
+  <Card title="User Experience" icon="users">
+    - Show progress indicators for long forms
+    - Provide clear error messages
+    - Enable auto-save for long forms
+    - Add confirmation for important actions
+    - Test the complete user journey
   </Card>
-  <Card title="Handle Errors Gracefully" icon="alert-triangle">
-    Display user-friendly error messages
+  
+  <Card title="Data Security" icon="shield">
+    - Use HTTPS for all form submissions
+    - Validate data on both client and server
+    - Implement rate limiting to prevent spam
+    - Encrypt sensitive data
+    - Regular security audits
   </Card>
-  <Card title="Track Analytics" icon="bar-chart">
-    Use built-in analytics to improve form performance
+  
+  <Card title="Analytics" icon="bar-chart">
+    - Monitor form completion rates
+    - Track field interaction patterns
+    - Analyze abandonment points
+    - A/B test different form designs
+    - Use insights to improve forms
   </Card>
 </CardGroup>
 
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Form not submitting">
+    - Check form ID is correct in property controls
+    - Verify all required fields are filled
+    - Check browser console for errors
+    - Test with different browsers
+    - Verify network connection
+  </Accordion>
+  
+  <Accordion title="File uploads failing">
+    - Check file size limits in property controls
+    - Verify supported file types
+    - Test with smaller files first
+    - Check browser compatibility
+    - Verify storage permissions
+  </Accordion>
+  
+  <Accordion title="Payment processing errors">
+    - Check Stripe account status
+    - Verify API keys are correct
+    - Test with Stripe test cards
+    - Check currency settings
+    - Verify webhook configuration
+  </Accordion>
+  
+  <Accordion title="Form styling issues">
+    - Check property control settings
+    - Verify custom styling is applied
+    - Test with default styling first
+    - Check responsive breakpoints
+    - Verify browser compatibility
+  </Accordion>
+</AccordionGroup>
+
 ## Next Steps
 
-<CardGroup cols={2}>
+<CardGroup cols={3}>
   <Card
-    title="Form Analytics"
+    title="Analytics"
     icon="bar-chart"
     href="/analytics"
   >
     Learn about form performance tracking
   </Card>
   <Card
-    title="Custom Styling"
+    title="UI Components"
     icon="palette"
     href="/ui-components"
   >
     Style your forms to match your design
+  </Card>
+  <Card
+    title="Dashboard"
+    icon="settings"
+    href="https://app.usegately.com"
+  >
+    Create and manage your forms
   </Card>
 </CardGroup>

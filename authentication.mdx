@@ -5,286 +5,241 @@ description: 'Multiple authentication methods from simple email/password to adva
 
 The Gately SDK provides multiple authentication methods to suit different use cases. From simple email/password to advanced SSO integration.
 
-## Email/Password Authentication
+## Authentication Methods
 
-Traditional email and password authentication with secure token management.
+Gately offers several authentication options that you can configure through the dashboard:
 
-```javascript
-import { GatelyBrowserClient } from 'https://cdn.usegately.com/gately-sdk.esm.min.js'
+<CardGroup cols={2}>
+  <Card title="Email/Password" icon="mail">
+    Traditional email and password authentication with secure token management.
+    
+    - Standard login/signup flow
+    - Password reset functionality
+    - Email verification
+    - Secure session management
+  </Card>
+  
+  <Card title="Magic Link" icon="link">
+    Passwordless authentication using secure email links.
+    
+    - No passwords required
+    - Secure email verification
+    - Automatic session creation
+    - User-friendly experience
+  </Card>
+  
+  <Card title="Social Login" icon="users">
+    Login with popular social platforms.
+    
+    - Google OAuth
+    - GitHub OAuth
+    - Custom OAuth providers
+    - Automatic profile sync
+  </Card>
+  
+  <Card title="SSO Integration" icon="shield">
+    Single Sign-On for enterprise users.
+    
+    - SAML 2.0 support
+    - Custom OAuth providers
+    - Enterprise authentication
+    - Role-based access
+  </Card>
+</CardGroup>
 
-const gately = new GatelyBrowserClient('your-project-id')
+## Dashboard Configuration
 
-// Sign up a new user
-try {
-  const response = await gately.signup('user@example.com', 'password123', {
-    tier: 'basic',
-    role: 'user'
-  })
-  console.log('User created:', response.user)
-} catch (error) {
-  console.error('Signup failed:', error.message)
-}
+Configure your authentication settings through the Gately dashboard:
 
-// Sign in an existing user
-try {
-  const response = await gately.login('user@example.com', 'password123')
-  console.log('User logged in:', response.user)
-} catch (error) {
-  console.error('Login failed:', error.message)
-}
+### Step 1: Choose Authentication Methods
 
-// Check authentication status
-if (gately.isAuthenticated()) {
-  const user = gately.getUser()
-  console.log('Current user:', user)
-}
-```
+1. Go to **Settings** → **Authentication**
+2. Enable the authentication methods you want to use
+3. Configure each method's specific settings
 
-## Magic Link Authentication
+### Step 2: Customize Sign-up Fields
 
-Passwordless authentication using secure email links.
+Choose what information to collect from new users:
 
-```javascript
-// Send magic link
-try {
-  await gately.sendMagicLink('user@example.com', {
-    redirectTo: 'https://yourapp.com/dashboard'
-  })
-  console.log('Magic link sent successfully')
-} catch (error) {
-  console.error('Failed to send magic link:', error.message)
-}
+- **Required Fields**: Email, Password
+- **Optional Fields**: Name, Phone, Company, etc.
+- **Custom Fields**: Add your own fields
+- **Validation Rules**: Set field requirements
 
-// The user clicks the link in their email and gets redirected back
-// The SDK automatically handles the authentication flow
-```
+### Step 3: Configure Social Logins
 
-<Note>
-Magic links are automatically handled when users return to your application. No additional code is required to process the authentication.
-</Note>
+Set up social authentication providers:
+
+1. **Google OAuth**: Add Google Client ID and Secret
+2. **GitHub OAuth**: Add GitHub Client ID and Secret
+3. **Custom OAuth**: Configure custom providers
+4. **SSO Setup**: Configure SAML or custom SSO
+
+### Step 4: Email Settings
+
+Configure email templates and settings:
+
+- **Email Templates**: Customize signup, login, and reset emails
+- **Sender Information**: Set your brand as the sender
+- **Email Verification**: Configure verification flow
+- **Password Reset**: Set up reset email flow
+
+## User Experience Settings
+
+Customize how authentication works for your users:
+
+### Redirect Settings
+- **Post-login redirect**: Where users go after logging in
+- **Post-signup redirect**: Where new users are directed
+- **Logout redirect**: Where users go after logging out
+- **Email verification redirect**: Where users go after verifying email
+
+### Message Customization
+- **Success messages**: Customize login/signup success text
+- **Error messages**: Customize error messages
+- **Email subjects**: Customize email subject lines
+- **Branding**: Add your logo and colors
+
+### Security Settings
+- **Password requirements**: Set minimum password strength
+- **Session duration**: How long users stay logged in
+- **Rate limiting**: Prevent brute force attacks
+- **IP restrictions**: Limit access by IP address
 
 ## Session Management
 
-The SDK automatically handles session persistence and token refresh.
+Gately automatically handles user sessions:
 
-```javascript
-// Get current session
-const session = gately.getSession()
-if (session) {
-  console.log('Access token:', session.access_token)
-  console.log('Expires at:', new Date(session.expires_at))
-}
+### Automatic Features
+- **Session persistence**: Users stay logged in across visits
+- **Token refresh**: Automatic token renewal
+- **Cross-device sync**: Sessions work across devices
+- **Secure storage**: Encrypted session data
 
-// Get current user
-const user = gately.getUser()
-if (user) {
-  console.log('User email:', user.email)
-  console.log('User ID:', user.id)
-  console.log('Created at:', user.created_at)
-}
-
-// Logout
-try {
-  await gately.logout()
-  console.log('User logged out successfully')
-} catch (error) {
-  console.error('Logout failed:', error.message)
-}
-
-// Listen for auth state changes
-gately.onAuthStateChange((user, session) => {
-  if (user) {
-    console.log('User logged in:', user.email)
-  } else {
-    console.log('User logged out')
-  }
-})
-```
-
-## React Hook Usage
-
-Use the React hook for reactive authentication state.
-
-```jsx
-import { useGately } from 'https://cdn.usegately.com/gately-sdk.esm.min.js'
-
-function LoginForm() {
-  const { user, login, logout, loading, error } = useGately('your-project-id')
-  
-  const handleLogin = async (e) => {
-    e.preventDefault()
-    const formData = new FormData(e.target)
-    
-    try {
-      await login(
-        formData.get('email'),
-        formData.get('password')
-      )
-    } catch (error) {
-      console.error('Login failed:', error)
-    }
-  }
-  
-  if (loading) return <div>Loading...</div>
-  
-  if (user) {
-    return (
-      <div>
-        <p>Welcome, {user.email}!</p>
-        <button onClick={logout}>Logout</button>
-      </div>
-    )
-  }
-  
-  return (
-    <form onSubmit={handleLogin}>
-      <input name="email" type="email" placeholder="Email" required />
-      <input name="password" type="password" placeholder="Password" required />
-      <button type="submit">Login</button>
-      {error && <p className="error">{error}</p>}
-    </form>
-  )
-}
-```
+### Session Settings
+- **Session duration**: Configure how long sessions last
+- **Remember me**: Allow extended sessions
+- **Device management**: Let users manage their devices
+- **Security alerts**: Notify users of suspicious activity
 
 ## Password Reset
 
-Allow users to reset their passwords securely.
+Allow users to reset their passwords securely:
 
-```javascript
-// Send password reset email
-try {
-  await gately.resetPassword('user@example.com')
-  console.log('Password reset email sent')
-} catch (error) {
-  console.error('Failed to send reset email:', error.message)
-}
+### Reset Flow
+1. **User requests reset**: User clicks "Forgot Password"
+2. **Email sent**: Secure reset link sent to user's email
+3. **User clicks link**: User clicks link in email
+4. **Set new password**: User sets a new password
+5. **Auto login**: User is automatically logged in
 
-// The user clicks the reset link and sets a new password
-// The SDK handles the reset flow automatically
-```
+### Configuration
+- **Reset email template**: Customize the reset email
+- **Link expiration**: Set how long reset links are valid
+- **Password requirements**: Set new password rules
+- **Security notifications**: Alert users of password changes
 
 ## Error Handling
 
-Proper error handling for authentication operations.
+Gately provides clear error messages for common issues:
 
-```javascript
-try {
-  await gately.login('user@example.com', 'wrongpassword')
-} catch (error) {
-  if (error.code === 'INVALID_CREDENTIALS') {
-    console.log('Invalid email or password')
-  } else if (error.code === 'USER_NOT_FOUND') {
-    console.log('User does not exist')
-  } else if (error.code === 'RATE_LIMITED') {
-    console.log('Too many attempts, try again later')
-  } else {
-    console.log('Authentication failed:', error.message)
-  }
-}
-```
+### Common Error Types
+- **Invalid credentials**: Wrong email/password
+- **User not found**: Email doesn't exist
+- **Email not verified**: User needs to verify email
+- **Rate limited**: Too many attempts
+- **Account locked**: Account temporarily locked
 
-### Common Error Codes
-
-<ResponseField name="INVALID_CREDENTIALS" type="string">
-  Wrong email/password combination
-</ResponseField>
-
-<ResponseField name="USER_NOT_FOUND" type="string">
-  User doesn't exist in the system
-</ResponseField>
-
-<ResponseField name="EMAIL_NOT_CONFIRMED" type="string">
-  Email address not verified
-</ResponseField>
-
-<ResponseField name="RATE_LIMITED" type="string">
-  Too many authentication attempts
-</ResponseField>
-
-<ResponseField name="NETWORK_ERROR" type="string">
-  Connection or network issues
-</ResponseField>
-
-## Authentication State
-
-Monitor and react to authentication state changes.
-
-```javascript
-// Check if user is authenticated
-const isAuth = gately.isAuthenticated()
-
-// Get current user data
-const user = gately.getUser()
-if (user) {
-  console.log('User ID:', user.id)
-  console.log('Email:', user.email)
-  console.log('Name:', user.name)
-  console.log('Avatar:', user.avatar_url)
-  console.log('Created:', user.created_at)
-  console.log('Last Sign In:', user.last_sign_in_at)
-}
-
-// Get session data
-const session = gately.getSession()
-if (session) {
-  console.log('Access Token:', session.access_token)
-  console.log('Refresh Token:', session.refresh_token)
-  console.log('Expires At:', new Date(session.expires_at))
-}
-
-// Listen for auth state changes
-const unsubscribe = gately.onAuthStateChange((user, session) => {
-  if (user) {
-    console.log('User authenticated:', user.email)
-  } else {
-    console.log('User signed out')
-  }
-})
-
-// Remove listener when done
-gately.offAuthStateChange(unsubscribe)
-```
+### Error Customization
+- **Error messages**: Customize error text
+- **Error pages**: Custom error page designs
+- **Help links**: Add links to support
+- **Recovery options**: Provide alternative solutions
 
 ## Best Practices
 
 <CardGroup cols={2}>
-  <Card title="Security" icon="shield">
-    - Always validate user input
-    - Use HTTPS in production
-    - Implement rate limiting
-    - Store sensitive data securely
-  </Card>
-  <Card title="User Experience" icon="heart">
+  <Card title="User Experience" icon="users">
+    - Keep authentication flows simple
     - Provide clear error messages
-    - Show loading states
-    - Remember user preferences
-    - Implement auto-logout for security
+    - Use familiar UI patterns
+    - Test the complete user journey
+    - Monitor user feedback
+  </Card>
+  
+  <Card title="Security" icon="shield">
+    - Enable email verification
+    - Set strong password requirements
+    - Configure rate limiting
+    - Monitor for suspicious activity
+    - Keep authentication methods updated
   </Card>
 </CardGroup>
+
+## Testing Authentication
+
+After configuring your authentication settings:
+
+1. **Test each method**: Try all enabled authentication methods
+2. **Test error cases**: Test with invalid credentials
+3. **Test email flows**: Verify email verification and reset
+4. **Test social logins**: Test all configured social providers
+5. **Test on mobile**: Ensure everything works on mobile devices
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Users can't sign up">
+    - Check required fields are configured
+    - Verify email settings are correct
+    - Check for validation errors
+    - Test email delivery
+  </Accordion>
+  
+  <Accordion title="Social login not working">
+    - Verify OAuth credentials are correct
+    - Check redirect URIs are configured
+    - Test with different browsers
+    - Check OAuth provider settings
+  </Accordion>
+  
+  <Accordion title="Password reset not working">
+    - Check email template configuration
+    - Verify email delivery settings
+    - Test reset link expiration
+    - Check password requirements
+  </Accordion>
+  
+  <Accordion title="Session issues">
+    - Check session duration settings
+    - Verify token refresh is working
+    - Test cross-device functionality
+    - Check browser compatibility
+  </Accordion>
+</AccordionGroup>
 
 ## Next Steps
 
 <CardGroup cols={3}>
   <Card
-    title="SSO Integration"
-    icon="google"
-    href="/sso"
-  >
-    Add Google and GitHub OAuth
-  </Card>
-  <Card
     title="User Management"
-    icon="user"
+    icon="users"
     href="/user-management"
   >
-    Manage user profiles and data
+    Set up user profiles and account management
   </Card>
   <Card
-    title="Examples"
-    icon="code"
-    href="/examples"
+    title="SSO Setup"
+    icon="shield"
+    href="/sso"
   >
-    View authentication examples
+    Configure Single Sign-On for enterprise users
+  </Card>
+  <Card
+    title="Dashboard"
+    icon="settings"
+    href="https://app.usegately.com"
+  >
+    Configure your authentication settings
   </Card>
 </CardGroup>

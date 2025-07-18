@@ -1,183 +1,140 @@
 ---
 title: Introduction
-description: 'The complete authentication and user management solution built specifically for Framer sites'
+description: 'The complete authentication and user management solution for no-code platforms and custom websites'
 ---
 
 <img
   className="block dark:hidden"
-  src="/images/hero-dark.png"
+  src="/images/hero-light.svg"
   alt="Hero Light"
 />
 <img
   className="hidden dark:block"
-  src="/images/hero-dark.png"
+  src="/images/hero-dark.svg"
   alt="Hero Dark"
 />
 
 # Introduction
 
-The Gately SDK is a universal authentication and user management solution that works across all major frameworks and platforms. It provides a simple, consistent API for handling user authentication, form submissions, analytics, and more.
+Gately is a complete authentication and user management platform designed for modern websites and no-code applications. Whether you're building with Framer, Webflow, Bubble, or any other platform, Gately provides seamless user authentication, form handling, and access control without requiring any coding.
 
 ## What is Gately?
 
-Gately is a complete authentication platform that provides:
+Gately is your all-in-one solution for adding user functionality to your website:
 
-- **Universal Authentication** - Works in browsers and Node.js
-- **Framework Agnostic** - React, Vue, Svelte, Angular, and vanilla JS support
-- **SSO Integration** - Google, GitHub, and custom OAuth providers
-- **Form Submissions** - Collect and manage form data
-- **Analytics** - Track user behavior and conversions
-- **Paywall & Subscriptions** - Manage access control and billing
-- **Auto Session Management** - Automatic token refresh and persistence
+- **🔐 Universal Authentication** - Works across all platforms and frameworks
+- **🎨 No-Code Integration** - Built specifically for Framer, Webflow, and other no-code tools
+- **👥 User Management** - Complete user profiles, plans, and subscriptions
+- **📝 Form Handling** - Collect and manage form submissions automatically
+- **📊 Analytics** - Track user behavior and conversions
+- **🔒 Access Control** - Protect content with paywalls and subscriptions
+- **⚡ Auto Session Management** - Seamless user experience with persistent login
 
 ## Key Features
 
 ### 🔐 Authentication
-- Email/password authentication
-- Magic link authentication
-- Social login (Google, GitHub)
+Add professional authentication to your site with just a few clicks:
+- Email/password login and signup
+- Magic link authentication (passwordless)
+- Social login with Google, GitHub, and more
 - Password reset functionality
-- Session management with auto-refresh
+- Automatic session management
 
-### 📝 Forms
+### 📝 Forms & Data Collection
+Collect user data without complex backend setup:
 - Dynamic form creation and management
-- Form submission handling
-- File uploads
+- File uploads and attachments
 - Custom validation rules
+- Automatic data storage and organization
 
-### 📊 Analytics
-- Event tracking
-- User behavior analytics
-- Conversion tracking
-- Custom metrics
+### 📊 Analytics & Insights
+Understand your users and optimize your site:
+- User behavior tracking
+- Conversion analytics
+- Custom event tracking
+- Performance insights
 
-### 🎯 Access Control
+### 🎯 Access Control & Subscriptions
+Monetize your content and control access:
 - Tier-based access control
 - Subscription management
 - Paywall integration
 - Role-based permissions
 
-## Quick Start
+## No-Code Platform Support
 
-### 1. Add the SDK
+Gately works seamlessly with your favorite no-code platforms:
 
-Choose one of these methods:
+<CardGroup cols={3}>
+  <Card title="Framer" icon="framer">
+    Native integration with Framer components and workflows
+  </Card>
+  <Card title="Webflow" icon="webflow">
+    Custom code integration for Webflow sites
+  </Card>
+  <Card title="Bubble" icon="bubble">
+    API integration for Bubble applications
+  </Card>
+</CardGroup>
 
-```html
-<!-- Script Tag (Recommended) -->
-<script src="https://cdn.usegately.com/gately.min.js"></script>
-```
+## How It Works
 
-```javascript
-// ES Module Import
-import { GatelyBrowserClient } from 'https://cdn.usegately.com/gately-sdk.esm.min.js'
-```
+### 1. Add Gately to Your Site
+Simply add a small script to your website's header. No coding required.
 
-### 2. Initialize
+### 2. Configure Your Settings
+Use the Gately dashboard to customize authentication, forms, and user experience.
 
-```javascript
-const gately = new GatelyBrowserClient('your-project-id')
-```
+### 3. Users Can Sign Up and Login
+Gately automatically handles user registration, login, and session management.
 
-### 3. Authenticate
+### 4. Manage Everything from Dashboard
+View users, form submissions, analytics, and manage subscriptions all in one place.
 
-```javascript
-// Login with email/password
-const { user, session } = await gately.login('user@example.com', 'password')
+## Quick Start with Framer
 
-// Check authentication status
-if (gately.isAuthenticated()) {
-  console.log('User is logged in:', gately.getUser())
-}
-```
+Getting started with Gately in Framer is incredibly simple:
 
-## Framework Support
+<Steps>
+  <Step title="Get Your Embed Code">
+    Copy your personalized embed script from the Gately dashboard.
+  </Step>
+  <Step title="Add to Framer">
+    Paste the script into your Framer site's custom code section.
+  </Step>
+  <Step title="Publish & Test">
+    Publish your site and test the authentication flow.
+  </Step>
+</Steps>
 
-The Gately SDK works with all major frameworks:
+## What You Get
 
-### React
-```jsx
-import { useGately } from 'https://cdn.usegately.com/gately-sdk.esm.min.js'
+Once you add Gately to your site, you'll have:
 
-function App() {
-  const { user, login, logout, isAuthenticated } = useGately('your-project-id')
-  // Your component logic
-}
-```
+- **Professional Authentication** - Login/signup forms that match your brand
+- **User Dashboard** - Complete user management interface
+- **Form Collection** - Automatic form submission handling
+- **Analytics Dashboard** - User behavior and conversion insights
+- **Mobile Responsive** - Works perfectly on all devices
+- **Custom Styling** - Matches your site's design automatically
 
-### Vue
-```javascript
-import { useGately } from 'https://cdn.usegately.com/gately-sdk.esm.min.js'
+## No-Code vs Developer Options
 
-export default {
-  setup() {
-    const { user, login, logout, isAuthenticated } = useGately('your-project-id')
-    return { user, login, logout, isAuthenticated }
-  }
-}
-```
+### For No-Code Users
+- **Visual Setup** - Configure everything through the dashboard
+- **Drag & Drop** - Use pre-built components in your no-code platform
+- **Zero Coding** - Everything works out of the box
+- **Visual Customization** - Style components through the interface
 
-### Svelte
-```javascript
-import { createGatelyStore } from 'https://cdn.usegately.com/gately-sdk.esm.min.js'
-
-const gatelyStore = createGatelyStore('your-project-id')
-```
-
-### Angular
-```typescript
-import { GatelyService } from 'https://cdn.usegately.com/gately-sdk.esm.min.js'
-
-@Injectable({
-  providedIn: 'root'
-})
-export class GatelyService {
-  // Service implementation
-}
-```
-
-## CDN Distribution
-
-The Gately SDK is distributed via CDN for optimal performance:
-
-### Latest Version
-- **Script Tag**: `https://cdn.usegately.com/gately.min.js`
-- **ES Module**: `https://cdn.usegately.com/gately-sdk.esm.min.js`
-
-### Versioned (Production)
-- **Script Tag**: `https://cdn.usegately.com/sdk/v1.1.0/gately.min.js`
-- **ES Module**: `https://cdn.usegately.com/sdk/v1.1.0/gately-sdk.esm.min.js`
-
-### Development
-- **Script Tag**: `https://dev-cdn.usegately.com/gately.min.js`
-- **ES Module**: `https://dev-cdn.usegately.com/gately-sdk.esm.min.js`
-
-## Browser Compatibility
-
-The SDK supports all modern browsers:
-
-- Chrome 60+
-- Firefox 55+
-- Safari 12+
-- Edge 79+
-
-## TypeScript Support
-
-Full TypeScript support is included:
-
-```typescript
-import { GatelyBrowserClient, User, Session } from 'https://cdn.usegately.com/gately-sdk.esm.min.js'
-
-const gately = new GatelyBrowserClient('your-project-id')
-
-async function handleLogin(): Promise<{ user: User; session: Session }> {
-  return await gately.login('user@example.com', 'password')
-}
-```
+### For Developers
+- **SDK Integration** - Use our JavaScript SDK for custom implementations
+- **API Access** - Full REST API for custom integrations
+- **Framework Support** - React, Vue, Svelte, Angular, and vanilla JS
+- **Custom Components** - Build your own authentication flows
 
 ## Next Steps
 
-- [Installation Guide](/docs/installation) - Get started with the SDK
-- [Quick Start Guide](/docs/quickstart) - Build your first integration
-- [Authentication Guide](/docs/authentication) - Learn about authentication methods
-- [API Reference](/docs/api-reference) - Complete API documentation
+- **[Framer Integration](/docs/framer)** - Get started with Framer
+- **[Quick Start Guide](/docs/quickstart)** - Set up Gately in minutes
+- **[Authentication Features](/docs/authentication)** - Learn about authentication options
+- **[Dashboard Setup](https://app.usegately.com)** - Configure your Gately project

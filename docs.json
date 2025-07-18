@@ -59,12 +59,12 @@
         "group": "Get Started",
         "pages": [
           "introduction",
-          "framer",
+          "framer-integration",
           "quickstart"
         ]
       },
-                {
-        "group": "Core Features",
+      {
+        "group": "Features",
         "pages": [
           "authentication",
           "user-management",
@@ -77,15 +77,19 @@
         ]
       },
       {
-        "group": "Advanced Integration",
+        "group": "No-Code Tools",
         "pages": [
-          "installation",
-          "framework-adapters"
+          "framer-integration",
+          "webflow-integration",
+          "bubble-integration",
+          "other-platforms"
         ]
       },
       {
-        "group": "Examples & Guides",
+        "group": "Developers",
         "pages": [
+          "installation",
+          "framework-adapters",
           "examples",
           "best-practices",
           "troubleshooting"
