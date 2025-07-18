@@ -1,0 +1,598 @@
+---
+title: Plans & Tiers
+description: 'Manage user plans, tiers, and feature access with the Gately SDK'
+---
+
+Manage user plans, tiers, and feature access with the Gately SDK.
+
+## Plan Management
+
+Check user plan access and manage tier-based features.
+
+```javascript
+import { GatelyBrowserClient } from '@gately/sdk'
+
+const gately = new GatelyBrowserClient('your-project-id')
+
+// Check if user has access to a feature
+async function checkFeatureAccess(featureName) {
+  try {
+    const hasAccess = await gately.hasFeatureAccess(featureName)
+    return hasAccess
+  } catch (error) {
+    console.error('Failed to check feature access:', error)
+    return false
+  }
+}
+
+// Get user's current plan
+async function getUserPlan() {
+  try {
+    const plan = await gately.getUserPlan()
+    return plan
+  } catch (error) {
+    console.error('Failed to get user plan:', error)
+    return null
+  }
+}
+
+// Check if user is on a specific tier
+function isUserOnTier(tier) {
+  const user = gately.getUser()
+  return user?.user_metadata?.tier === tier
+}
+
+// Example usage
+if (isUserOnTier('premium')) {
+  console.log('User has premium access')
+}
+
+if (await checkFeatureAccess('advanced_analytics')) {
+  console.log('User can access advanced analytics')
+}
+```
+
+## Feature Access Control
+
+Control access to features based on user plans and tiers.
+
+```javascript
+class FeatureManager {
+  constructor(gately) {
+    this.gately = gately
+    this.features = {
+      basic: ['profile_management', 'basic_support'],
+      premium: ['advanced_analytics', 'priority_support', 'custom_branding'],
+      enterprise: ['api_access', 'white_labeling', 'dedicated_support']
+    }
+  }
+
+  async hasAccess(featureName) {
+    const user = this.gately.getUser()
+    if (!user) return false
+
+    const userTier = user.user_metadata?.tier || 'basic'
+    
+    // Check if feature is available in user's tier or lower tiers
+    for (const [tier, features] of Object.entries(this.features)) {
+      if (features.includes(featureName)) {
+        return this.isTierAccessible(userTier, tier)
+      }
+    }
+    
+    return false
+  }
+
+  isTierAccessible(userTier, requiredTier) {
+    const tierHierarchy = ['basic', 'premium', 'enterprise']
+    const userTierIndex = tierHierarchy.indexOf(userTier)
+    const requiredTierIndex = tierHierarchy.indexOf(requiredTier)
+    
+    return userTierIndex >= requiredTierIndex
+  }
+
+  async enableFeature(elementId, featureName) {
+    const hasAccess = await this.hasAccess(featureName)
+    const element = document.getElementById(elementId)
+    
+    if (element) {
+      if (hasAccess) {
+        element.style.display = 'block'
+        element.classList.remove('feature-disabled')
+      } else {
+        element.style.display = 'none'
+        element.classList.add('feature-disabled')
+      }
+    }
+  }
+
+  async showUpgradePrompt(featureName) {
+    const hasAccess = await this.hasAccess(featureName)
+    
+    if (!hasAccess) {
+      const user = this.gately.getUser()
+      const currentTier = user?.user_metadata?.tier || 'basic'
+      
+      // Find the minimum tier required for this feature
+      let requiredTier = null
+      for (const [tier, features] of Object.entries(this.features)) {
+        if (features.includes(featureName)) {
+          requiredTier = tier
+          break
+        }
+      }
+      
+      if (requiredTier && requiredTier !== currentTier) {
+        this.displayUpgradeModal(requiredTier, featureName)
+      }
+    }
+  }
+
+  displayUpgradeModal(requiredTier, featureName) {
+    const modal = document.createElement('div')
+    modal.className = 'upgrade-modal'
+    modal.innerHTML = `
+      <div class="modal-content">
+        <h3>Upgrade Required</h3>
+        <p>This feature requires a ${requiredTier} plan.</p>
+        <p>Feature: ${featureName}</p>
+        <div class="modal-actions">
+          <button onclick="this.closest('.upgrade-modal').remove()">Cancel</button>
+          <button onclick="window.location.href='/upgrade'">Upgrade Now</button>
+        </div>
+      </div>
+    `
+    document.body.appendChild(modal)
+  }
+}
+
+// Usage
+const featureManager = new FeatureManager(gately)
+
+// Enable features based on user plan
+await featureManager.enableFeature('analytics-dashboard', 'advanced_analytics')
+await featureManager.enableFeature('api-section', 'api_access')
+
+// Show upgrade prompt when user tries to access restricted feature
+document.getElementById('premium-feature-btn').addEventListener('click', async () => {
+  const hasAccess = await featureManager.hasAccess('advanced_analytics')
+  if (hasAccess) {
+    // Show the feature
+    showAdvancedAnalytics()
+  } else {
+    // Show upgrade prompt
+    await featureManager.showUpgradePrompt('advanced_analytics')
+  }
+})
+```
+
+## Plan Comparison
+
+Display plan comparison and upgrade options.
+
+```javascript
+class PlanComparison {
+  constructor(gately) {
+    this.gately = gately
+    this.plans = {
+      basic: {
+        name: 'Basic',
+        price: '$0',
+        features: [
+          'Up to 1,000 users',
+          'Basic authentication',
+          'Email support',
+          'Standard UI components'
+        ]
+      },
+      premium: {
+        name: 'Premium',
+        price: '$29/month',
+        features: [
+          'Up to 10,000 users',
+          'Advanced authentication',
+          'Priority support',
+          'Custom branding',
+          'Analytics dashboard'
+        ]
+      },
+      enterprise: {
+        name: 'Enterprise',
+        price: 'Custom',
+        features: [
+          'Unlimited users',
+          'SSO integration',
+          'Dedicated support',
+          'White labeling',
+          'API access',
+          'Custom integrations'
+        ]
+      }
+    }
+  }
+
+  renderPlanComparison(containerId) {
+    const container = document.getElementById(containerId)
+    const currentUser = this.gately.getUser()
+    const currentTier = currentUser?.user_metadata?.tier || 'basic'
+
+    const planCards = Object.entries(this.plans).map(([tier, plan]) => {
+      const isCurrentPlan = tier === currentTier
+      const features = plan.features.map(feature => `<li>${feature}</li>`).join('')
+      
+      return `
+        <div class="plan-card ${isCurrentPlan ? 'current-plan' : ''}">
+          <div class="plan-header">
+            <h3>${plan.name}</h3>
+            <div class="plan-price">${plan.price}</div>
+            ${isCurrentPlan ? '<span class="current-badge">Current Plan</span>' : ''}
+          </div>
+          <ul class="plan-features">
+            ${features}
+          </ul>
+          <div class="plan-actions">
+            ${isCurrentPlan 
+              ? '<button disabled>Current Plan</button>' 
+              : `<button onclick="upgradeToPlan('${tier}')">Upgrade</button>`
+            }
+          </div>
+        </div>
+      `
+    }).join('')
+
+    container.innerHTML = `
+      <div class="plans-container">
+        ${planCards}
+      </div>
+    `
+  }
+
+  async upgradePlan(newTier) {
+    try {
+      const response = await this.gately.updateUserPlan(newTier)
+      if (response.success) {
+        alert(`Successfully upgraded to ${newTier} plan!`)
+        // Refresh the page or update UI
+        window.location.reload()
+      }
+    } catch (error) {
+      console.error('Failed to upgrade plan:', error)
+      alert('Failed to upgrade plan. Please try again.')
+    }
+  }
+}
+
+// Usage
+const planComparison = new PlanComparison(gately)
+planComparison.renderPlanComparison('plans-container')
+
+// Global function for upgrade buttons
+window.upgradeToPlan = (tier) => {
+  planComparison.upgradePlan(tier)
+}
+```
+
+## React Plan Management
+
+React component for plan management and feature access.
+
+```jsx
+import React, { useState, useEffect } from 'react'
+import { useGately } from '@gately/sdk'
+
+function PlanManager() {
+  const { user, getUserPlan, updateUserPlan } = useGately('your-project-id')
+  const [currentPlan, setCurrentPlan] = useState(null)
+  const [loading, setLoading] = useState(true)
+
+  const plans = {
+    basic: {
+      name: 'Basic',
+      price: '$0',
+      features: ['Up to 1,000 users', 'Basic authentication', 'Email support']
+    },
+    premium: {
+      name: 'Premium',
+      price: '$29/month',
+      features: ['Up to 10,000 users', 'Advanced authentication', 'Priority support', 'Analytics']
+    },
+    enterprise: {
+      name: 'Enterprise',
+      price: 'Custom',
+      features: ['Unlimited users', 'SSO integration', 'Dedicated support', 'API access']
+    }
+  }
+
+  useEffect(() => {
+    async function loadPlan() {
+      if (user) {
+        try {
+          const plan = await getUserPlan()
+          setCurrentPlan(plan)
+        } catch (error) {
+          console.error('Failed to load plan:', error)
+        } finally {
+          setLoading(false)
+        }
+      }
+    }
+    
+    loadPlan()
+  }, [user])
+
+  const handleUpgrade = async (newTier) => {
+    try {
+      setLoading(true)
+      await updateUserPlan(newTier)
+      setCurrentPlan({ ...currentPlan, tier: newTier })
+      alert(`Successfully upgraded to ${newTier} plan!`)
+    } catch (error) {
+      console.error('Failed to upgrade plan:', error)
+      alert('Failed to upgrade plan. Please try again.')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  if (loading) return <div>Loading plan information...</div>
+  if (!user) return <div>Please log in to view plan information</div>
+
+  const currentTier = currentPlan?.tier || 'basic'
+
+  return (
+    <div className="plan-manager">
+      <h2>Your Plan</h2>
+      
+      <div className="current-plan-info">
+        <h3>Current Plan: {plans[currentTier]?.name}</h3>
+        <p>Price: {plans[currentTier]?.price}</p>
+      </div>
+
+      <div className="plans-grid">
+        {Object.entries(plans).map(([tier, plan]) => (
+          <div 
+            key={tier} 
+            className={`plan-card ${tier === currentTier ? 'current' : ''}`}
+          >
+            <h3>{plan.name}</h3>
+            <div className="price">{plan.price}</div>
+            
+            <ul className="features">
+              {plan.features.map((feature, index) => (
+                <li key={index}>{feature}</li>
+              ))}
+            </ul>
+            
+            <div className="plan-actions">
+              {tier === currentTier ? (
+                <button disabled>Current Plan</button>
+              ) : (
+                <button 
+                  onClick={() => handleUpgrade(tier)}
+                  disabled={loading}
+                >
+                  {loading ? 'Upgrading...' : 'Upgrade'}
+                </button>
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+export default PlanManager
+```
+
+## Feature Gates
+
+Implement feature gates based on user plans.
+
+```jsx
+import React from 'react'
+import { useGately } from '@gately/sdk'
+
+function FeatureGate({ feature, fallback, children }) {
+  const { user } = useGately('your-project-id')
+  
+  const hasAccess = () => {
+    if (!user) return false
+    
+    const userTier = user.user_metadata?.tier || 'basic'
+    const featureMap = {
+      'advanced_analytics': ['premium', 'enterprise'],
+      'api_access': ['enterprise'],
+      'custom_branding': ['premium', 'enterprise'],
+      'priority_support': ['premium', 'enterprise']
+    }
+    
+    return featureMap[feature]?.includes(userTier) || false
+  }
+
+  if (hasAccess()) {
+    return children
+  }
+
+  return fallback || (
+    <div className="feature-locked">
+      <p>This feature requires a plan upgrade.</p>
+      <button onClick={() => window.location.href = '/upgrade'}>
+        Upgrade Now
+      </button>
+    </div>
+  )
+}
+
+// Usage examples
+function Dashboard() {
+  return (
+    <div>
+      <h1>Dashboard</h1>
+      
+      {/* Basic content available to all users */}
+      <div className="basic-stats">
+        <h2>Basic Statistics</h2>
+        <p>User count, basic metrics</p>
+      </div>
+      
+      {/* Premium feature with gate */}
+      <FeatureGate feature="advanced_analytics">
+        <div className="advanced-analytics">
+          <h2>Advanced Analytics</h2>
+          <p>Detailed charts and insights</p>
+        </div>
+      </FeatureGate>
+      
+      {/* Enterprise feature with custom fallback */}
+      <FeatureGate 
+        feature="api_access"
+        fallback={
+          <div className="api-section-locked">
+            <h2>API Access</h2>
+            <p>API access is available with Enterprise plan.</p>
+            <button>Contact Sales</button>
+          </div>
+        }
+      >
+        <div className="api-section">
+          <h2>API Access</h2>
+          <p>Your API keys and documentation</p>
+        </div>
+      </FeatureGate>
+    </div>
+  )
+}
+```
+
+## Usage Analytics
+
+Track feature usage by plan tier.
+
+```javascript
+class UsageAnalytics {
+  constructor(gately) {
+    this.gately = gately
+  }
+
+  async trackFeatureUsage(featureName) {
+    const user = this.gately.getUser()
+    if (!user) return
+
+    try {
+      await this.gately.submitForm({
+        formId: 'feature-usage',
+        data: {
+          user_id: user.id,
+          feature_name: featureName,
+          user_tier: user.user_metadata?.tier || 'basic',
+          timestamp: new Date().toISOString()
+        },
+        metadata: {
+          page_url: window.location.href,
+          user_agent: navigator.userAgent
+        }
+      })
+    } catch (error) {
+      console.error('Failed to track feature usage:', error)
+    }
+  }
+
+  async trackUpgradeIntent(fromTier, toTier) {
+    const user = this.gately.getUser()
+    if (!user) return
+
+    try {
+      await this.gately.submitForm({
+        formId: 'upgrade-intent',
+        data: {
+          user_id: user.id,
+          from_tier: fromTier,
+          to_tier: toTier,
+          timestamp: new Date().toISOString()
+        },
+        metadata: {
+          page_url: window.location.href
+        }
+      })
+    } catch (error) {
+      console.error('Failed to track upgrade intent:', error)
+    }
+  }
+}
+
+// Usage
+const analytics = new UsageAnalytics(gately)
+
+// Track when users access premium features
+document.getElementById('analytics-dashboard').addEventListener('click', () => {
+  analytics.trackFeatureUsage('advanced_analytics')
+})
+
+// Track upgrade button clicks
+document.querySelectorAll('.upgrade-button').forEach(button => {
+  button.addEventListener('click', (e) => {
+    const toTier = e.target.dataset.tier
+    const currentTier = gately.getUser()?.user_metadata?.tier || 'basic'
+    analytics.trackUpgradeIntent(currentTier, toTier)
+  })
+})
+```
+
+## Best Practices
+
+<AccordionGroup>
+  <Accordion title="Plan Design">
+    - Keep plan differences clear and simple
+    - Provide value at each tier
+    - Make upgrade paths obvious
+    - Offer trial periods for premium features
+  </Accordion>
+  
+  <Accordion title="Feature Access">
+    - Gracefully handle feature restrictions
+    - Provide clear upgrade prompts
+    - Show value of premium features
+    - Allow feature previews when possible
+  </Accordion>
+  
+  <Accordion title="User Experience">
+    - Don't hide features completely
+    - Explain why upgrades are needed
+    - Make billing transparent
+    - Provide easy downgrade options
+  </Accordion>
+  
+  <Accordion title="Analytics">
+    - Track feature usage by tier
+    - Monitor upgrade conversion rates
+    - Identify popular features
+    - A/B test pricing strategies
+  </Accordion>
+</AccordionGroup>
+
+## Next Steps
+
+<CardGroup cols={3}>
+  <Card
+    title="User Management"
+    icon="user"
+    href="/user-management"
+  >
+    Manage user profiles and data
+  </Card>
+  <Card
+    title="Forms"
+    icon="file-text"
+    href="/forms"
+  >
+    Submit forms with user tracking
+  </Card>
+  <Card
+    title="Examples"
+    icon="code"
+    href="/examples"
+  >
+    View plan management examples
+  </Card>
+</CardGroup>

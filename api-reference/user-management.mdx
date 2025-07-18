@@ -1,0 +1,480 @@
+---
+title: User Management API
+description: 'Complete reference for user profile and account management methods'
+---
+
+Complete reference for user profile and account management methods.
+
+## Profile Management
+
+### getUserProfile()
+
+Get current user's profile information.
+
+```typescript
+getUserProfile(): Promise<UserProfile | null>
+```
+
+**Example:**
+
+```javascript
+try {
+  const profile = await gately.getUserProfile()
+  if (profile) {
+    console.log('User Profile:', {
+      id: profile.id,
+      email: profile.email,
+      firstName: profile.first_name,
+      lastName: profile.last_name,
+      displayName: profile.display_name,
+      bio: profile.bio,
+      company: profile.company,
+      website: profile.website,
+      location: profile.location,
+      phone: profile.phone,
+      jobTitle: profile.job_title,
+      createdAt: profile.created_at,
+      updatedAt: profile.updated_at
+    })
+  }
+  return profile
+} catch (error) {
+  console.error('Failed to get profile:', error.message)
+  return null
+}
+```
+
+**Returns:** `Promise<UserProfile | null>`
+
+### updateUserProfile()
+
+Update user profile information.
+
+```typescript
+updateUserProfile(updates: UpdateProfileRequest): Promise<UserProfile>
+```
+
+<ParamField path="updates" type="UpdateProfileRequest" required>
+  Profile fields to update
+</ParamField>
+
+**Example:**
+
+```javascript
+try {
+  const updatedProfile = await gately.updateUserProfile({
+    first_name: 'John',
+    last_name: 'Doe',
+    display_name: 'John Doe',
+    bio: 'Software Developer at Acme Corp',
+    company: 'Acme Corp',
+    website: 'https://johndoe.com',
+    location: 'San Francisco, CA',
+    phone: '+1-555-123-4567',
+    job_title: 'Senior Developer',
+    user_metadata: {
+      preferences: {
+        theme: 'dark',
+        notifications: true
+      },
+      newsletter: true
+    }
+  })
+  
+  console.log('Profile updated successfully:', updatedProfile)
+  return updatedProfile
+} catch (error) {
+  console.error('Failed to update profile:', error.message)
+  throw error
+}
+```
+
+**Returns:** `Promise<UserProfile>`
+
+## Account Management
+
+### changePassword()
+
+Change user's password.
+
+```typescript
+changePassword(currentPassword: string, newPassword: string): Promise<void>
+```
+
+<ParamField path="currentPassword" type="string" required>
+  User's current password
+</ParamField>
+
+<ParamField path="newPassword" type="string" required>
+  New password (minimum 8 characters)
+</ParamField>
+
+**Example:**
+
+```javascript
+try {
+  await gately.changePassword('currentPassword123', 'newPassword456')
+  console.log('Password changed successfully')
+} catch (error) {
+  if (error.code === 'INVALID_CURRENT_PASSWORD') {
+    console.error('Current password is incorrect')
+  } else if (error.code === 'WEAK_PASSWORD') {
+    console.error('New password does not meet security requirements')
+  } else {
+    console.error('Failed to change password:', error.message)
+  }
+}
+```
+
+**Returns:** `Promise<void>`
+
+### deleteUserAccount()
+
+Permanently delete user account and all associated data.
+
+```typescript
+deleteUserAccount(): Promise<void>
+```
+
+<Warning>
+This action is permanent and cannot be undone. All user data will be permanently removed.
+</Warning>
+
+**Example:**
+
+```javascript
+try {
+  const confirmed = confirm(
+    'Are you sure you want to delete your account? ' +
+    'This action cannot be undone and all your data will be permanently removed.'
+  )
+  
+  if (confirmed) {
+    await gately.deleteUserAccount()
+    console.log('Account deleted successfully')
+    // Redirect to home page or show goodbye message
+    window.location.href = '/'
+  }
+} catch (error) {
+  console.error('Failed to delete account:', error.message)
+}
+```
+
+**Returns:** `Promise<void>`
+
+## Plan Management
+
+### getUserPlan()
+
+Get user's current plan information.
+
+```typescript
+getUserPlan(): Promise<UserPlan | null>
+```
+
+**Example:**
+
+```javascript
+try {
+  const plan = await gately.getUserPlan()
+  if (plan) {
+    console.log('Current plan:', plan.tier)
+    console.log('Plan features:', plan.features)
+    console.log('Billing cycle:', plan.billing_cycle)
+    console.log('Next billing date:', plan.next_billing_date)
+  }
+  return plan
+} catch (error) {
+  console.error('Failed to get user plan:', error.message)
+  return null
+}
+```
+
+**Returns:** `Promise<UserPlan | null>`
+
+### updateUserPlan()
+
+Update user's plan or subscription.
+
+```typescript
+updateUserPlan(planId: string): Promise<UserPlan>
+```
+
+<ParamField path="planId" type="string" required>
+  ID of the new plan to upgrade/downgrade to
+</ParamField>
+
+**Example:**
+
+```javascript
+try {
+  const updatedPlan = await gately.updateUserPlan('premium')
+  console.log('Plan updated successfully:', updatedPlan.tier)
+  return updatedPlan
+} catch (error) {
+  console.error('Failed to update plan:', error.message)
+  throw error
+}
+```
+
+**Returns:** `Promise<UserPlan>`
+
+### hasFeatureAccess()
+
+Check if user has access to a specific feature.
+
+```typescript
+hasFeatureAccess(featureName: string): Promise<boolean>
+```
+
+<ParamField path="featureName" type="string" required>
+  Name of the feature to check access for
+</ParamField>
+
+**Example:**
+
+```javascript
+try {
+  const hasAccess = await gately.hasFeatureAccess('advanced_analytics')
+  if (hasAccess) {
+    console.log('User can access advanced analytics')
+    // Show advanced analytics UI
+  } else {
+    console.log('User needs to upgrade for advanced analytics')
+    // Show upgrade prompt
+  }
+  return hasAccess
+} catch (error) {
+  console.error('Failed to check feature access:', error.message)
+  return false
+}
+```
+
+**Returns:** `Promise<boolean>`
+
+## React Hook Extensions
+
+The `useGately` hook also provides user management methods:
+
+```jsx
+import { useGately } from '@gately/sdk'
+
+function UserProfile() {
+  const { 
+    user,
+    profile,
+    getUserProfile,
+    updateUserProfile,
+    changePassword,
+    deleteAccount,
+    loading,
+    error
+  } = useGately('your-project-id')
+
+  const [isEditing, setIsEditing] = useState(false)
+  const [formData, setFormData] = useState({
+    firstName: '',
+    lastName: '',
+    bio: '',
+    company: ''
+  })
+
+  useEffect(() => {
+    if (user) {
+      getUserProfile()
+    }
+  }, [user])
+
+  const handleUpdateProfile = async (e) => {
+    e.preventDefault()
+    
+    try {
+      await updateUserProfile({
+        first_name: formData.firstName,
+        last_name: formData.lastName,
+        bio: formData.bio,
+        company: formData.company
+      })
+      
+      setIsEditing(false)
+      alert('Profile updated successfully!')
+    } catch (error) {
+      alert('Failed to update profile: ' + error.message)
+    }
+  }
+
+  // Component JSX...
+}
+```
+
+## Type Definitions
+
+### UserProfile
+
+```typescript
+interface UserProfile {
+  id: string
+  email: string
+  first_name?: string
+  last_name?: string
+  display_name?: string
+  avatar_url?: string
+  bio?: string
+  phone?: string
+  website?: string
+  location?: string
+  company?: string
+  job_title?: string
+  created_at: string
+  updated_at: string
+  user_metadata?: Record<string, any>
+}
+```
+
+### UpdateProfileRequest
+
+```typescript
+interface UpdateProfileRequest {
+  first_name?: string
+  last_name?: string
+  display_name?: string
+  avatar_url?: string
+  bio?: string
+  phone?: string
+  website?: string
+  location?: string
+  company?: string
+  job_title?: string
+  user_metadata?: Record<string, any>
+}
+```
+
+### UserPlan
+
+```typescript
+interface UserPlan {
+  id: string
+  user_id: string
+  tier: string
+  features: string[]
+  billing_cycle?: 'monthly' | 'yearly'
+  next_billing_date?: string
+  status: 'active' | 'cancelled' | 'past_due'
+  created_at: string
+  updated_at: string
+}
+```
+
+## Error Handling
+
+User management methods can throw specific errors:
+
+### Profile Errors
+
+<ResponseField name="PROFILE_NOT_FOUND" type="string">
+  User profile not found
+</ResponseField>
+
+<ResponseField name="INVALID_PROFILE_DATA" type="string">
+  Invalid profile data provided
+</ResponseField>
+
+<ResponseField name="PROFILE_UPDATE_FAILED" type="string">
+  Failed to update profile
+</ResponseField>
+
+### Password Errors
+
+<ResponseField name="INVALID_CURRENT_PASSWORD" type="string">
+  Current password is incorrect
+</ResponseField>
+
+<ResponseField name="WEAK_PASSWORD" type="string">
+  Password does not meet security requirements
+</ResponseField>
+
+<ResponseField name="PASSWORD_CHANGE_FAILED" type="string">
+  Failed to change password
+</ResponseField>
+
+### Account Errors
+
+<ResponseField name="ACCOUNT_DELETION_FAILED" type="string">
+  Failed to delete account
+</ResponseField>
+
+<ResponseField name="PENDING_ACTIONS" type="string">
+  Cannot delete account with pending actions
+</ResponseField>
+
+### Plan Errors
+
+<ResponseField name="PLAN_NOT_FOUND" type="string">
+  Requested plan does not exist
+</ResponseField>
+
+<ResponseField name="PLAN_UPDATE_FAILED" type="string">
+  Failed to update user plan
+</ResponseField>
+
+<ResponseField name="FEATURE_NOT_FOUND" type="string">
+  Requested feature does not exist
+</ResponseField>
+
+## Best Practices
+
+<AccordionGroup>
+  <Accordion title="Profile Management">
+    - Always validate user input before updating profiles
+    - Provide clear feedback for successful/failed operations
+    - Use appropriate form validation for different fields
+    - Consider implementing profile completion tracking
+  </Accordion>
+  
+  <Accordion title="Password Security">
+    - Enforce strong password requirements
+    - Provide password strength indicators
+    - Implement rate limiting for password changes
+    - Send confirmation emails for password changes
+  </Accordion>
+  
+  <Accordion title="Account Deletion">
+    - Require explicit confirmation before deletion
+    - Explain the consequences of account deletion
+    - Consider offering account deactivation instead
+    - Provide data export options before deletion
+  </Accordion>
+  
+  <Accordion title="Plan Management">
+    - Check feature access before showing premium features
+    - Provide clear upgrade paths and pricing
+    - Handle plan changes gracefully
+    - Monitor usage and billing status
+  </Accordion>
+</AccordionGroup>
+
+## Next Steps
+
+<CardGroup cols={3}>
+  <Card
+    title="Authentication API"
+    icon="key"
+    href="/api-reference/authentication"
+  >
+    Login, signup, and OAuth methods
+  </Card>
+  <Card
+    title="SSO Integration"
+    icon="google"
+    href="/api-reference/sso"
+  >
+    OAuth providers and configuration
+  </Card>
+  <Card
+    title="Type Definitions"
+    icon="code"
+    href="/api-reference/types"
+  >
+    Complete TypeScript interfaces
+  </Card>
+</CardGroup>

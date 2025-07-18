@@ -1,75 +1,227 @@
 ---
-title: "Quickstart"
-description: "Start building awesome documentation in under 5 minutes"
+title: "Quick Start"
+description: "Get up and running with Gately in under 5 minutes"
 ---
 
-## Setup your development
+This guide will help you integrate Gately authentication into your application in just a few minutes.
 
-Learn how to update your docs locally and deploy them to the public.
+## Step 1: Get Your Project ID
 
-### Edit and preview
+First, you'll need to create a Gately project and get your project ID:
 
-<AccordionGroup>
-  <Accordion title="Clone your docs locally" icon="github">
-    During the onboarding process, we created a repository on your Github with
-    your docs content. You can find this repository on our
-    [dashboard](https://dashboard.mintlify.com). To clone the repository
-    locally, follow these
-    [instructions](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository)
-    in your terminal.
-  </Accordion>
-  <Accordion title="Preview changes" icon="rectangle-terminal">
-    Previewing helps you make sure your changes look as intended. We built a
-    command line interface to render these changes locally.
+1. Sign up at [dashboard.gately.com](https://dashboard.gately.com)
+2. Create a new project
+3. Copy your project ID from the dashboard
 
-    1. Install the
-       [Mintlify CLI](https://www.npmjs.com/package/mintlify) to preview the
-       documentation changes locally with this command: `npm i -g mintlify`
-    2. Run the following command at the root of your documentation (where
-       `docs.json` is): `mintlify dev`
+## Step 2: Install the SDK
 
-    <Note>
-      If you’re currently using the legacy `mint.json` configuration file, please update the Mintlify CLI:
+<CodeGroup>
 
-      `npm i -g mintlify@latest`
-      And run the new upgrade command in your docs repository:
+```bash npm
+npm install @gately/sdk
+```
 
-      `mintlify upgrade`
-      You should now be using the new `docs.json` configuration file. Feel free to delete the `mint.json` file from your repository.
-    </Note>
-  </Accordion>
-</AccordionGroup>
 
-### DocumentationDeploy your changes
+```bash yarn
+yarn add @gately/sdk
+```
 
-<AccordionGroup>
-  <Accordion title="Install our Github app" icon="message-bot">
-    Our Github app automatically deploys your changes to your docs site, so you
-    don't need to manage deployments yourself. You can find the link to install on
-    your [dashboard](https://dashboard.mintlify.com). Once the bot has been
-    successfully installed, there should be a check mark next to the commit hash
-    of the repo.
-  </Accordion>
-  <Accordion title="Push your changes" icon="rocket">
-    [Commit and push your changes to Git](https://docs.github.com/en/get-started/using-git/pushing-commits-to-a-remote-repository#about-git-push) For your changes to update in your docs site. If you push and don't see that the Github app successfully deployed your changes, you can also manually update your docs through our [dashboard](https://dashboard.mintlify.com).
-  </Accordion>
-</AccordionGroup>
 
-## .Update your docs
+```html CDN
+<script src="https://cdn.usegately.com/sdk/latest/gately.min.js"></script>
+```
 
-Add content directly in your files with MDX syntax and React components. You can use any of our components, or even build your own.
+</CodeGroup>
+
+## Step 3: Initialize the Client
+
+```javascript
+import { GatelyBrowserClient } from '@gately/sdk'
+
+const gately = new GatelyBrowserClient('your-project-id')
+```
+
+## Step 4: Add Authentication
+
+### Basic Login Form
+
+```html
+<form id="login-form">
+  <input type="email" name="email" placeholder="Email" required>
+  <input type="password" name="password" placeholder="Password" required>
+  <button type="submit">Login</button>
+</form>
+
+<div id="user-info" style="display: none;">
+  <p>Welcome, <span id="user-email"></span>!</p>
+  <button id="logout-btn">Logout</button>
+</div>
+```
+
+### JavaScript Logic
+
+```javascript
+// Handle login form
+document.getElementById('login-form').addEventListener('submit', async (e) => {
+  e.preventDefault()
+  const formData = new FormData(e.target)
+  
+  try {
+    await gately.login(
+      formData.get('email'),
+      formData.get('password')
+    )
+  } catch (error) {
+    alert('Login failed: ' + error.message)
+  }
+})
+
+// Handle logout
+document.getElementById('logout-btn').addEventListener('click', async () => {
+  await gately.logout()
+})
+
+// Listen for auth state changes
+gately.onAuthStateChange((user) => {
+  if (user) {
+    // User is logged in
+    document.getElementById('login-form').style.display = 'none'
+    document.getElementById('user-info').style.display = 'block'
+    document.getElementById('user-email').textContent = user.email
+  } else {
+    // User is logged out
+    document.getElementById('login-form').style.display = 'block'
+    document.getElementById('user-info').style.display = 'none'
+  }
+})
+```
+
+## Step 5: Add Sign Up (Optional)
+
+```javascript
+// Add signup functionality
+async function signup(email, password) {
+  try {
+    await gately.signup(email, password, {
+      tier: 'basic',
+      role: 'user'
+    })
+    console.log('Signup successful!')
+  } catch (error) {
+    console.error('Signup failed:', error.message)
+  }
+}
+```
+
+## React Quick Start
+
+If you're using React, here's a complete component:
+
+```jsx
+import React from 'react'
+import { useGately } from '@gately/sdk'
+
+function App() {
+  const { user, login, logout, signup, loading, error } = useGately('your-project-id')
+  const [email, setEmail] = React.useState('')
+  const [password, setPassword] = React.useState('')
+
+  const handleLogin = async (e) => {
+    e.preventDefault()
+    try {
+      await login(email, password)
+    } catch (error) {
+      console.error('Login failed:', error)
+    }
+  }
+
+  if (loading) return <div>Loading...</div>
+
+  if (user) {
+    return (
+      <div>
+        <h1>Welcome, {user.email}!</h1>
+        <button onClick={logout}>Logout</button>
+      </div>
+    )
+  }
+
+  return (
+    <form onSubmit={handleLogin}>
+      <input
+        type="email"
+        placeholder="Email"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        required
+      />
+      <input
+        type="password"
+        placeholder="Password"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+        required
+      />
+      <button type="submit">Login</button>
+      {error && <p style={{color: 'red'}}>{error}</p>}
+    </form>
+  )
+}
+
+export default App
+```
+
+## Testing Your Integration
+
+1. **Sign Up**: Create a test user account
+2. **Sign In**: Log in with your test credentials
+3. **Check State**: Verify the user object is populated
+4. **Sign Out**: Test the logout functionality
+
+```javascript
+// Test authentication state
+console.log('Is authenticated:', gately.isAuthenticated())
+console.log('Current user:', gately.getUser())
+console.log('Current session:', gately.getSession())
+```
+
+## Next Steps
+
+Now that you have basic authentication working, explore these features:
 
 <CardGroup cols={2}>
-  <Card title="Add Content With MDX" icon="file" href="/essentials/markdown">
-    Add content to your docs with MDX syntax.
+  <Card title="SSO Integration" icon="google" href="/sso">
+    Add Google and GitHub OAuth
   </Card>
-  <Card title="Add Code Blocks" icon="square-code" href="/essentials/code">
-    Add code directly to your docs with syntax highlighting.
+  <Card title="User Management" icon="user" href="/user-management">
+    Manage user profiles and data
   </Card>
-  <Card title="Add Images" icon="image" href="/essentials/images">
-    Add images to your docs to make them more engaging.
+  <Card title="UI Components" icon="palette" href="/ui-components">
+    Control UI based on auth state
   </Card>
-  <Card title="Add Custom Components" icon="puzzle-piece" href="/essentials/reusable-snippets">
-    Add templates to your docs to make them more reusable.
+  <Card title="Framework Adapters" icon="react" href="/framework-adapters">
+    React, Vue, Svelte, and Angular
   </Card>
 </CardGroup>
+
+## Common Issues
+
+<AccordionGroup>
+  <Accordion title="Authentication not working">
+    - Check your project ID is correct
+    - Verify your domain is whitelisted in the dashboard
+    - Check browser console for errors
+  </Accordion>
+  <Accordion title="User state not persisting">
+    - Ensure cookies are enabled
+    - Check if you're in incognito/private mode
+    - Verify localStorage is available
+  </Accordion>
+  <Accordion title="CORS errors">
+    - Add your domain to allowed origins in the dashboard
+    - Check if you're using the correct API URL
+    - Ensure HTTPS in production
+  </Accordion>
+</AccordionGroup>
+
+Need help? Check out our [troubleshooting guide](/troubleshooting) or [contact support](mailto:support@gately.com).

@@ -1,0 +1,483 @@
+---
+title: SSO API Reference
+description: 'Complete reference for Single Sign-On integration with OAuth providers'
+---
+
+Complete reference for Single Sign-On integration with OAuth providers.
+
+## OAuth Methods
+
+### loginWithGoogle()
+
+Authenticate users with Google OAuth 2.0.
+
+```typescript
+loginWithGoogle(options?: SSOOptions): Promise<void>
+```
+
+<ParamField path="options" type="SSOOptions">
+  OAuth configuration options
+</ParamField>
+
+**Examples:**
+
+<CodeGroup>
+
+```javascript Popup Mode (Default)
+try {
+  await gately.loginWithGoogle()
+  console.log('Google login successful')
+} catch (error) {
+  console.error('Google login failed:', error.message)
+}
+```
+
+```javascript Redirect Mode
+try {
+  await gately.loginWithGoogle({
+    mode: 'redirect',
+    redirectUrl: 'https://yourapp.com/dashboard'
+  })
+  // User will be redirected to Google
+} catch (error) {
+  console.error('Google login failed:', error.message)
+}
+```
+
+```javascript Custom Popup Options
+try {
+  await gately.loginWithGoogle({
+    mode: 'popup',
+    popupOptions: {
+      width: 600,
+      height: 700,
+      scrollbars: true,
+      resizable: true
+    }
+  })
+} catch (error) {
+  console.error('Google login failed:', error.message)
+}
+```
+
+</CodeGroup>
+
+**Returns:** `Promise<void>`
+
+### loginWithGithubSSO()
+
+Authenticate users with GitHub OAuth.
+
+```typescript
+loginWithGithubSSO(options?: SSOOptions): Promise<void>
+```
+
+<ParamField path="options" type="SSOOptions">
+  OAuth configuration options
+</ParamField>
+
+**Examples:**
+
+<CodeGroup>
+
+```javascript Popup Mode
+try {
+  await gately.loginWithGithubSSO({
+    mode: 'popup',
+    popupOptions: {
+      width: 500,
+      height: 600
+    }
+  })
+  console.log('GitHub login successful')
+} catch (error) {
+  console.error('GitHub login failed:', error.message)
+}
+```
+
+```javascript Redirect Mode
+try {
+  await gately.loginWithGithubSSO({
+    mode: 'redirect',
+    redirectUrl: window.location.href
+  })
+  // User will be redirected to GitHub
+} catch (error) {
+  console.error('GitHub login failed:', error.message)
+}
+```
+
+</CodeGroup>
+
+**Returns:** `Promise<void>`
+
+## SSO Configuration
+
+### SSOOptions
+
+```typescript
+interface SSOOptions {
+  mode?: 'popup' | 'redirect'
+  redirectUrl?: string
+  popupOptions?: PopupOptions
+}
+```
+
+<ResponseField name="mode" type="'popup' | 'redirect'" default="'popup'">
+  Authentication mode - popup opens a new window, redirect navigates the current page
+</ResponseField>
+
+<ResponseField name="redirectUrl" type="string" default="window.location.href">
+  URL to redirect to after successful authentication (redirect mode only)
+</ResponseField>
+
+<ResponseField name="popupOptions" type="PopupOptions">
+  Configuration for popup window (popup mode only)
+</ResponseField>
+
+### PopupOptions
+
+```typescript
+interface PopupOptions {
+  width?: number
+  height?: number
+  scrollbars?: boolean
+  resizable?: boolean
+  left?: number
+  top?: number
+}
+```
+
+<ResponseField name="width" type="number" default="500">
+  Popup window width in pixels
+</ResponseField>
+
+<ResponseField name="height" type="number" default="600">
+  Popup window height in pixels
+</ResponseField>
+
+<ResponseField name="scrollbars" type="boolean" default="true">
+  Show scrollbars in popup window
+</ResponseField>
+
+<ResponseField name="resizable" type="boolean" default="true">
+  Allow popup window resizing
+</ResponseField>
+
+<ResponseField name="left" type="number">
+  Popup window left position (auto-centered if not specified)
+</ResponseField>
+
+<ResponseField name="top" type="number">
+  Popup window top position (auto-centered if not specified)
+</ResponseField>
+
+## OAuth Redirect Handling
+
+When using redirect mode, handle the OAuth callback on page load:
+
+```javascript
+function handleOAuthRedirect() {
+  const url = new URL(window.location.href)
+  const authSuccess = url.searchParams.get('gately_auth_success')
+  const sessionParam = url.searchParams.get('gately_session')
+  const userParam = url.searchParams.get('gately_user')
+
+  if (authSuccess === 'true' && sessionParam && userParam) {
+    try {
+      // The SDK automatically handles session restoration
+      console.log('OAuth authentication successful')
+      
+      // Clean up URL parameters
+      url.searchParams.delete('gately_auth_success')
+      url.searchParams.delete('gately_session')
+      url.searchParams.delete('gately_user')
+      
+      // Update URL without parameters
+      window.history.replaceState({}, '', url.toString())
+      
+      // Show success message or redirect
+      showSuccessMessage('Successfully logged in!')
+    } catch (error) {
+      console.error('Failed to handle OAuth redirect:', error)
+      showErrorMessage('Authentication failed. Please try again.')
+    }
+  }
+}
+
+// Call on page load
+document.addEventListener('DOMContentLoaded', handleOAuthRedirect)
+
+// Or in React
+useEffect(() => {
+  handleOAuthRedirect()
+}, [])
+```
+
+## React SSO Integration
+
+Complete React component with SSO support:
+
+```jsx
+import React, { useState, useEffect } from 'react'
+import { useGately } from '@gately/sdk'
+
+function SSOLogin() {
+  const { 
+    loginWithGoogle, 
+    loginWithGithubSSO, 
+    user, 
+    logout, 
+    loading, 
+    error 
+  } = useGately('your-project-id')
+  
+  const [ssoLoading, setSsoLoading] = useState(false)
+
+  // Handle OAuth redirect on component mount
+  useEffect(() => {
+    const handleOAuthRedirect = () => {
+      const url = new URL(window.location.href)
+      const authSuccess = url.searchParams.get('gately_auth_success')
+      
+      if (authSuccess === 'true') {
+        // Clean up URL
+        url.searchParams.delete('gately_auth_success')
+        url.searchParams.delete('gately_session')
+        url.searchParams.delete('gately_user')
+        window.history.replaceState({}, '', url.toString())
+      }
+    }
+    
+    handleOAuthRedirect()
+  }, [])
+
+  const handleGoogleLogin = async () => {
+    setSsoLoading(true)
+    try {
+      await loginWithGoogle({
+        mode: 'popup',
+        popupOptions: { width: 500, height: 600 }
+      })
+    } catch (error) {
+      console.error('Google login failed:', error)
+    } finally {
+      setSsoLoading(false)
+    }
+  }
+
+  const handleGithubLogin = async () => {
+    setSsoLoading(true)
+    try {
+      await loginWithGithubSSO({
+        mode: 'redirect',
+        redirectUrl: window.location.href
+      })
+    } catch (error) {
+      console.error('GitHub login failed:', error)
+      setSsoLoading(false)
+    }
+  }
+
+  if (user) {
+    return (
+      <div className="user-info">
+        <h3>Welcome, {user.email}!</h3>
+        <p>You are logged in via SSO</p>
+        <button onClick={logout}>Logout</button>
+      </div>
+    )
+  }
+
+  return (
+    <div className="sso-login">
+      <h2>Sign in with SSO</h2>
+      
+      <button 
+        onClick={handleGoogleLogin}
+        disabled={ssoLoading || loading}
+        className="google-btn"
+      >
+        {ssoLoading ? 'Signing in...' : 'Sign in with Google'}
+      </button>
+
+      <button 
+        onClick={handleGithubLogin}
+        disabled={ssoLoading || loading}
+        className="github-btn"
+      >
+        {ssoLoading ? 'Signing in...' : 'Sign in with GitHub'}
+      </button>
+
+      {error && <p className="error">{error}</p>}
+    </div>
+  )
+}
+
+export default SSOLogin
+```
+
+## Provider Configuration
+
+### Google OAuth Setup
+
+To use Google OAuth, configure your OAuth application:
+
+1. Go to the [Google Cloud Console](https://console.cloud.google.com/)
+2. Create a new project or select an existing one
+3. Enable the Google+ API
+4. Create OAuth 2.0 credentials
+5. Add authorized redirect URIs: `https://sdk.usegately.com/api/sdk/auth/google`
+6. Copy the Client ID and Client Secret to your Gately dashboard
+
+### GitHub OAuth Setup
+
+To use GitHub OAuth, configure your OAuth application:
+
+1. Go to GitHub Settings → Developer settings → OAuth Apps
+2. Create a new OAuth App
+3. Set the Authorization callback URL to: `https://sdk.usegately.com/api/sdk/auth/github`
+4. Copy the Client ID and Client Secret to your Gately dashboard
+
+## SSO Modes Comparison
+
+### Popup Mode
+
+<CardGroup cols={2}>
+  <Card title="Advantages" icon="thumbs-up">
+    - User stays on your page
+    - No page reload required
+    - Better user experience
+    - Can handle authentication errors gracefully
+  </Card>
+  <Card title="Disadvantages" icon="thumbs-down">
+    - May be blocked by popup blockers
+    - Limited screen space on mobile devices
+    - Requires JavaScript enabled
+  </Card>
+</CardGroup>
+
+### Redirect Mode
+
+<CardGroup cols={2}>
+  <Card title="Advantages" icon="thumbs-up">
+    - Works on all devices and browsers
+    - Not blocked by popup blockers
+    - Better for mobile applications
+    - Works without JavaScript
+  </Card>
+  <Card title="Disadvantages" icon="thumbs-down">
+    - Page reload required
+    - User leaves your application temporarily
+    - Need to handle redirect parameters
+    - Loses application state
+  </Card>
+</CardGroup>
+
+## Error Handling
+
+SSO methods can throw specific errors:
+
+### OAuth Errors
+
+<ResponseField name="OAUTH_CANCELLED" type="string">
+  User cancelled the OAuth flow
+</ResponseField>
+
+<ResponseField name="OAUTH_ERROR" type="string">
+  OAuth provider returned an error
+</ResponseField>
+
+<ResponseField name="POPUP_BLOCKED" type="string">
+  Popup was blocked by browser
+</ResponseField>
+
+<ResponseField name="PROVIDER_NOT_CONFIGURED" type="string">
+  OAuth provider not configured in dashboard
+</ResponseField>
+
+<ResponseField name="INVALID_REDIRECT_URL" type="string">
+  Redirect URL not whitelisted
+</ResponseField>
+
+**Example Error Handling:**
+
+```javascript
+try {
+  await gately.loginWithGoogle()
+} catch (error) {
+  switch (error.code) {
+    case 'OAUTH_CANCELLED':
+      console.log('User cancelled Google login')
+      break
+    case 'POPUP_BLOCKED':
+      console.log('Popup was blocked. Please allow popups and try again.')
+      // Fallback to redirect mode
+      await gately.loginWithGoogle({ mode: 'redirect' })
+      break
+    case 'PROVIDER_NOT_CONFIGURED':
+      console.error('Google OAuth not configured. Please contact support.')
+      break
+    default:
+      console.error('Google login failed:', error.message)
+  }
+}
+```
+
+## Best Practices
+
+<AccordionGroup>
+  <Accordion title="Mode Selection">
+    - Use popup mode for desktop applications
+    - Use redirect mode for mobile applications
+    - Provide fallback from popup to redirect if blocked
+    - Consider user experience and device capabilities
+  </Accordion>
+  
+  <Accordion title="Error Handling">
+    - Always handle authentication errors gracefully
+    - Provide fallback authentication methods
+    - Show appropriate error messages to users
+    - Log errors for debugging and monitoring
+  </Accordion>
+  
+  <Accordion title="Security">
+    - Validate redirect URLs to prevent open redirects
+    - Use HTTPS in production environments
+    - Implement proper session management
+    - Keep OAuth credentials secure
+  </Accordion>
+  
+  <Accordion title="User Experience">
+    - Show loading states during authentication
+    - Provide clear instructions for users
+    - Handle edge cases like popup blockers
+    - Test on multiple browsers and devices
+  </Accordion>
+</AccordionGroup>
+
+## Next Steps
+
+<CardGroup cols={3}>
+  <Card
+    title="Authentication API"
+    icon="key"
+    href="/api-reference/authentication"
+  >
+    Core authentication methods
+  </Card>
+  <Card
+    title="User Management API"
+    icon="user"
+    href="/api-reference/user-management"
+  >
+    Profile and account management
+  </Card>
+  <Card
+    title="Type Definitions"
+    icon="code"
+    href="/api-reference/types"
+  >
+    Complete TypeScript interfaces
+  </Card>
+</CardGroup>

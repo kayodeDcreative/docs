@@ -1,0 +1,481 @@
+---
+title: Framer Integration
+description: 'Build beautiful authentication flows and user management directly in Framer'
+---
+
+<img
+  className="block dark:hidden"
+  src="/images/framer-hero-light.png"
+  alt="Framer Integration"
+/>
+<img
+  className="hidden dark:block"
+  src="/images/framer-hero-dark.png"
+  alt="Framer Integration"
+/>
+
+Build beautiful authentication flows and user management directly in Framer with Gately's powerful components and APIs.
+
+<CardGroup cols={3}>
+  <Card title="No-code authentication" icon="zap">
+    Visual authentication flows without coding
+  </Card>
+  <Card title="Customizable components" icon="palette">
+    Match your brand with flexible styling
+  </Card>
+  <Card title="User management" icon="users">
+    Complete user profiles and plans
+  </Card>
+</CardGroup>
+
+## Quick Start
+
+Get started with Gately in Framer in just a few steps:
+
+<Steps>
+  <Step title="Add Gately Components">
+    Import Gately components from our Framer library or use our pre-built components.
+  </Step>
+  <Step title="Configure Your Project">
+    Set up your Gately project ID and configure authentication settings.
+  </Step>
+  <Step title="Connect Components">
+    Wire up authentication flows and user management features.
+  </Step>
+</Steps>
+
+## Available Components
+
+<CardGroup cols={2}>
+  <Card title="Auth Forms" icon="shield">
+    Pre-built sign up, sign in, and password reset forms with validation and error handling.
+    
+    - Sign Up Form
+    - Sign In Form  
+    - Password Reset
+    - Email Verification
+  </Card>
+  
+  <Card title="User Management" icon="users">
+    User profile components, account settings, and membership management.
+    
+    - User Profile
+    - Account Settings
+    - Membership Cards
+    - Plan Selection
+  </Card>
+  
+  <Card title="UI Elements" icon="palette">
+    Reusable UI components for authentication and user management.
+    
+    - Auth Buttons
+    - User Avatars
+    - Status Indicators
+    - Loading States
+  </Card>
+  
+  <Card title="Custom Components" icon="code">
+    Build custom authentication flows with our flexible component system.
+    
+    - Custom Forms
+    - Auth Modals
+    - Protected Routes
+    - SSO Integration
+  </Card>
+</CardGroup>
+
+## Setup Instructions
+
+### 1. Install Gately Library
+
+Add the Gately component library to your Framer project:
+
+```javascript
+// In your Framer project
+// Add Gately components from our library
+// or import from: https://framer.com/gately
+```
+
+### 2. Configure Project Settings
+
+Set up your Gately project configuration:
+
+```javascript
+// Project Configuration
+const gatelyConfig = {
+  projectId: "your-project-id",
+  apiUrl: "https://api.gately.com",
+  redirectUrl: "https://your-domain.com",
+  // Optional: Custom styling
+  theme: {
+    primaryColor: "#6b7280",
+    borderRadius: "8px",
+    fontFamily: "Onest, sans-serif"
+  }
+}
+```
+
+### 3. Add Authentication Flow
+
+Create a complete authentication flow:
+
+<CodeGroup>
+
+```javascript Sign Up Form
+<GatelySignUpForm 
+  projectId="your-project-id"
+  onSuccess={(user) => {
+    // Handle successful signup
+    console.log("User signed up:", user)
+  }}
+/>
+```
+
+```javascript Sign In Form
+<GatelySignInForm
+  projectId="your-project-id"
+  onSuccess={(user) => {
+    // Handle successful signin
+    console.log("User signed in:", user)
+  }}
+/>
+```
+
+```javascript User Profile
+<GatelyUserProfile
+  projectId="your-project-id"
+  onUpdate={(user) => {
+    // Handle profile updates
+    console.log("Profile updated:", user)
+  }}
+/>
+```
+
+</CodeGroup>
+
+## Component Examples
+
+### Simple Sign Up Form
+
+A clean, minimal sign up form with email and password fields:
+
+```javascript
+<GatelySignUpForm
+  projectId="your-project-id"
+  fields={["email", "password", "name"]}
+  theme={{
+    primaryColor: "#6b7280",
+    borderRadius: "12px",
+    fontFamily: "Onest, sans-serif"
+  }}
+  onSuccess={(user) => {
+    // Redirect to dashboard
+    window.location.href = "/dashboard"
+  }}
+  onError={(error) => {
+    // Show error message
+    console.error("Sign up error:", error)
+  }}
+/>
+```
+
+### User Profile with Plans
+
+A comprehensive user profile with plan management:
+
+```javascript
+<GatelyUserProfile
+  projectId="your-project-id"
+  showPlans={true}
+  showBilling={true}
+  theme={{
+    primaryColor: "#6b7280",
+    cardStyle: "elevated",
+    spacing: "comfortable"
+  }}
+  onPlanChange={(plan) => {
+    // Handle plan changes
+    console.log("Plan changed to:", plan)
+  }}
+  onBillingUpdate={(billing) => {
+    // Handle billing updates
+    console.log("Billing updated:", billing)
+  }}
+/>
+```
+
+## Component Props
+
+### GatelySignUpForm
+
+<ResponseField name="projectId" type="string" required>
+  Your Gately project ID
+</ResponseField>
+
+<ResponseField name="fields" type="array" default="['email', 'password']">
+  Form fields to display
+</ResponseField>
+
+<ResponseField name="theme" type="object">
+  Custom styling options
+</ResponseField>
+
+<ResponseField name="onSuccess" type="function">
+  Callback when signup succeeds
+</ResponseField>
+
+<ResponseField name="onError" type="function">
+  Callback when signup fails
+</ResponseField>
+
+### GatelyUserProfile
+
+<ResponseField name="projectId" type="string" required>
+  Your Gately project ID
+</ResponseField>
+
+<ResponseField name="showPlans" type="boolean" default="false">
+  Show plan management section
+</ResponseField>
+
+<ResponseField name="showBilling" type="boolean" default="false">
+  Show billing information
+</ResponseField>
+
+<ResponseField name="theme" type="object">
+  Custom styling options
+</ResponseField>
+
+<ResponseField name="onUpdate" type="function">
+  Callback when profile updates
+</ResponseField>
+
+## Styling Options
+
+Customize the appearance of Gately components to match your brand:
+
+```javascript
+const theme = {
+  // Colors
+  primaryColor: "#6b7280",
+  secondaryColor: "#f3f4f6",
+  textColor: "#111827",
+  backgroundColor: "#ffffff",
+  
+  // Typography
+  fontFamily: "Onest, sans-serif",
+  fontSize: "16px",
+  fontWeight: "400",
+  
+  // Layout
+  borderRadius: "8px",
+  spacing: "16px",
+  cardStyle: "elevated", // "flat", "elevated", "outlined"
+  
+  // Form elements
+  inputStyle: "outlined", // "filled", "outlined"
+  buttonStyle: "solid", // "solid", "outlined", "ghost"
+  
+  // Responsive
+  breakpoints: {
+    mobile: "768px",
+    tablet: "1024px"
+  }
+}
+```
+
+## Advanced Configuration
+
+### Custom Authentication Flow
+
+Create a multi-step authentication process:
+
+```javascript
+<GatelyAuthFlow
+  projectId="your-project-id"
+  steps={[
+    {
+      type: "signup",
+      fields: ["email", "password", "name"],
+      validation: {
+        email: "required|email",
+        password: "required|min:8",
+        name: "required|min:2"
+      }
+    },
+    {
+      type: "verification",
+      method: "email"
+    },
+    {
+      type: "profile",
+      fields: ["company", "role", "phone"],
+      optional: true
+    }
+  ]}
+  onComplete={(user) => {
+    console.log("Authentication flow completed:", user)
+  }}
+/>
+```
+
+### SSO Integration
+
+Add social login options:
+
+```javascript
+<GatelySSOButtons
+  projectId="your-project-id"
+  providers={["google", "github", "microsoft"]}
+  theme={{
+    layout: "horizontal", // "vertical", "horizontal", "grid"
+    buttonStyle: "outlined",
+    showLabels: true
+  }}
+  onSuccess={(user, provider) => {
+    console.log(`Logged in with ${provider}:`, user)
+  }}
+/>
+```
+
+## Best Practices
+
+<CardGroup cols={2}>
+  <Card title="Design Guidelines" icon="palette">
+    - Use consistent spacing and typography
+    - Implement proper error states
+    - Add loading indicators for async actions
+    - Ensure accessibility compliance
+    - Test on multiple screen sizes
+  </Card>
+  
+  <Card title="Development Tips" icon="code">
+    - Use environment variables for config
+    - Implement proper error handling
+    - Add analytics tracking
+    - Test authentication flows thoroughly
+    - Monitor user experience metrics
+  </Card>
+</CardGroup>
+
+## Responsive Design
+
+Gately components are fully responsive and work across all device sizes:
+
+```javascript
+const responsiveTheme = {
+  breakpoints: {
+    mobile: "768px",
+    tablet: "1024px",
+    desktop: "1200px"
+  },
+  responsive: {
+    mobile: {
+      fontSize: "14px",
+      spacing: "12px",
+      buttonHeight: "44px"
+    },
+    tablet: {
+      fontSize: "16px",
+      spacing: "16px",
+      buttonHeight: "48px"
+    },
+    desktop: {
+      fontSize: "16px",
+      spacing: "20px",
+      buttonHeight: "52px"
+    }
+  }
+}
+```
+
+## Analytics & Tracking
+
+Track user interactions and conversion rates:
+
+```javascript
+<GatelyAnalytics
+  projectId="your-project-id"
+  events={[
+    "form_view",
+    "form_interaction", 
+    "form_submission",
+    "auth_success",
+    "auth_failure"
+  ]}
+  onEvent={(event, data) => {
+    // Send to your analytics platform
+    analytics.track(event, data)
+  }}
+/>
+```
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Components not loading">
+    - Check your project ID is correct
+    - Verify internet connection
+    - Ensure Framer has access to external resources
+  </Accordion>
+  
+  <Accordion title="Styling not applying">
+    - Check theme object syntax
+    - Verify CSS property names
+    - Test with default theme first
+  </Accordion>
+  
+  <Accordion title="Authentication not working">
+    - Verify domain is whitelisted in dashboard
+    - Check browser console for errors
+    - Test with different browsers
+  </Accordion>
+  
+  <Accordion title="Mobile responsiveness issues">
+    - Test on actual devices
+    - Check responsive breakpoints
+    - Verify touch interactions work
+  </Accordion>
+</AccordionGroup>
+
+## Resources
+
+<CardGroup cols={2}>
+  <Card title="Documentation" icon="book">
+    - [Authentication Guide](/authentication)
+    - [UI Components](/ui-components)  
+    - [API Reference](/api-reference)
+  </Card>
+  
+  <Card title="External Links" icon="external-link">
+    - [Framer Documentation](https://framer.com)
+    - [GitHub Repository](https://github.com/your-org/gately-sdk)
+    - [Component Library](https://framer.com/gately)
+  </Card>
+</CardGroup>
+
+## Next Steps
+
+<CardGroup cols={3}>
+  <Card
+    title="Authentication"
+    icon="key"
+    href="/authentication"
+  >
+    Learn about authentication methods
+  </Card>
+  <Card
+    title="User Management"
+    icon="user"
+    href="/user-management"
+  >
+    Manage user profiles and data
+  </Card>
+  <Card
+    title="Examples"
+    icon="code"
+    href="/examples"
+  >
+    View Framer integration examples
+  </Card>
+</CardGroup>

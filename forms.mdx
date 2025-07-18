@@ -1,0 +1,526 @@
+---
+title: Forms
+description: 'Submit forms with user authentication and metadata tracking'
+---
+
+Submit forms with user authentication and metadata tracking using the Gately SDK.
+
+## Form Submission
+
+Submit forms with automatic user tracking and metadata collection.
+
+```javascript
+import { GatelyBrowserClient } from '@gately/sdk'
+
+const gately = new GatelyBrowserClient('your-project-id')
+
+// Submit a form
+async function submitForm(formId, formData) {
+  try {
+    const response = await gately.submitForm({
+      formId,
+      data: formData,
+      metadata: {
+        ip_address: await getClientIP(),
+        user_agent: navigator.userAgent,
+        referrer: document.referrer,
+        page_url: window.location.href
+      }
+    })
+
+    if (response.success) {
+      console.log('Form submitted successfully:', response.submission_id)
+      
+      if (response.redirect_url) {
+        window.location.href = response.redirect_url
+      }
+      
+      return response
+    }
+  } catch (error) {
+    console.error('Form submission failed:', error.message)
+    throw error
+  }
+}
+
+// Get client IP address
+async function getClientIP() {
+  try {
+    const response = await fetch('https://api.ipify.org?format=json')
+    const data = await response.json()
+    return data.ip
+  } catch (error) {
+    console.warn('Could not get client IP:', error)
+    return null
+  }
+}
+```
+
+## Contact Form Example
+
+Complete contact form with authentication and submission tracking.
+
+```html
+<form id="contact-form">
+  <div class="form-group">
+    <label for="name">Name</label>
+    <input type="text" id="name" name="name" required>
+  </div>
+  
+  <div class="form-group">
+    <label for="email">Email</label>
+    <input type="email" id="email" name="email" required>
+  </div>
+  
+  <div class="form-group">
+    <label for="subject">Subject</label>
+    <input type="text" id="subject" name="subject" required>
+  </div>
+  
+  <div class="form-group">
+    <label for="message">Message</label>
+    <textarea id="message" name="message" rows="5" required></textarea>
+  </div>
+  
+  <button type="submit">Send Message</button>
+</form>
+```
+
+```javascript
+// Handle contact form submission
+document.getElementById('contact-form').addEventListener('submit', async (e) => {
+  e.preventDefault()
+  const formData = new FormData(e.target)
+  
+  try {
+    const response = await gately.submitForm({
+      formId: 'contact-form',
+      data: {
+        name: formData.get('name'),
+        email: formData.get('email'),
+        subject: formData.get('subject'),
+        message: formData.get('message')
+      },
+      metadata: {
+        timestamp: new Date().toISOString(),
+        user_agent: navigator.userAgent,
+        page_url: window.location.href,
+        referrer: document.referrer
+      }
+    })
+    
+    if (response.success) {
+      alert('Message sent successfully!')
+      e.target.reset()
+    }
+  } catch (error) {
+    alert('Failed to send message. Please try again.')
+    console.error('Form submission error:', error)
+  }
+})
+```
+
+## Newsletter Signup
+
+Newsletter subscription form with user preferences.
+
+```html
+<form id="newsletter-form">
+  <div class="form-group">
+    <label for="newsletter-email">Email Address</label>
+    <input type="email" id="newsletter-email" name="email" required>
+  </div>
+  
+  <div class="form-group">
+    <label>Preferences</label>
+    <div class="checkbox-group">
+      <label>
+        <input type="checkbox" name="preferences" value="weekly-digest">
+        Weekly Digest
+      </label>
+      <label>
+        <input type="checkbox" name="preferences" value="product-updates">
+        Product Updates
+      </label>
+      <label>
+        <input type="checkbox" name="preferences" value="marketing">
+        Marketing & Promotions
+      </label>
+    </div>
+  </div>
+  
+  <button type="submit">Subscribe</button>
+</form>
+```
+
+```javascript
+// Handle newsletter signup
+document.getElementById('newsletter-form').addEventListener('submit', async (e) => {
+  e.preventDefault()
+  const formData = new FormData(e.target)
+  
+  try {
+    const response = await gately.submitForm({
+      formId: 'newsletter-signup',
+      data: {
+        email: formData.get('email'),
+        preferences: formData.getAll('preferences'),
+        source: 'website'
+      },
+      metadata: {
+        signup_date: new Date().toISOString(),
+        user_id: gately.getUser()?.id || null,
+        page_url: window.location.href
+      }
+    })
+    
+    if (response.success) {
+      alert('Successfully subscribed to newsletter!')
+      e.target.reset()
+    }
+  } catch (error) {
+    alert('Failed to subscribe. Please try again.')
+    console.error('Newsletter signup error:', error)
+  }
+})
+```
+
+## React Form Component
+
+Complete React form component with validation and submission.
+
+```jsx
+import React, { useState } from 'react'
+import { useGately } from '@gately/sdk'
+
+function ContactForm() {
+  const { submitForm, user } = useGately('your-project-id')
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    subject: '',
+    message: ''
+  })
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [submitStatus, setSubmitStatus] = useState(null)
+
+  const handleInputChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    })
+  }
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    setIsSubmitting(true)
+    setSubmitStatus(null)
+
+    try {
+      const response = await submitForm({
+        formId: 'contact-form',
+        data: {
+          ...formData,
+          user_id: user?.id || null
+        },
+        metadata: {
+          timestamp: new Date().toISOString(),
+          user_agent: navigator.userAgent,
+          page_url: window.location.href,
+          authenticated: !!user
+        }
+      })
+
+      if (response.success) {
+        setSubmitStatus({ type: 'success', message: 'Message sent successfully!' })
+        setFormData({ name: '', email: '', subject: '', message: '' })
+      }
+    } catch (error) {
+      setSubmitStatus({ 
+        type: 'error', 
+        message: 'Failed to send message. Please try again.' 
+      })
+      console.error('Form submission error:', error)
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
+
+  return (
+    <form onSubmit={handleSubmit} className="contact-form">
+      <div className="form-group">
+        <label htmlFor="name">Name</label>
+        <input
+          type="text"
+          id="name"
+          name="name"
+          value={formData.name}
+          onChange={handleInputChange}
+          required
+        />
+      </div>
+
+      <div className="form-group">
+        <label htmlFor="email">Email</label>
+        <input
+          type="email"
+          id="email"
+          name="email"
+          value={formData.email}
+          onChange={handleInputChange}
+          required
+        />
+      </div>
+
+      <div className="form-group">
+        <label htmlFor="subject">Subject</label>
+        <input
+          type="text"
+          id="subject"
+          name="subject"
+          value={formData.subject}
+          onChange={handleInputChange}
+          required
+        />
+      </div>
+
+      <div className="form-group">
+        <label htmlFor="message">Message</label>
+        <textarea
+          id="message"
+          name="message"
+          rows="5"
+          value={formData.message}
+          onChange={handleInputChange}
+          required
+        />
+      </div>
+
+      <button type="submit" disabled={isSubmitting}>
+        {isSubmitting ? 'Sending...' : 'Send Message'}
+      </button>
+
+      {submitStatus && (
+        <div className={`status-message ${submitStatus.type}`}>
+          {submitStatus.message}
+        </div>
+      )}
+    </form>
+  )
+}
+
+export default ContactForm
+```
+
+## Form Validation
+
+Client-side validation with custom error handling.
+
+```javascript
+class FormValidator {
+  constructor() {
+    this.rules = {}
+  }
+
+  addRule(fieldName, validator, errorMessage) {
+    if (!this.rules[fieldName]) {
+      this.rules[fieldName] = []
+    }
+    this.rules[fieldName].push({ validator, errorMessage })
+  }
+
+  validate(formData) {
+    const errors = {}
+
+    for (const [fieldName, value] of Object.entries(formData)) {
+      if (this.rules[fieldName]) {
+        for (const rule of this.rules[fieldName]) {
+          if (!rule.validator(value)) {
+            if (!errors[fieldName]) {
+              errors[fieldName] = []
+            }
+            errors[fieldName].push(rule.errorMessage)
+          }
+        }
+      }
+    }
+
+    return {
+      isValid: Object.keys(errors).length === 0,
+      errors
+    }
+  }
+}
+
+// Usage example
+const validator = new FormValidator()
+
+// Add validation rules
+validator.addRule('email', (value) => /\S+@\S+\.\S+/.test(value), 'Invalid email format')
+validator.addRule('name', (value) => value.length >= 2, 'Name must be at least 2 characters')
+validator.addRule('message', (value) => value.length >= 10, 'Message must be at least 10 characters')
+
+// Validate form before submission
+const formData = {
+  name: 'John Doe',
+  email: 'john@example.com',
+  message: 'Hello world!'
+}
+
+const validation = validator.validate(formData)
+if (validation.isValid) {
+  // Submit form
+  await submitForm('contact-form', formData)
+} else {
+  // Show validation errors
+  console.log('Validation errors:', validation.errors)
+}
+```
+
+## Form Analytics
+
+Track form interactions and conversion rates.
+
+```javascript
+class FormAnalytics {
+  constructor(gately) {
+    this.gately = gately
+    this.interactions = {}
+  }
+
+  trackFormView(formId) {
+    this.gately.submitForm({
+      formId: 'form-analytics',
+      data: {
+        event: 'form_view',
+        form_id: formId,
+        user_id: this.gately.getUser()?.id || null
+      },
+      metadata: {
+        timestamp: new Date().toISOString(),
+        page_url: window.location.href
+      }
+    })
+  }
+
+  trackFieldInteraction(formId, fieldName) {
+    const key = `${formId}-${fieldName}`
+    if (!this.interactions[key]) {
+      this.interactions[key] = true
+      
+      this.gately.submitForm({
+        formId: 'form-analytics',
+        data: {
+          event: 'field_interaction',
+          form_id: formId,
+          field_name: fieldName,
+          user_id: this.gately.getUser()?.id || null
+        },
+        metadata: {
+          timestamp: new Date().toISOString(),
+          page_url: window.location.href
+        }
+      })
+    }
+  }
+
+  trackFormSubmission(formId, success) {
+    this.gately.submitForm({
+      formId: 'form-analytics',
+      data: {
+        event: 'form_submission',
+        form_id: formId,
+        success: success,
+        user_id: this.gately.getUser()?.id || null
+      },
+      metadata: {
+        timestamp: new Date().toISOString(),
+        page_url: window.location.href
+      }
+    })
+  }
+}
+
+// Usage
+const analytics = new FormAnalytics(gately)
+
+// Track form view
+analytics.trackFormView('contact-form')
+
+// Track field interactions
+document.querySelectorAll('input, textarea, select').forEach(field => {
+  field.addEventListener('focus', () => {
+    analytics.trackFieldInteraction('contact-form', field.name)
+  })
+})
+
+// Track form submission
+document.getElementById('contact-form').addEventListener('submit', async (e) => {
+  e.preventDefault()
+  
+  try {
+    await submitForm('contact-form', formData)
+    analytics.trackFormSubmission('contact-form', true)
+  } catch (error) {
+    analytics.trackFormSubmission('contact-form', false)
+  }
+})
+```
+
+## Best Practices
+
+<AccordionGroup>
+  <Accordion title="Form Design">
+    - Keep forms simple and focused
+    - Use clear labels and placeholders
+    - Provide real-time validation feedback
+    - Make required fields obvious
+  </Accordion>
+  
+  <Accordion title="Data Collection">
+    - Only collect necessary information
+    - Be transparent about data usage
+    - Provide privacy policy links
+    - Allow users to opt-out of tracking
+  </Accordion>
+  
+  <Accordion title="Error Handling">
+    - Provide clear error messages
+    - Highlight problematic fields
+    - Allow users to retry submissions
+    - Log errors for debugging
+  </Accordion>
+  
+  <Accordion title="Performance">
+    - Validate on client-side first
+    - Use debounced validation
+    - Show loading states during submission
+    - Cache form data locally
+  </Accordion>
+</AccordionGroup>
+
+## Next Steps
+
+<CardGroup cols={3}>
+  <Card
+    title="User Management"
+    icon="user"
+    href="/user-management"
+  >
+    Manage user profiles and data
+  </Card>
+  <Card
+    title="Authentication"
+    icon="key"
+    href="/authentication"
+  >
+    Learn about authentication methods
+  </Card>
+  <Card
+    title="Examples"
+    icon="code"
+    href="/examples"
+  >
+    View form submission examples
+  </Card>
+</CardGroup>

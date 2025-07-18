@@ -1,0 +1,188 @@
+---
+title: "Installation"
+description: "Install and configure the Gately SDK across multiple environments and frameworks"
+---
+
+The Gately SDK is designed to work across multiple environments and frameworks. Choose the installation method that best fits your project.
+
+## NPM Installation
+
+Install the SDK using npm or yarn:
+
+<CodeGroup>
+
+```bash npm
+npm install @gately/sdk
+```
+
+
+```bash yarn
+yarn add @gately/sdk
+```
+
+
+```bash pnpm
+pnpm add @gately/sdk
+```
+
+</CodeGroup>
+
+## CDN Installation
+
+For simple HTML pages or when you can't use a package manager:
+
+<CodeGroup>
+
+```html ESM Module
+<script type="module">
+  import { GatelyBrowserClient } from 'https://cdn.usegately.com/sdk/latest/gately-sdk.esm.min.js'
+  
+  const gately = new GatelyBrowserClient('your-project-id')
+</script>
+```
+
+
+```html UMD Bundle
+<script src="https://cdn.usegately.com/sdk/latest/gately.min.js"></script>
+<script>
+  const gately = new Gately.GatelyBrowserClient('your-project-id')
+</script>
+```
+
+</CodeGroup>
+
+## Basic Setup
+
+Initialize the SDK with your project ID:
+
+```javascript
+import { GatelyBrowserClient } from '@gately/sdk'
+
+// Initialize the client
+const gately = new GatelyBrowserClient('your-project-id')
+
+// Optional: Configure additional options
+const gately = new GatelyBrowserClient('your-project-id', {
+  apiUrl: 'https://sdk.usegately.com', // Custom API URL
+  autoRefresh: true // Auto-refresh tokens (default: true)
+})
+```
+
+## Framework-Specific Setup
+
+### React
+
+```jsx
+import { useGately } from '@gately/sdk'
+
+function App() {
+  const { user, login, logout, loading } = useGately('your-project-id')
+  
+  if (loading) return <div>Loading...</div>
+  
+  return (
+    <div>
+      {user ? (
+        <button onClick={logout}>Logout</button>
+      ) : (
+        <button onClick={() => login('email', 'password')}>Login</button>
+      )}
+    </div>
+  )
+}
+```
+
+### Vue 3
+
+```javascript
+import { useGately } from '@gately/sdk/adapters/vue'
+
+export default {
+  setup() {
+    const { user, login, logout, loading } = useGately('your-project-id')
+    
+    return {
+      user,
+      login,
+      logout,
+      loading
+    }
+  }
+}
+```
+
+### Svelte
+
+```javascript
+import { createGatelyStore } from '@gately/sdk/adapters/svelte'
+
+const gately = createGatelyStore('your-project-id')
+
+// In your Svelte component
+<script>
+  import { gately } from './stores/gately.js'
+  
+  $: user = $gately.user
+  $: loading = $gately.loading
+  
+  function handleLogin() {
+    gately.login('email', 'password')
+  }
+</script>
+```
+
+## Environment Variables
+
+For production applications, use environment variables to store your project ID:
+
+<CodeGroup>
+
+```bash .env.local
+VITE_GATELY_PROJECT_ID=your-project-id
+GATELY_API_URL=https://sdk.usegately.com
+```
+
+
+```javascript Usage
+const gately = new GatelyBrowserClient(
+  import.meta.env.VITE_GATELY_PROJECT_ID,
+  {
+    apiUrl: import.meta.env.VITE_GATELY_API_URL
+  }
+)
+```
+
+</CodeGroup>
+
+## TypeScript Support
+
+The SDK includes full TypeScript support out of the box:
+
+```typescript
+import { GatelyBrowserClient, User, Session } from '@gately/sdk'
+
+const gately = new GatelyBrowserClient('your-project-id')
+
+// Type-safe user data
+const user: User | null = gately.getUser()
+const session: Session | null = gately.getSession()
+
+// Type-safe authentication
+if (gately.isAuthenticated()) {
+  console.log('User is authenticated:', user?.email)
+}
+```
+
+## Next Steps
+
+<CardGroup cols={3}>
+  <Card title="Authentication" icon="key" href="/authentication">
+    Learn about authentication methods
+  </Card>
+  <Card title="Examples" icon="code" href="/examples">
+    View code examples
+  </Card>
+  <Card title="API Reference" icon="book" href="/api-reference">
+    Explore the API reference
+  </Card>
+</CardGroup>

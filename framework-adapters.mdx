@@ -1,0 +1,599 @@
+---
+title: "Framework Adapters"
+description: "Native adapters for React, Vue, Svelte, and Angular with reactive state management"
+---
+
+The Gately SDK provides native adapters for popular JavaScript frameworks, making it easy to integrate authentication into your existing applications.
+
+## React Adapter
+
+Use the React hook for reactive authentication state management.
+
+```jsx
+import React from 'react'
+import { useGately } from '@gately/sdk'
+
+function App() {
+  const { 
+    user, 
+    session, 
+    profile,
+    loading, 
+    error,
+    login, 
+    logout, 
+    signup,
+    loginWithGoogle,
+    sendMagicLink,
+    resetPassword,
+    getUserProfile,
+    updateUserProfile,
+    changePassword,
+    deleteAccount,
+    client
+  } = useGately('your-project-id')
+
+  const handleLogin = async (e) => {
+    e.preventDefault()
+    const formData = new FormData(e.target)
+    
+    try {
+      await login(
+        formData.get('email'),
+        formData.get('password')
+      )
+    } catch (error) {
+      console.error('Login failed:', error)
+    }
+  }
+
+  if (loading) return <div>Loading...</div>
+
+  return (
+    <div>
+      {user ? (
+        <div>
+          <h1>Welcome, {user.email}!</h1>
+          <button onClick={logout}>Logout</button>
+        </div>
+      ) : (
+        <form onSubmit={handleLogin}>
+          <input name="email" type="email" placeholder="Email" required />
+          <input name="password" type="password" placeholder="Password" required />
+          <button type="submit">Login</button>
+        </form>
+      )}
+      
+      {error && <p className="error">{error}</p>}
+    </div>
+  )
+}
+
+export default App
+```
+
+### React Hook API
+
+The `useGately` hook returns an object with the following properties:
+
+<ResponseField name="user" type="User | null">
+  Current authenticated user
+</ResponseField>
+
+<ResponseField name="session" type="Session | null">
+  Current user session
+</ResponseField>
+
+<ResponseField name="profile" type="UserProfile | null">
+  Current user profile
+</ResponseField>
+
+<ResponseField name="loading" type="boolean">
+  Loading state for authentication operations
+</ResponseField>
+
+<ResponseField name="error" type="string | null">
+  Error message from last operation
+</ResponseField>
+
+<ResponseField name="login" type="function">
+  Login with email and password
+</ResponseField>
+
+<ResponseField name="logout" type="function">
+  Logout current user
+</ResponseField>
+
+<ResponseField name="signup" type="function">
+  Create new user account
+</ResponseField>
+
+<ResponseField name="client" type="GatelyBrowserClient">
+  Direct access to the SDK client
+</ResponseField>
+
+## Vue 3 Adapter
+
+Use the Vue 3 composition API for reactive authentication.
+
+```vue
+<template>
+  <div>
+    <div v-if="loading">Loading...</div>
+    
+    <div v-else-if="user">
+      <h1>Welcome, {{ user.email }}!</h1>
+      <button @click="logout">Logout</button>
+    </div>
+    
+    <form v-else @submit.prevent="handleLogin">
+      <input v-model="form.email" type="email" placeholder="Email" required />
+      <input v-model="form.password" type="password" placeholder="Password" required />
+      <button type="submit">Login</button>
+    </form>
+    
+    <p v-if="error" class="error">{{ error }}</p>
+  </div>
+</template>
+
+<script setup>
+import { ref, reactive } from 'vue'
+import { useGately } from '@gately/sdk/adapters/vue'
+
+const { 
+  user, 
+  session, 
+  profile,
+  loading, 
+  error,
+  login, 
+  logout, 
+  signup,
+  loginWithGoogle,
+  sendMagicLink,
+  resetPassword,
+  getUserProfile,
+  updateUserProfile,
+  changePassword,
+  deleteAccount,
+  client
+} = useGately('your-project-id')
+
+const form = reactive({
+  email: '',
+  password: ''
+})
+
+const handleLogin = async () => {
+  try {
+    await login(form.email, form.password)
+    form.email = ''
+    form.password = ''
+  } catch (error) {
+    console.error('Login failed:', error)
+  }
+}
+</script>
+```
+
+### Vue 3 Installation
+
+```bash
+npm install @gately/sdk
+```
+
+```javascript
+import { useGately } from '@gately/sdk/adapters/vue'
+```
+
+## Svelte Adapter
+
+Use the Svelte store for reactive authentication state.
+
+```javascript
+// stores/gately.js
+import { createGatelyStore } from '@gately/sdk/adapters/svelte'
+
+export const gately = createGatelyStore('your-project-id')
+```
+
+```svelte
+<!-- App.svelte -->
+<script>
+  import { gately } from './stores/gately.js'
+  
+  let form = {
+    email: '',
+    password: ''
+  }
+  
+  async function handleLogin() {
+    try {
+      await gately.login(form.email, form.password)
+      form.email = ''
+      form.password = ''
+    } catch (error) {
+      console.error('Login failed:', error)
+    }
+  }
+  
+  async function handleLogout() {
+    await gately.logout()
+  }
+</script>
+
+{#if $gately.loading}
+  <div>Loading...</div>
+{:else if $gately.user}
+  <div>
+    <h1>Welcome, {$gately.user.email}!</h1>
+    <button on:click={handleLogout}>Logout</button>
+  </div>
+{:else}
+  <form on:submit|preventDefault={handleLogin}>
+    <input 
+      bind:value={form.email} 
+      type="email" 
+      placeholder="Email" 
+      required 
+    />
+    <input 
+      bind:value={form.password} 
+      type="password" 
+      placeholder="Password" 
+      required 
+    />
+    <button type="submit">Login</button>
+  </form>
+{/if}
+
+{#if $gately.error}
+  <p class="error">{$gately.error}</p>
+{/if}
+```
+
+### Svelte Store API
+
+The Svelte store provides reactive access to:
+
+- `$gately.user` - Current user
+- `$gately.session` - Current session
+- `$gately.loading` - Loading state
+- `$gately.error` - Error messages
+- `gately.login()` - Login method
+- `gately.logout()` - Logout method
+- `gately.signup()` - Signup method
+
+## Angular Adapter
+
+Use the Angular service for authentication in Angular applications.
+
+```typescript
+// auth.service.ts
+import { Injectable } from '@angular/core'
+import { GatelyService } from '@gately/sdk/adapters/angular'
+import { BehaviorSubject, Observable } from 'rxjs'
+
+@Injectable({
+  providedIn: 'root'
+})
+export class AuthService {
+  private gately: GatelyService
+  private userSubject = new BehaviorSubject<any>(null)
+  private loadingSubject = new BehaviorSubject<boolean>(true)
+  private errorSubject = new BehaviorSubject<string | null>(null)
+
+  constructor() {
+    this.gately = new GatelyService('your-project-id')
+    this.setupAuthListener()
+  }
+
+  private setupAuthListener() {
+    this.gately.onAuthStateChange((user, session) => {
+      this.userSubject.next(user)
+      this.loadingSubject.next(false)
+    })
+  }
+
+  get user$(): Observable<any> {
+    return this.userSubject.asObservable()
+  }
+
+  get loading$(): Observable<boolean> {
+    return this.loadingSubject.asObservable()
+  }
+
+  get error$(): Observable<string | null> {
+    return this.errorSubject.asObservable()
+  }
+
+  async login(email: string, password: string) {
+    try {
+      this.loadingSubject.next(true)
+      this.errorSubject.next(null)
+      await this.gately.login(email, password)
+    } catch (error: any) {
+      this.errorSubject.next(error.message)
+      throw error
+    } finally {
+      this.loadingSubject.next(false)
+    }
+  }
+
+  async logout() {
+    try {
+      await this.gately.logout()
+    } catch (error: any) {
+      this.errorSubject.next(error.message)
+    }
+  }
+
+  async signup(email: string, password: string, metadata?: any) {
+    try {
+      this.loadingSubject.next(true)
+      this.errorSubject.next(null)
+      await this.gately.signup(email, password, metadata)
+    } catch (error: any) {
+      this.errorSubject.next(error.message)
+      throw error
+    } finally {
+      this.loadingSubject.next(false)
+    }
+  }
+}
+```
+
+```typescript
+// app.component.ts
+import { Component } from '@angular/core'
+import { AuthService } from './auth.service'
+
+@Component({
+  selector: 'app-root',
+  template: `
+    <div *ngIf="auth.loading$ | async">Loading...</div>
+    
+    <div *ngIf="auth.user$ | async as user">
+      <h1>Welcome, {{ user.email }}!</h1>
+      <button (click)="logout()">Logout</button>
+    </div>
+    
+    <form *ngIf="!(auth.user$ | async)" (ngSubmit)="login()">
+      <input [(ngModel)]="form.email" name="email" type="email" placeholder="Email" required />
+      <input [(ngModel)]="form.password" name="password" type="password" placeholder="Password" required />
+      <button type="submit">Login</button>
+    </form>
+    
+    <p *ngIf="auth.error$ | async as error" class="error">{{ error }}</p>
+  `
+})
+export class AppComponent {
+  form = {
+    email: '',
+    password: ''
+  }
+
+  constructor(public auth: AuthService) {}
+
+  async login() {
+    try {
+      await this.auth.login(this.form.email, this.form.password)
+      this.form.email = ''
+      this.form.password = ''
+    } catch (error) {
+      console.error('Login failed:', error)
+    }
+  }
+
+  async logout() {
+    await this.auth.logout()
+  }
+}
+```
+
+## Installation Instructions
+
+<Tabs>
+  <Tab title="React">
+    ```bash
+    npm install @gately/sdk
+    ```
+
+    ```javascript
+    import { useGately } from '@gately/sdk'
+    ```
+  </Tab>
+  <Tab title="Vue 3">
+    ```bash
+    npm install @gately/sdk
+    ```
+
+    ```javascript
+    import { useGately } from '@gately/sdk/adapters/vue'
+    ```
+  </Tab>
+  <Tab title="Svelte">
+    ```bash
+    npm install @gately/sdk
+    ```
+
+    ```javascript
+    import { createGatelyStore } from '@gately/sdk/adapters/svelte'
+    ```
+  </Tab>
+  <Tab title="Angular">
+    ```bash
+    npm install @gately/sdk
+    ```
+
+    ```typescript
+    import { GatelyService } from '@gately/sdk/adapters/angular'
+    ```
+  </Tab>
+</Tabs>
+
+## Framework-Specific Features
+
+<CardGroup cols={2}>
+  <Card title="React Features" icon="react">
+    - Reactive state management with hooks
+    - Automatic re-rendering on auth state changes
+    - TypeScript support with full type definitions
+    - Integration with React Router for protected routes
+  </Card>
+  <Card title="Vue 3 Features" icon="vue">
+    - Composition API integration
+    - Reactive refs and computed properties
+    - Vue DevTools support
+    - Template syntax integration
+  </Card>
+  <Card title="Svelte Features" icon="svelte">
+    - Reactive store with automatic subscriptions
+    - Minimal bundle size impact
+    - SvelteKit integration
+    - Built-in reactivity system
+  </Card>
+  <Card title="Angular Features" icon="angular">
+    - Injectable service pattern
+    - RxJS observables for reactive programming
+    - Dependency injection integration
+    - Angular CLI and build system support
+  </Card>
+</CardGroup>
+
+## Protected Routes
+
+### React Router Example
+
+```jsx
+import { Navigate } from 'react-router-dom'
+import { useGately } from '@gately/sdk'
+
+function ProtectedRoute({ children }) {
+  const { user, loading } = useGately('your-project-id')
+  
+  if (loading) return <div>Loading...</div>
+  
+  return user ? children : <Navigate to="/login" />
+}
+
+// Usage
+<Route path="/dashboard" element={
+  <ProtectedRoute>
+    <Dashboard />
+  </ProtectedRoute>
+} />
+```
+
+### Vue Router Example
+
+```javascript
+// router/index.js
+import { createRouter, createWebHistory } from 'vue-router'
+import { useGately } from '@gately/sdk/adapters/vue'
+
+const router = createRouter({
+  history: createWebHistory(),
+  routes: [
+    {
+      path: '/dashboard',
+      component: Dashboard,
+      meta: { requiresAuth: true }
+    }
+  ]
+})
+
+router.beforeEach((to, from, next) => {
+  const { user } = useGately('your-project-id')
+  
+  if (to.meta.requiresAuth && !user.value) {
+    next('/login')
+  } else {
+    next()
+  }
+})
+```
+
+## Best Practices
+
+<AccordionGroup>
+  <Accordion title="State Management">
+    - Use framework-specific adapters for better integration
+    - Avoid mixing different state management approaches
+    - Handle loading and error states consistently
+    - Use TypeScript for better type safety
+  </Accordion>
+  <Accordion title="Performance">
+    - Initialize the SDK once at the app level
+    - Use memoization for expensive operations
+    - Implement proper cleanup in component unmount
+    - Avoid unnecessary re-renders
+  </Accordion>
+  <Accordion title="Error Handling">
+    - Implement consistent error handling across components
+    - Show user-friendly error messages
+    - Log errors for debugging purposes
+    - Provide fallback UI for error states
+  </Accordion>
+  <Accordion title="Security">
+    - Store project ID in environment variables
+    - Validate user input before authentication
+    - Implement proper session management
+    - Use HTTPS in production
+  </Accordion>
+</AccordionGroup>
+
+## Migration Guide
+
+Migrate from the core SDK to framework-specific adapters.
+
+<CodeGroup>
+
+```javascript Before: Using core SDK in React
+import { GatelyBrowserClient } from '@gately/sdk'
+import { useState, useEffect } from 'react'
+
+function App() {
+  const [user, setUser] = useState(null)
+  const [loading, setLoading] = useState(true)
+  
+  useEffect(() => {
+    const gately = new GatelyBrowserClient('your-project-id')
+    
+    gately.onAuthStateChange((user) => {
+      setUser(user)
+      setLoading(false)
+    })
+  }, [])
+  
+  // ... rest of component
+}
+```
+
+
+```javascript After: Using React adapter
+import { useGately } from '@gately/sdk'
+
+function App() {
+  const { user, loading, login, logout } = useGately('your-project-id')
+  
+  // Much simpler and more reactive!
+  // ... rest of component
+}
+```
+
+</CodeGroup>
+
+## Next Steps
+
+<CardGroup cols={3}>
+  <Card title="Authentication" icon="key" href="/authentication">
+    Learn about authentication methods
+  </Card>
+  <Card title="Examples" icon="code" href="/examples">
+    View framework-specific examples
+  </Card>
+  <Card title="API Reference" icon="book" href="/api-reference">
+    Explore the complete API
+  </Card>
+</CardGroup>
