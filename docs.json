@@ -3,8 +3,8 @@
   "theme": "maple",
   "name": "Gately SDK",
   "logo": {
-    "dark": "/logo/dark.svg",
-    "light": "/logo/light.svg"
+    "dark": "/logo/icon.png",
+    "light": "/logo/icon.png"
   },
   "favicon": "/favicon.svg",
   "colors": {
