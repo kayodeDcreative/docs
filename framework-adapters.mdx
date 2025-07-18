@@ -1,6 +1,6 @@
 ---
-title: "Framework Adapters"
-description: "Native adapters for React, Vue, Svelte, and Angular with reactive state management"
+title: Framework Adapters
+description: 'Native adapters for React, Vue, Svelte, and Angular with reactive state management'
 ---
 
 The Gately SDK provides native adapters for popular JavaScript frameworks, making it easy to integrate authentication into your existing applications.
@@ -11,7 +11,7 @@ Use the React hook for reactive authentication state management.
 
 ```jsx
 import React from 'react'
-import { useGately } from '@gately/sdk'
+import { useGately } from 'https://cdn.usegately.com/gately-sdk.esm.min.js'
 
 function App() {
   const { 
@@ -138,7 +138,7 @@ Use the Vue 3 composition API for reactive authentication.
 
 <script setup>
 import { ref, reactive } from 'vue'
-import { useGately } from '@gately/sdk/adapters/vue'
+import { useGately } from 'https://cdn.usegately.com/gately-sdk.esm.min.js'
 
 const { 
   user, 
@@ -178,12 +178,8 @@ const handleLogin = async () => {
 
 ### Vue 3 Installation
 
-```bash
-npm install @gately/sdk
-```
-
 ```javascript
-import { useGately } from '@gately/sdk/adapters/vue'
+import { useGately } from 'https://cdn.usegately.com/gately-sdk.esm.min.js'
 ```
 
 ## Svelte Adapter
@@ -192,7 +188,7 @@ Use the Svelte store for reactive authentication state.
 
 ```javascript
 // stores/gately.js
-import { createGatelyStore } from '@gately/sdk/adapters/svelte'
+import { createGatelyStore } from 'https://cdn.usegately.com/gately-sdk.esm.min.js'
 
 export const gately = createGatelyStore('your-project-id')
 ```
@@ -271,7 +267,7 @@ Use the Angular service for authentication in Angular applications.
 ```typescript
 // auth.service.ts
 import { Injectable } from '@angular/core'
-import { GatelyService } from '@gately/sdk/adapters/angular'
+import { GatelyService } from 'https://cdn.usegately.com/gately-sdk.esm.min.js'
 import { BehaviorSubject, Observable } from 'rxjs'
 
 @Injectable({
@@ -395,39 +391,26 @@ export class AppComponent {
 
 <Tabs>
   <Tab title="React">
-    ```bash
-    npm install @gately/sdk
-    ```
-
     ```javascript
-    import { useGately } from '@gately/sdk'
+    import { useGately } from 'https://cdn.usegately.com/gately-sdk.esm.min.js'
     ```
   </Tab>
+  
   <Tab title="Vue 3">
-    ```bash
-    npm install @gately/sdk
-    ```
-
     ```javascript
-    import { useGately } from '@gately/sdk/adapters/vue'
+    import { useGately } from 'https://cdn.usegately.com/gately-sdk.esm.min.js'
     ```
   </Tab>
+  
   <Tab title="Svelte">
-    ```bash
-    npm install @gately/sdk
-    ```
-
     ```javascript
-    import { createGatelyStore } from '@gately/sdk/adapters/svelte'
+    import { createGatelyStore } from 'https://cdn.usegately.com/gately-sdk.esm.min.js'
     ```
   </Tab>
+  
   <Tab title="Angular">
-    ```bash
-    npm install @gately/sdk
-    ```
-
     ```typescript
-    import { GatelyService } from '@gately/sdk/adapters/angular'
+    import { GatelyService } from 'https://cdn.usegately.com/gately-sdk.esm.min.js'
     ```
   </Tab>
 </Tabs>
@@ -441,18 +424,21 @@ export class AppComponent {
     - TypeScript support with full type definitions
     - Integration with React Router for protected routes
   </Card>
+  
   <Card title="Vue 3 Features" icon="vue">
     - Composition API integration
     - Reactive refs and computed properties
     - Vue DevTools support
     - Template syntax integration
   </Card>
+  
   <Card title="Svelte Features" icon="svelte">
     - Reactive store with automatic subscriptions
     - Minimal bundle size impact
     - SvelteKit integration
     - Built-in reactivity system
   </Card>
+  
   <Card title="Angular Features" icon="angular">
     - Injectable service pattern
     - RxJS observables for reactive programming
@@ -467,7 +453,7 @@ export class AppComponent {
 
 ```jsx
 import { Navigate } from 'react-router-dom'
-import { useGately } from '@gately/sdk'
+import { useGately } from 'https://cdn.usegately.com/gately-sdk.esm.min.js'
 
 function ProtectedRoute({ children }) {
   const { user, loading } = useGately('your-project-id')
@@ -490,7 +476,7 @@ function ProtectedRoute({ children }) {
 ```javascript
 // router/index.js
 import { createRouter, createWebHistory } from 'vue-router'
-import { useGately } from '@gately/sdk/adapters/vue'
+import { useGately } from 'https://cdn.usegately.com/gately-sdk.esm.min.js'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -523,18 +509,21 @@ router.beforeEach((to, from, next) => {
     - Handle loading and error states consistently
     - Use TypeScript for better type safety
   </Accordion>
+  
   <Accordion title="Performance">
     - Initialize the SDK once at the app level
     - Use memoization for expensive operations
     - Implement proper cleanup in component unmount
     - Avoid unnecessary re-renders
   </Accordion>
+  
   <Accordion title="Error Handling">
     - Implement consistent error handling across components
     - Show user-friendly error messages
     - Log errors for debugging purposes
     - Provide fallback UI for error states
   </Accordion>
+  
   <Accordion title="Security">
     - Store project ID in environment variables
     - Validate user input before authentication
@@ -550,7 +539,7 @@ Migrate from the core SDK to framework-specific adapters.
 <CodeGroup>
 
 ```javascript Before: Using core SDK in React
-import { GatelyBrowserClient } from '@gately/sdk'
+import { GatelyBrowserClient } from 'https://cdn.usegately.com/gately-sdk.esm.min.js'
 import { useState, useEffect } from 'react'
 
 function App() {
@@ -570,9 +559,8 @@ function App() {
 }
 ```
 
-
 ```javascript After: Using React adapter
-import { useGately } from '@gately/sdk'
+import { useGately } from 'https://cdn.usegately.com/gately-sdk.esm.min.js'
 
 function App() {
   const { user, loading, login, logout } = useGately('your-project-id')
@@ -587,13 +575,25 @@ function App() {
 ## Next Steps
 
 <CardGroup cols={3}>
-  <Card title="Authentication" icon="key" href="/authentication">
+  <Card
+    title="Authentication"
+    icon="key"
+    href="/authentication"
+  >
     Learn about authentication methods
   </Card>
-  <Card title="Examples" icon="code" href="/examples">
+  <Card
+    title="Examples"
+    icon="code"
+    href="/examples"
+  >
     View framework-specific examples
   </Card>
-  <Card title="API Reference" icon="book" href="/api-reference">
+  <Card
+    title="API Reference"
+    icon="book"
+    href="/api-reference"
+  >
     Explore the complete API
   </Card>
 </CardGroup>

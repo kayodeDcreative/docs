@@ -382,7 +382,7 @@ Tips, recommendations, and best practices for using the Gately SDK effectively a
     Mock the SDK for unit tests to avoid external dependencies.
     
     ```javascript
-    // __mocks__/@gately/sdk.js
+    // __mocks__/gately-sdk.js
     export const GatelyBrowserClient = jest.fn(() => ({
       login: jest.fn(),
       logout: jest.fn(),
