@@ -1,0 +1,820 @@
+---
+title: Examples
+description: 'Practical examples showing how to use the Gately SDK in real-world scenarios'
+---
+
+Practical examples showing how to use the Gately SDK in real-world scenarios.
+
+## Basic Authentication Flow
+
+Complete authentication flow with signup, login, and logout.
+
+```javascript
+import { GatelyBrowserClient } from 'https://cdn.usegately.com/gately-sdk.esm.min.js'
+
+class AuthManager {
+  constructor() {
+    this.gately = new GatelyBrowserClient('your-project-id')
+    this.setupAuthListener()
+  }
+
+  setupAuthListener() {
+    this.gately.onAuthStateChange((user, session) => {
+      if (user) {
+        this.showAuthenticatedUI(user)
+      } else {
+        this.showUnauthenticatedUI()
+      }
+    })
+  }
+
+  async signup(email, password) {
+    try {
+      const response = await this.gately.signup(email, password, {
+        tier: 'basic',
+        role: 'user'
+      })
+      console.log('Signup successful:', response.user.email)
+      return response
+    } catch (error) {
+      console.error('Signup failed:', error.message)
+      throw error
+    }
+  }
+
+  async login(email, password) {
+    try {
+      const response = await this.gately.login(email, password)
+      console.log('Login successful:', response.user.email)
+      return response
+    } catch (error) {
+      console.error('Login failed:', error.message)
+      throw error
+    }
+  }
+
+  async logout() {
+    try {
+      await this.gately.logout()
+      console.log('Logout successful')
+    } catch (error) {
+      console.error('Logout failed:', error.message)
+    }
+  }
+
+  showAuthenticatedUI(user) {
+    document.getElementById('auth-status').textContent = `Welcome, ${user.email}!`
+    document.getElementById('login-form').style.display = 'none'
+    document.getElementById('dashboard').style.display = 'block'
+  }
+
+  showUnauthenticatedUI() {
+    document.getElementById('auth-status').textContent = 'Please log in'
+    document.getElementById('login-form').style.display = 'block'
+    document.getElementById('dashboard').style.display = 'none'
+  }
+}
+
+// Usage
+const auth = new AuthManager()
+```
+
+## React Component Example
+
+A complete React component with authentication and user management.
+
+```jsx
+import React, { useState } from 'react'
+import { useGately } from 'https://cdn.usegately.com/gately-sdk.esm.min.js'
+
+function AuthApp() {
+  const { user, login, logout, signup, loading, error } = useGately('your-project-id')
+  const [isSignup, setIsSignup] = useState(false)
+  const [formData, setFormData] = useState({ email: '', password: '' })
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    
+    try {
+      if (isSignup) {
+        await signup(formData.email, formData.password, {
+          tier: 'basic',
+          role: 'user'
+        })
+      } else {
+        await login(formData.email, formData.password)
+      }
+    } catch (error) {
+      console.error('Auth failed:', error)
+    }
+  }
+
+  const handleInputChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    })
+  }
+
+  if (loading) {
+    return <div className="loading">Loading...</div>
+  }
+
+  if (user) {
+    return (
+      <div className="dashboard">
+        <h1>Welcome, {user.email}!</h1>
+        <p>You are successfully authenticated.</p>
+        <button onClick={logout}>Logout</button>
+      </div>
+    )
+  }
+
+  return (
+    <div className="auth-form">
+      <h2>{isSignup ? 'Sign Up' : 'Login'}</h2>
+      
+      <form onSubmit={handleSubmit}>
+        <input
+          type="email"
+          name="email"
+          placeholder="Email"
+          value={formData.email}
+          onChange={handleInputChange}
+          required
+        />
+        <input
+          type="password"
+          name="password"
+          placeholder="Password"
+          value={formData.password}
+          onChange={handleInputChange}
+          required
+        />
+        <button type="submit">
+          {isSignup ? 'Sign Up' : 'Login'}
+        </button>
+      </form>
+
+      {error && <p className="error">{error}</p>}
+
+      <button onClick={() => setIsSignup(!isSignup)}>
+        {isSignup ? 'Already have an account? Login' : 'Need an account? Sign up'}
+      </button>
+    </div>
+  )
+}
+
+export default AuthApp
+```
+
+## SSO Integration
+
+Integrate Google and GitHub OAuth authentication.
+
+```javascript
+import { GatelyBrowserClient } from 'https://cdn.usegately.com/gately-sdk.esm.min.js'
+
+class SSOManager {
+  constructor() {
+    this.gately = new GatelyBrowserClient('your-project-id')
+  }
+
+  async loginWithGoogle() {
+    try {
+      await this.gately.loginWithGoogle({
+        mode: 'popup',
+        popupOptions: {
+          width: 500,
+          height: 600
+        }
+      })
+      console.log('Google login successful')
+    } catch (error) {
+      console.error('Google login failed:', error.message)
+    }
+  }
+
+  async loginWithGithub() {
+    try {
+      await this.gately.loginWithGithubSSO({
+        mode: 'redirect',
+        redirectUrl: window.location.href
+      })
+      // User will be redirected to GitHub
+    } catch (error) {
+      console.error('GitHub login failed:', error.message)
+    }
+  }
+
+  // Handle OAuth redirect (call this on page load)
+  handleOAuthRedirect() {
+    const url = new URL(window.location.href)
+    const authSuccess = url.searchParams.get('gately_auth_success')
+    
+    if (authSuccess === 'true') {
+      console.log('OAuth authentication successful')
+      // Clean up URL
+      url.searchParams.delete('gately_auth_success')
+      window.history.replaceState({}, '', url.toString())
+    }
+  }
+}
+
+// Usage
+const sso = new SSOManager()
+
+// Handle redirect on page load
+sso.handleOAuthRedirect()
+
+// Add SSO buttons to your UI
+document.getElementById('google-login').onclick = () => sso.loginWithGoogle()
+document.getElementById('github-login').onclick = () => sso.loginWithGithub()
+```
+
+## User Profile Management
+
+Complete user profile management with CRUD operations.
+
+```javascript
+import { GatelyBrowserClient } from 'https://cdn.usegately.com/gately-sdk.esm.min.js'
+
+class ProfileManager {
+  constructor() {
+    this.gately = new GatelyBrowserClient('your-project-id')
+  }
+
+  async getProfile() {
+    try {
+      const profile = await this.gately.getUserProfile()
+      if (profile) {
+        this.displayProfile(profile)
+      }
+      return profile
+    } catch (error) {
+      console.error('Failed to get profile:', error.message)
+    }
+  }
+
+  async updateProfile(updates) {
+    try {
+      const updatedProfile = await this.gately.updateUserProfile(updates)
+      this.displayProfile(updatedProfile)
+      console.log('Profile updated successfully')
+      return updatedProfile
+    } catch (error) {
+      console.error('Failed to update profile:', error.message)
+    }
+  }
+
+  async changePassword(currentPassword, newPassword) {
+    try {
+      await this.gately.changePassword(currentPassword, newPassword)
+      console.log('Password changed successfully')
+      return true
+    } catch (error) {
+      console.error('Failed to change password:', error.message)
+      return false
+    }
+  }
+
+  async deleteAccount() {
+    if (confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
+      try {
+        await this.gately.deleteUserAccount()
+        console.log('Account deleted successfully')
+        return true
+      } catch (error) {
+        console.error('Failed to delete account:', error.message)
+        return false
+      }
+    }
+  }
+
+  displayProfile(profile) {
+    document.getElementById('profile-name').textContent = profile.display_name || profile.email
+    document.getElementById('profile-email').textContent = profile.email
+    document.getElementById('profile-bio').textContent = profile.bio || 'No bio set'
+    document.getElementById('profile-company').textContent = profile.company || 'No company set'
+  }
+}
+
+// Usage
+const profileManager = new ProfileManager()
+
+// Load profile on page load
+if (gately.isAuthenticated()) {
+  profileManager.getProfile()
+}
+
+// Update profile form handler
+document.getElementById('profile-form').onsubmit = async (e) => {
+  e.preventDefault()
+  const formData = new FormData(e.target)
+  
+  await profileManager.updateProfile({
+    first_name: formData.get('firstName'),
+    last_name: formData.get('lastName'),
+    display_name: formData.get('displayName'),
+    bio: formData.get('bio'),
+    company: formData.get('company'),
+    website: formData.get('website')
+  })
+}
+```
+
+## UI Control Example
+
+Automatically show/hide UI elements based on authentication state.
+
+```javascript
+import { GatelyBrowserClient } from 'https://cdn.usegately.com/gately-sdk.esm.min.js'
+
+class UIController {
+  constructor() {
+    this.gately = new GatelyBrowserClient('your-project-id')
+    this.setupUIControls()
+  }
+
+  setupUIControls() {
+    // Show dashboard only when authenticated
+    this.gately.showElementOnAuth('dashboard', {
+      hideIfLoggedOut: true,
+      customClass: 'authenticated-only'
+    })
+
+    // Show login form only when not authenticated
+    this.gately.showElementOnAuth('login-form', {
+      hideIfLoggedIn: true,
+      customClass: 'unauthenticated-only'
+    })
+
+    // Show user menu only when authenticated
+    this.gately.showElementOnAuth('user-menu', {
+      hideIfLoggedOut: true
+    })
+
+    // Show signup button only when not authenticated
+    this.gately.showElementOnAuth('signup-button', {
+      hideIfLoggedIn: true
+    })
+
+    // Show premium features only for premium users
+    this.gately.showElementOnAuth('premium-features', {
+      hideIfLoggedOut: true,
+      customStyle: {
+        opacity: '0.8',
+        filter: 'grayscale(50%)'
+      }
+    })
+  }
+
+  // Manual UI control
+  toggleElement(elementId, show) {
+    const element = document.getElementById(elementId)
+    if (element) {
+      element.style.display = show ? 'block' : 'none'
+    }
+  }
+
+  updateUserInfo() {
+    const user = this.gately.getUser()
+    if (user) {
+      document.getElementById('user-name').textContent = user.name || user.email
+      if (user.avatar_url) {
+        document.getElementById('user-avatar').src = user.avatar_url
+      }
+    }
+  }
+}
+
+// Usage
+const uiController = new UIController()
+
+// Update user info when auth state changes
+gately.onAuthStateChange((user) => {
+  if (user) {
+    uiController.updateUserInfo()
+  }
+})
+```
+
+## Form Submission Example
+
+Submit forms with user authentication and metadata.
+
+```javascript
+import { GatelyBrowserClient } from 'https://cdn.usegately.com/gately-sdk.esm.min.js'
+
+class FormManager {
+  constructor() {
+    this.gately = new GatelyBrowserClient('your-project-id')
+  }
+
+  async submitForm(formId, formData) {
+    try {
+      const response = await this.gately.submitForm({
+        formId,
+        data: formData,
+        metadata: {
+          ip_address: await this.getClientIP(),
+          user_agent: navigator.userAgent,
+          referrer: document.referrer,
+          page_url: window.location.href
+        }
+      })
+
+      if (response.success) {
+        console.log('Form submitted successfully:', response.submission_id)
+        
+        if (response.redirect_url) {
+          window.location.href = response.redirect_url
+        }
+        
+        return response
+      }
+    } catch (error) {
+      console.error('Form submission failed:', error.message)
+      throw error
+    }
+  }
+
+  async getClientIP() {
+    try {
+      const response = await fetch('https://api.ipify.org?format=json')
+      const data = await response.json()
+      return data.ip
+    } catch (error) {
+      console.warn('Could not get client IP:', error)
+      return null
+    }
+  }
+
+  setupFormHandlers() {
+    // Contact form
+    document.getElementById('contact-form').onsubmit = async (e) => {
+      e.preventDefault()
+      const formData = new FormData(e.target)
+      
+      try {
+        await this.submitForm('contact-form', {
+          name: formData.get('name'),
+          email: formData.get('email'),
+          message: formData.get('message')
+        })
+        
+        alert('Message sent successfully!')
+        e.target.reset()
+      } catch (error) {
+        alert('Failed to send message. Please try again.')
+      }
+    }
+
+    // Newsletter signup
+    document.getElementById('newsletter-form').onsubmit = async (e) => {
+      e.preventDefault()
+      const formData = new FormData(e.target)
+      
+      try {
+        await this.submitForm('newsletter-signup', {
+          email: formData.get('email'),
+          preferences: formData.getAll('preferences')
+        })
+        
+        alert('Successfully subscribed to newsletter!')
+        e.target.reset()
+      } catch (error) {
+        alert('Failed to subscribe. Please try again.')
+      }
+    }
+  }
+}
+
+// Usage
+const formManager = new FormManager()
+formManager.setupFormHandlers()
+```
+
+## Error Handling Example
+
+Comprehensive error handling for all SDK operations.
+
+```javascript
+import { GatelyBrowserClient } from '@gately/sdk'
+
+class ErrorHandler {
+  constructor() {
+    this.gately = new GatelyBrowserClient('your-project-id')
+  }
+
+  async handleAuthOperation(operation, ...args) {
+    try {
+      const result = await operation.apply(this.gately, args)
+      this.showSuccess('Operation completed successfully')
+      return result
+    } catch (error) {
+      this.handleError(error)
+      throw error
+    }
+  }
+
+  handleError(error) {
+    console.error('Gately Error:', error)
+
+    let message = 'An unexpected error occurred'
+    let type = 'error'
+
+    switch (error.code) {
+      case 'INVALID_CREDENTIALS':
+        message = 'Invalid email or password'
+        type = 'warning'
+        break
+      
+      case 'USER_NOT_FOUND':
+        message = 'No account found with this email'
+        type = 'warning'
+        break
+      
+      case 'EMAIL_NOT_CONFIRMED':
+        message = 'Please check your email and confirm your account'
+        type = 'info'
+        break
+      
+      case 'RATE_LIMITED':
+        message = 'Too many attempts. Please try again later'
+        type = 'warning'
+        break
+      
+      case 'NETWORK_ERROR':
+        message = 'Network error. Please check your connection'
+        type = 'error'
+        break
+      
+      case 'INVALID_PROJECT_ID':
+        message = 'Invalid project configuration'
+        type = 'error'
+        break
+      
+      default:
+        if (error.status >= 500) {
+          message = 'Server error. Please try again later'
+        } else if (error.status >= 400) {
+          message = error.message || 'Request failed'
+        }
+    }
+
+    this.showNotification(message, type)
+  }
+
+  showNotification(message, type = 'info') {
+    const notification = document.createElement('div')
+    notification.className = `notification notification-${type}`
+    notification.textContent = message
+    
+    document.body.appendChild(notification)
+    
+    setTimeout(() => {
+      notification.remove()
+    }, 5000)
+  }
+
+  showSuccess(message) {
+    this.showNotification(message, 'success')
+  }
+
+  // Wrapper methods for common operations
+  async login(email, password) {
+    return this.handleAuthOperation(this.gately.login, email, password)
+  }
+
+  async signup(email, password, metadata) {
+    return this.handleAuthOperation(this.gately.signup, email, password, metadata)
+  }
+
+  async sendMagicLink(email, options) {
+    return this.handleAuthOperation(this.gately.sendMagicLink, email, options)
+  }
+}
+
+// Usage
+const errorHandler = new ErrorHandler()
+
+// Use wrapped methods for automatic error handling
+document.getElementById('login-form').onsubmit = async (e) => {
+  e.preventDefault()
+  const formData = new FormData(e.target)
+  
+  try {
+    await errorHandler.login(
+      formData.get('email'),
+      formData.get('password')
+    )
+  } catch (error) {
+    // Error already handled by ErrorHandler
+  }
+}
+```
+
+## Vue.js Example
+
+Complete Vue.js application with authentication.
+
+```vue
+<template>
+  <div id="app">
+    <div v-if="loading" class="loading">
+      Loading...
+    </div>
+    
+    <div v-else-if="user" class="dashboard">
+      <h1>Welcome, {{ user.email }}!</h1>
+      <button @click="handleLogout">Logout</button>
+    </div>
+    
+    <div v-else class="auth-form">
+      <h2>{{ isSignup ? 'Sign Up' : 'Login' }}</h2>
+      
+      <form @submit.prevent="handleSubmit">
+        <input
+          v-model="form.email"
+          type="email"
+          placeholder="Email"
+          required
+        />
+        <input
+          v-model="form.password"
+          type="password"
+          placeholder="Password"
+          required
+        />
+        <button type="submit">
+          {{ isSignup ? 'Sign Up' : 'Login' }}
+        </button>
+      </form>
+      
+      <p v-if="error" class="error">{{ error }}</p>
+      
+      <button @click="isSignup = !isSignup">
+        {{ isSignup ? 'Already have an account? Login' : 'Need an account? Sign up' }}
+      </button>
+    </div>
+  </div>
+</template>
+
+<script>
+import { useGately } from 'https://cdn.usegately.com/gately-sdk.esm.min.js'
+
+export default {
+  name: 'App',
+  setup() {
+    const { user, login, logout, signup, loading, error } = useGately('your-project-id')
+    
+    return {
+      user,
+      login,
+      logout,
+      signup,
+      loading,
+      error
+    }
+  },
+  data() {
+    return {
+      isSignup: false,
+      form: {
+        email: '',
+        password: ''
+      }
+    }
+  },
+  methods: {
+    async handleSubmit() {
+      try {
+        if (this.isSignup) {
+          await this.signup(this.form.email, this.form.password, {
+            tier: 'basic',
+            role: 'user'
+          })
+        } else {
+          await this.login(this.form.email, this.form.password)
+        }
+        
+        this.form.email = ''
+        this.form.password = ''
+      } catch (error) {
+        console.error('Auth failed:', error)
+      }
+    },
+    
+    async handleLogout() {
+      await this.logout()
+    }
+  }
+}
+</script>
+```
+
+## Next.js Example
+
+Server-side rendering with authentication.
+
+```jsx
+// pages/_app.js
+import { GatelyProvider } from 'https://cdn.usegately.com/gately-sdk.esm.min.js'
+
+function MyApp({ Component, pageProps }) {
+  return (
+    <GatelyProvider projectId="your-project-id">
+      <Component {...pageProps} />
+    </GatelyProvider>
+  )
+}
+
+export default MyApp
+```
+
+```jsx
+// pages/dashboard.js
+import { useGately } from 'https://cdn.usegately.com/gately-sdk.esm.min.js'
+import { useRouter } from 'next/router'
+import { useEffect } from 'react'
+
+export default function Dashboard() {
+  const { user, loading } = useGately()
+  const router = useRouter()
+
+  useEffect(() => {
+    if (!loading && !user) {
+      router.push('/login')
+    }
+  }, [user, loading, router])
+
+  if (loading) return <div>Loading...</div>
+  if (!user) return null
+
+  return (
+    <div>
+      <h1>Dashboard</h1>
+      <p>Welcome, {user.email}!</p>
+    </div>
+  )
+}
+```
+
+## Best Practices
+
+<AccordionGroup>
+  <Accordion title="Authentication Flow">
+    - Always handle loading states
+    - Provide clear error messages
+    - Implement proper session management
+    - Use secure password requirements
+  </Accordion>
+  
+  <Accordion title="User Experience">
+    - Show loading indicators during operations
+    - Provide feedback for successful actions
+    - Handle network errors gracefully
+    - Implement proper form validation
+  </Accordion>
+  
+  <Accordion title="Security">
+    - Store sensitive data securely
+    - Use HTTPS in production
+    - Implement proper CORS settings
+    - Validate user input on both client and server
+  </Accordion>
+  
+  <Accordion title="Performance">
+    - Initialize SDK once per application
+    - Use framework-specific adapters
+    - Implement proper cleanup
+    - Cache user data appropriately
+  </Accordion>
+</AccordionGroup>
+
+## Next Steps
+
+<CardGroup cols={3}>
+  <Card
+    title="API Reference"
+    icon="book"
+    href="/api-reference"
+  >
+    Complete API documentation
+  </Card>
+  <Card
+    title="Framework Adapters"
+    icon="react"
+    href="/framework-adapters"
+  >
+    React, Vue, Svelte, Angular
+  </Card>
+  <Card
+    title="Best Practices"
+    icon="star"
+    href="/best-practices"
+  >
+    Tips and recommendations
+  </Card>
+</CardGroup>

@@ -10,7 +10,7 @@ The Gately SDK provides multiple authentication methods to suit different use ca
 Traditional email and password authentication with secure token management.
 
 ```javascript
-import { GatelyBrowserClient } from '@gately/sdk'
+import { GatelyBrowserClient } from 'https://cdn.usegately.com/gately-sdk.esm.min.js'
 
 const gately = new GatelyBrowserClient('your-project-id')
 
@@ -106,7 +106,7 @@ gately.onAuthStateChange((user, session) => {
 Use the React hook for reactive authentication state.
 
 ```jsx
-import { useGately } from '@gately/sdk'
+import { useGately } from 'https://cdn.usegately.com/gately-sdk.esm.min.js'
 
 function LoginForm() {
   const { user, login, logout, loading, error } = useGately('your-project-id')

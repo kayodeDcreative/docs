@@ -10,7 +10,7 @@ Manage user plans, tiers, and feature access with the Gately SDK.
 Check user plan access and manage tier-based features.
 
 ```javascript
-import { GatelyBrowserClient } from '@gately/sdk'
+import { GatelyBrowserClient } from 'https://cdn.usegately.com/gately-sdk.esm.min.js'
 
 const gately = new GatelyBrowserClient('your-project-id')
 
@@ -278,7 +278,7 @@ React component for plan management and feature access.
 
 ```jsx
 import React, { useState, useEffect } from 'react'
-import { useGately } from '@gately/sdk'
+import { useGately } from 'https://cdn.usegately.com/gately-sdk.esm.min.js'
 
 function PlanManager() {
   const { user, getUserPlan, updateUserPlan } = useGately('your-project-id')
@@ -391,7 +391,7 @@ Implement feature gates based on user plans.
 
 ```jsx
 import React from 'react'
-import { useGately } from '@gately/sdk'
+import { useGately } from 'https://cdn.usegately.com/gately-sdk.esm.min.js'
 
 function FeatureGate({ feature, fallback, children }) {
   const { user } = useGately('your-project-id')

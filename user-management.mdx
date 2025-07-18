@@ -1,477 +1,480 @@
 ---
-title: "User Management"
-description: "Manage user profiles, update account information, and handle user data with the Gately SDK"
+title: UI Components
+description: 'Control UI elements based on authentication state with built-in methods'
 ---
 
-Manage user profiles, update account information, and handle user data with the Gately SDK.
+The Gately SDK provides built-in UI control methods to automatically show, hide, and style elements based on authentication state.
 
-## User Profile Management
+## Basic UI Control
 
-Get and update user profile information, including personal details and metadata.
+Automatically control element visibility based on authentication state.
 
 ```javascript
-import { GatelyBrowserClient } from '@gately/sdk'
+import { GatelyBrowserClient } from 'https://cdn.usegately.com/gately-sdk.esm.min.js'
 
 const gately = new GatelyBrowserClient('your-project-id')
 
-// Get current user's profile
-async function getUserProfile() {
-  try {
-    const profile = await gately.getUserProfile()
-    if (profile) {
-      console.log('User Profile:', {
-        id: profile.id,
-        email: profile.email,
-        firstName: profile.first_name,
-        lastName: profile.last_name,
-        displayName: profile.display_name,
-        bio: profile.bio,
-        company: profile.company,
-        website: profile.website,
-        location: profile.location,
-        phone: profile.phone,
-        jobTitle: profile.job_title,
-        createdAt: profile.created_at,
-        updatedAt: profile.updated_at
-      })
-    }
-    return profile
-  } catch (error) {
-    console.error('Failed to get profile:', error.message)
-    return null
-  }
-}
+// Show element only when user is authenticated
+gately.showElementOnAuth('dashboard', {
+  hideIfLoggedOut: true
+})
 
-// Update user profile
-async function updateProfile(updates) {
-  try {
-    const updatedProfile = await gately.updateUserProfile({
-      first_name: updates.firstName,
-      last_name: updates.lastName,
-      display_name: updates.displayName,
-      bio: updates.bio,
-      company: updates.company,
-      website: updates.website,
-      location: updates.location,
-      phone: updates.phone,
-      job_title: updates.jobTitle,
-      user_metadata: {
-        preferences: updates.preferences,
-        newsletter: updates.newsletter
+// Show element only when user is not authenticated
+gately.showElementOnAuth('login-form', {
+  hideIfLoggedIn: true
+})
+
+// Hide element when user is authenticated
+gately.hideElementOnAuth('signup-button', {
+  hideIfLoggedIn: true
+})
+
+// Show element when user is not authenticated
+gately.showElementOnNoAuth('welcome-message', {
+  hideIfLoggedIn: true
+})
+```
+
+## Advanced UI Control
+
+Use custom classes and styles for more sophisticated UI control.
+
+```javascript
+// Add custom CSS classes based on auth state
+gately.showElementOnAuth('user-menu', {
+  hideIfLoggedOut: true,
+  customClass: 'auth-visible'
+})
+
+// Apply custom styles based on auth state
+gately.showElementOnAuth('premium-features', {
+  hideIfLoggedOut: true,
+  customStyle: {
+    opacity: '0.8',
+    filter: 'grayscale(50%)',
+    pointerEvents: 'none'
+  }
+})
+
+// Combine multiple options
+gately.showElementOnAuth('admin-panel', {
+  hideIfLoggedOut: true,
+  customClass: 'admin-only',
+  customStyle: {
+    border: '2px solid #ff6b6b',
+    backgroundColor: '#fff5f5'
+  }
+})
+
+// Show loader while checking auth state
+gately.showElementOnAuth('content-area', {
+  showLoader: true,
+  customClass: 'content-loaded'
+})
+```
+
+## Complete UI Example
+
+A complete example showing how to control an entire application UI.
+
+```javascript
+class UIController {
+  constructor() {
+    this.gately = new GatelyBrowserClient('your-project-id')
+    this.setupUIControls()
+  }
+
+  setupUIControls() {
+    // Navigation elements
+    this.gately.showElementOnAuth('nav-dashboard', { hideIfLoggedOut: true })
+    this.gately.showElementOnAuth('nav-profile', { hideIfLoggedOut: true })
+    this.gately.showElementOnAuth('nav-logout', { hideIfLoggedOut: true })
+    
+    this.gately.showElementOnAuth('nav-login', { hideIfLoggedIn: true })
+    this.gately.showElementOnAuth('nav-signup', { hideIfLoggedIn: true })
+
+    // Main content areas
+    this.gately.showElementOnAuth('dashboard-content', { 
+      hideIfLoggedOut: true,
+      customClass: 'authenticated-content'
+    })
+    
+    this.gately.showElementOnAuth('welcome-content', { 
+      hideIfLoggedIn: true,
+      customClass: 'unauthenticated-content'
+    })
+
+    // User-specific elements
+    this.gately.showElementOnAuth('user-welcome', { 
+      hideIfLoggedOut: true,
+      customClass: 'user-info'
+    })
+    
+    this.gately.showElementOnAuth('user-avatar', { 
+      hideIfLoggedOut: true,
+      customStyle: { borderRadius: '50%' }
+    })
+
+    // Feature access
+    this.gately.showElementOnAuth('premium-features', { 
+      hideIfLoggedOut: true,
+      customClass: 'feature-section',
+      customStyle: { 
+        opacity: '0.9',
+        borderLeft: '4px solid #6b7280'
       }
     })
+
+    // Forms
+    this.gately.showElementOnAuth('login-form', { 
+      hideIfLoggedIn: true,
+      customClass: 'auth-form'
+    })
     
-    console.log('Profile updated successfully:', updatedProfile)
-    return updatedProfile
-  } catch (error) {
-    console.error('Failed to update profile:', error.message)
-    throw error
-  }
-}
-```
+    this.gately.showElementOnAuth('signup-form', { 
+      hideIfLoggedIn: true,
+      customClass: 'auth-form'
+    })
 
-## Password Management
-
-Allow users to change their passwords securely.
-
-```javascript
-// Change user password
-async function changePassword(currentPassword, newPassword) {
-  try {
-    await gately.changePassword(currentPassword, newPassword)
-    console.log('Password changed successfully')
-    return true
-  } catch (error) {
-    console.error('Failed to change password:', error.message)
-    return false
-  }
-}
-
-// Password change form handler
-document.getElementById('password-form').onsubmit = async (e) => {
-  e.preventDefault()
-  const formData = new FormData(e.target)
-  
-  const currentPassword = formData.get('currentPassword')
-  const newPassword = formData.get('newPassword')
-  const confirmPassword = formData.get('confirmPassword')
-  
-  // Validate passwords match
-  if (newPassword !== confirmPassword) {
-    alert('New passwords do not match')
-    return
-  }
-  
-  // Validate password strength
-  if (newPassword.length < 8) {
-    alert('Password must be at least 8 characters long')
-    return
-  }
-  
-  const success = await changePassword(currentPassword, newPassword)
-  if (success) {
-    alert('Password changed successfully')
-    e.target.reset()
-  } else {
-    alert('Failed to change password. Please check your current password.')
-  }
-}
-```
-
-## Account Deletion
-
-Allow users to delete their accounts permanently.
-
-<Warning>
-  Account deletion is permanent and cannot be undone. All user data will be permanently removed.
-</Warning>
-
-```javascript
-// Delete user account
-async function deleteAccount() {
-  try {
-    await gately.deleteUserAccount()
-    console.log('Account deleted successfully')
-    return true
-  } catch (error) {
-    console.error('Failed to delete account:', error.message)
-    return false
-  }
-}
-
-// Account deletion with confirmation
-document.getElementById('delete-account-btn').onclick = async () => {
-  const confirmed = confirm(
-    'Are you sure you want to delete your account? ' +
-    'This action cannot be undone and all your data will be permanently removed.'
-  )
-  
-  if (confirmed) {
-    const success = await deleteAccount()
-    if (success) {
-      alert('Your account has been deleted successfully')
-      // Redirect to home page or show goodbye message
-      window.location.href = '/'
-    } else {
-      alert('Failed to delete account. Please try again.')
-    }
-  }
-}
-```
-
-## React Hook Usage
-
-Use the React hook for reactive user management.
-
-```jsx
-import React, { useState, useEffect } from 'react'
-import { useGately } from '@gately/sdk'
-
-function UserProfile() {
-  const { 
-    user, 
-    profile, 
-    getUserProfile, 
-    updateUserProfile, 
-    changePassword, 
-    deleteAccount,
-    loading, 
-    error 
-  } = useGately('your-project-id')
-
-  const [isEditing, setIsEditing] = useState(false)
-  const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    displayName: '',
-    bio: '',
-    company: '',
-    website: '',
-    location: '',
-    phone: '',
-    jobTitle: ''
-  })
-
-  // Load profile on component mount
-  useEffect(() => {
-    if (user) {
-      getUserProfile()
-    }
-  }, [user])
-
-  // Update form data when profile loads
-  useEffect(() => {
-    if (profile) {
-      setFormData({
-        firstName: profile.first_name || '',
-        lastName: profile.last_name || '',
-        displayName: profile.display_name || '',
-        bio: profile.bio || '',
-        company: profile.company || '',
-        website: profile.website || '',
-        location: profile.location || '',
-        phone: profile.phone || '',
-        jobTitle: profile.job_title || ''
-      })
-    }
-  }, [profile])
-
-  const handleSubmit = async (e) => {
-    e.preventDefault()
-    
-    try {
-      await updateUserProfile({
-        first_name: formData.firstName,
-        last_name: formData.lastName,
-        display_name: formData.displayName,
-        bio: formData.bio,
-        company: formData.company,
-        website: formData.website,
-        location: formData.location,
-        phone: formData.phone,
-        job_title: formData.jobTitle
-      })
-      
-      setIsEditing(false)
-      alert('Profile updated successfully!')
-    } catch (error) {
-      alert('Failed to update profile: ' + error.message)
-    }
-  }
-
-  const handleInputChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
+    // Loading states
+    this.gately.showElementOnAuth('loading-spinner', { 
+      showLoader: true,
+      customClass: 'loading-indicator'
     })
   }
 
-  if (loading) return <div>Loading profile...</div>
-  if (!user) return <div>Please log in to view your profile</div>
+  updateUserInfo() {
+    const user = this.gately.getUser()
+    if (user) {
+      const welcomeElement = document.getElementById('user-welcome')
+      if (welcomeElement) {
+        welcomeElement.textContent = `Welcome, ${user.name || user.email}!`
+      }
+
+      const avatarElement = document.getElementById('user-avatar')
+      if (avatarElement && user.avatar_url) {
+        avatarElement.src = user.avatar_url
+      }
+    }
+  }
+}
+
+// Usage
+const uiController = new UIController()
+
+// Update UI when auth state changes
+gately.onAuthStateChange((user) => {
+  if (user) {
+    uiController.updateUserInfo()
+  }
+})
+```
+
+## CSS Styling
+
+CSS classes and styles that work with the UI control methods.
+
+```css
+/* Base styles for authenticated/unauthenticated states */
+.authenticated-content {
+  display: block;
+  animation: fadeIn 0.3s ease-in;
+}
+
+.unauthenticated-content {
+  display: block;
+  animation: slideIn 0.3s ease-out;
+}
+
+/* User-specific styling */
+.user-info {
+  background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+  color: white;
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+/* Feature sections */
+.feature-section {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin: 1rem 0;
+}
+
+/* Auth forms */
+.auth-form {
+  max-width: 400px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Loading indicator */
+.loading-indicator {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+}
+
+.loading-indicator::after {
+  content: '';
+  width: 20px;
+  height: 20px;
+  border: 2px solid #e2e8f0;
+  border-top: 2px solid #6b7280;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideIn {
+  from { 
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to { 
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .auth-form {
+    margin: 1rem;
+    padding: 1rem;
+  }
+  
+  .user-info {
+    padding: 0.75rem;
+    margin-bottom: 0.75rem;
+  }
+}
+```
+
+## React Integration
+
+Use UI control methods with React components.
+
+```jsx
+import React, { useEffect, useRef } from 'react'
+import { useGately } from 'https://cdn.usegately.com/gately-sdk.esm.min.js'
+
+function App() {
+  const { user, loading } = useGately('your-project-id')
+  const uiControllerRef = useRef(null)
+
+  useEffect(() => {
+    if (uiControllerRef.current) {
+      // Setup UI controls when component mounts
+      const gately = uiControllerRef.current.gately
+      
+      gately.showElementOnAuth('dashboard', { hideIfLoggedOut: true })
+      gately.showElementOnAuth('login-form', { hideIfLoggedIn: true })
+      gately.showElementOnAuth('user-menu', { 
+        hideIfLoggedOut: true,
+        customClass: 'user-menu-visible'
+      })
+    }
+  }, [])
+
+  if (loading) {
+    return (
+      <div id="loading-spinner" className="loading-indicator">
+        Loading...
+      </div>
+    )
+  }
 
   return (
-    <div className="user-profile">
-      <h2>User Profile</h2>
-      
-      {error && <p className="error">{error}</p>}
-      
-      <form onSubmit={handleSubmit}>
-        <div className="form-group">
-          <label>First Name</label>
-          <input
-            type="text"
-            name="firstName"
-            value={formData.firstName}
-            onChange={handleInputChange}
-            disabled={!isEditing}
-          />
-        </div>
-
-        <div className="form-group">
-          <label>Last Name</label>
-          <input
-            type="text"
-            name="lastName"
-            value={formData.lastName}
-            onChange={handleInputChange}
-            disabled={!isEditing}
-          />
-        </div>
-
-        <div className="form-group">
-          <label>Display Name</label>
-          <input
-            type="text"
-            name="displayName"
-            value={formData.displayName}
-            onChange={handleInputChange}
-            disabled={!isEditing}
-          />
-        </div>
-
-        <div className="form-group">
-          <label>Bio</label>
-          <textarea
-            name="bio"
-            value={formData.bio}
-            onChange={handleInputChange}
-            disabled={!isEditing}
-          />
-        </div>
-
-        {isEditing ? (
-          <div className="form-actions">
-            <button type="submit">Save Changes</button>
-            <button type="button" onClick={() => setIsEditing(false)}>
-              Cancel
-            </button>
+    <div className="app">
+      <header className="header">
+        <nav className="nav">
+          <div id="nav-dashboard" className="nav-item">Dashboard</div>
+          <div id="nav-profile" className="nav-item">Profile</div>
+          <div id="nav-login" className="nav-item">Login</div>
+          <div id="nav-signup" className="nav-item">Sign Up</div>
+          <div id="nav-logout" className="nav-item">Logout</div>
+        </nav>
+        
+        <div id="user-menu" className="user-menu">
+          <div id="user-welcome" className="user-welcome">
+            {user ? `Welcome, ${user.name || user.email}!` : ''}
           </div>
-        ) : (
-          <button type="button" onClick={() => setIsEditing(true)}>
-            Edit Profile
-          </button>
-        )}
-      </form>
+          <img 
+            id="user-avatar" 
+            className="user-avatar" 
+            src={user?.avatar_url} 
+            alt="User avatar"
+          />
+        </div>
+      </header>
+
+      <main className="main">
+        <div id="welcome-content" className="welcome-content">
+          <h1>Welcome to Our App</h1>
+          <p>Please log in to access your dashboard.</p>
+        </div>
+
+        <div id="dashboard-content" className="dashboard-content">
+          <h1>Dashboard</h1>
+          <p>Welcome to your personalized dashboard!</p>
+          
+          <div id="premium-features" className="premium-features">
+            <h2>Premium Features</h2>
+            <p>Access to exclusive content and features.</p>
+          </div>
+        </div>
+
+        <div id="login-form" className="auth-form">
+          <h2>Login</h2>
+          {/* Login form content */}
+        </div>
+      </main>
     </div>
   )
 }
 
-export default UserProfile
+export default App
 ```
 
-## User Data Types
+## UI Control Options
 
-```typescript
-interface User {
-  id: string
-  email: string
-  name?: string
-  avatar_url?: string
-  created_at: string
-  project_id?: string
-  last_sign_in_at?: string
-  user_metadata?: Record<string, any>
-  app_metadata?: Record<string, any>
-}
+<ResponseField name="hideIfLoggedOut" type="boolean" default="false">
+  Hide element when user is not authenticated
+</ResponseField>
 
-interface UserProfile {
-  id: string
-  email: string
-  first_name?: string
-  last_name?: string
-  display_name?: string
-  avatar_url?: string
-  bio?: string
-  phone?: string
-  website?: string
-  location?: string
-  company?: string
-  job_title?: string
-  created_at: string
-  updated_at: string
-  user_metadata?: Record<string, any>
-}
+<ResponseField name="hideIfLoggedIn" type="boolean" default="false">
+  Hide element when user is authenticated
+</ResponseField>
 
-interface UpdateProfileRequest {
-  first_name?: string
-  last_name?: string
-  display_name?: string
-  avatar_url?: string
-  bio?: string
-  phone?: string
-  website?: string
-  location?: string
-  company?: string
-  job_title?: string
-  user_metadata?: Record<string, any>
-}
-```
+<ResponseField name="showLoader" type="boolean" default="false">
+  Show loading state while checking auth
+</ResponseField>
+
+<ResponseField name="customClass" type="string" default="undefined">
+  CSS class to add based on auth state
+</ResponseField>
+
+<ResponseField name="customStyle" type="object" default="undefined">
+  CSS styles to apply based on auth state
+</ResponseField>
 
 ## Best Practices
 
 <AccordionGroup>
-  <Accordion title="Profile Management">
-    - Always validate user input before updating profiles
-    - Provide clear feedback for successful/failed operations
-    - Use appropriate form validation for different fields
-    - Consider implementing profile completion tracking
+  <Accordion title="Element Organization">
+    - Use descriptive element IDs for better maintainability
+    - Group related elements with similar auth requirements
+    - Consider using data attributes for additional metadata
   </Accordion>
-  <Accordion title="Password Security">
-    - Enforce strong password requirements
-    - Provide password strength indicators
-    - Implement rate limiting for password changes
-    - Send confirmation emails for password changes
+  
+  <Accordion title="Performance">
+    - Set up UI controls once during initialization
+    - Avoid setting up controls in render loops
+    - Use CSS transitions for smooth state changes
   </Accordion>
-  <Accordion title="Account Deletion">
-    - Require explicit confirmation before deletion
-    - Explain the consequences of account deletion
-    - Consider offering account deactivation instead
-    - Provide data export options before deletion
+  
+  <Accordion title="User Experience">
+    - Provide loading states for better perceived performance
+    - Use smooth animations for state transitions
+    - Ensure accessible navigation for all users
   </Accordion>
-  <Accordion title="Data Privacy">
-    - Only collect necessary user information
-    - Provide clear privacy policies
-    - Allow users to control their data
-    - Implement data retention policies
+  
+  <Accordion title="Error Handling">
+    - Handle cases where elements don't exist
+    - Provide fallback content for missing elements
+    - Log errors for debugging purposes
   </Accordion>
 </AccordionGroup>
 
-## Error Handling
+## Troubleshooting
 
-Handle common errors in user management operations.
+<AccordionGroup>
+  <Accordion title="Element not found">
+    Ensure element ID exists in DOM before setting up controls
+  </Accordion>
+  
+  <Accordion title="Controls not working">
+    Check if SDK is properly initialized and project ID is correct
+  </Accordion>
+  
+  <Accordion title="State not updating">
+    Verify auth state change listeners are properly set up
+  </Accordion>
+  
+  <Accordion title="CSS not applying">
+    Check if custom classes are defined in your stylesheet
+  </Accordion>
+</AccordionGroup>
+
+### Debugging UI Controls
 
 ```javascript
-// Comprehensive error handling for user management
-class UserManagementErrorHandler {
-  static handleProfileError(error) {
-    switch (error.code) {
-      case 'PROFILE_NOT_FOUND':
-        return 'User profile not found. Please contact support.'
-      
-      case 'INVALID_PROFILE_DATA':
-        return 'Invalid profile data provided. Please check your input.'
-      
-      case 'PROFILE_UPDATE_FAILED':
-        return 'Failed to update profile. Please try again.'
-      
-      case 'UNAUTHORIZED':
-        return 'You are not authorized to perform this action.'
-      
-      default:
-        return error.message || 'An unexpected error occurred.'
-    }
-  }
-
-  static handlePasswordError(error) {
-    switch (error.code) {
-      case 'INVALID_CURRENT_PASSWORD':
-        return 'Current password is incorrect.'
-      
-      case 'WEAK_PASSWORD':
-        return 'Password does not meet security requirements.'
-      
-      case 'PASSWORD_CHANGE_FAILED':
-        return 'Failed to change password. Please try again.'
-      
-      default:
-        return error.message || 'Password change failed.'
-    }
-  }
-
-  static handleAccountDeletionError(error) {
-    switch (error.code) {
-      case 'ACCOUNT_DELETION_FAILED':
-        return 'Failed to delete account. Please try again.'
-      
-      case 'PENDING_ACTIONS':
-        return 'Cannot delete account with pending actions.'
-      
-      default:
-        return error.message || 'Account deletion failed.'
-    }
-  }
-}
-
-// Usage example
-try {
-  await gately.updateUserProfile(updates)
-  showSuccess('Profile updated successfully!')
-} catch (error) {
-  const message = UserManagementErrorHandler.handleProfileError(error)
-  showError(message)
+// Debug UI controls
+function debugUIControls() {
+  const gately = new GatelyBrowserClient('your-project-id')
+  
+  // Check if element exists
+  const element = document.getElementById('dashboard')
+  console.log('Dashboard element exists:', !!element)
+  
+  // Check auth state
+  console.log('Is authenticated:', gately.isAuthenticated())
+  console.log('Current user:', gately.getUser())
+  
+  // Test UI control
+  gately.showElementOnAuth('dashboard', {
+    hideIfLoggedOut: true,
+    customClass: 'debug-test'
+  })
+  
+  // Check applied classes
+  setTimeout(() => {
+    const dashboard = document.getElementById('dashboard')
+    console.log('Dashboard classes:', dashboard?.className)
+  }, 100)
 }
 ```
 
 ## Next Steps
 
 <CardGroup cols={3}>
-  <Card title="Authentication" icon="key" href="/authentication">
+  <Card
+    title="Authentication"
+    icon="key"
+    href="/authentication"
+  >
     Learn about authentication methods
   </Card>
-  <Card title="Plans & Tiers" icon="crown" href="/plans">
-    Manage user plans and subscriptions
+  <Card
+    title="Framework Adapters"
+    icon="react"
+    href="/framework-adapters"
+  >
+    React, Vue, Svelte integration
   </Card>
-  <Card title="Examples" icon="code" href="/examples">
-    View user management examples
+  <Card
+    title="Examples"
+    icon="code"
+    href="/examples"
+  >
+    View UI control examples
   </Card>
 </CardGroup>

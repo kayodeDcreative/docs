@@ -65,7 +65,7 @@ Forms can be created through the Gately dashboard or programmatically via the AP
 ### Submit Form Data
 
 ```javascript
-import { GatelyBrowserClient } from '@gately/sdk'
+import { GatelyBrowserClient } from 'https://cdn.usegately.com/gately-sdk.esm.min.js'
 
 const gately = new GatelyBrowserClient('your-project-id')
 
@@ -142,7 +142,7 @@ async function handleSubmit(event) {
 
 ```jsx
 import React, { useState } from 'react'
-import { useGately } from '@gately/sdk'
+import { useGately } from 'https://cdn.usegately.com/gately-sdk.esm.min.js'
 
 function ContactForm() {
   const { submitForm } = useGately('your-project-id')

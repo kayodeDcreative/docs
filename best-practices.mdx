@@ -139,7 +139,7 @@ Tips, recommendations, and best practices for using the Gately SDK effectively a
     ```javascript
     // Lazy load SDK
     async function loadGately() {
-      const { GatelyBrowserClient } = await import('@gately/sdk')
+      const { GatelyBrowserClient } = await import('https://cdn.usegately.com/gately-sdk.esm.min.js')
       return new GatelyBrowserClient('project-id')
     }
     
