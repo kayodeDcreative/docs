@@ -9,7 +9,7 @@ A comprehensive documentation site for the Gately SDK, built with React, TypeScr
 - **Dark Mode Support**: Pure black dark mode with excellent contrast
 - **Responsive Design**: Works perfectly on desktop, tablet, and mobile
 - **Custom Color Scheme**: Uses Gately brand colors (#FFC599 accent)
-- **Onest Font**: Modern, readable typography
+- **One font**: Modern, readable typography
 
 ### **Complete Documentation**
 
