@@ -1,6 +1,8 @@
 ---
-title: Framer Integration
-description: 'Build beautiful authentication flows and user management directly in Framer'
+title: "Framer Integration"
+description: "Build beautiful authentication flows and user management directly in Framer"
+sidebarTitle: "Gately documentation"
+mode: "wide"
 ---
 
 <img
@@ -8,10 +10,12 @@ description: 'Build beautiful authentication flows and user management directly 
   src="/images/framer-hero-dark.avif"
   alt="Framer Integration"
 />
+
 <img
   className="hidden dark:block"
   src="/images/framer-hero-dark.avif"
   alt="Framer Integration"
+  title=""
 />
 
 Build beautiful authentication flows and user management directly in Framer with Gately's powerful components and APIs.
@@ -49,34 +53,31 @@ Get started with Gately in Framer in just a few steps:
 <CardGroup cols={2}>
   <Card title="Auth Forms" icon="shield">
     Pre-built sign up, sign in, and password reset forms with validation and error handling.
-    
+
     - Sign Up Form
-    - Sign In Form  
+    - Sign In Form
     - Password Reset
     - Email Verification
   </Card>
-  
   <Card title="User Management" icon="users">
     User profile components, account settings, and membership management.
-    
+
     - User Profile
     - Account Settings
     - Membership Cards
     - Plan Selection
   </Card>
-  
   <Card title="UI Elements" icon="palette">
     Reusable UI components for authentication and user management.
-    
+
     - Auth Buttons
     - User Avatars
     - Status Indicators
     - Loading States
   </Card>
-  
   <Card title="Custom Components" icon="code">
     Build custom authentication flows with our flexible component system.
-    
+
     - Custom Forms
     - Auth Modals
     - Protected Routes
@@ -131,6 +132,7 @@ Create a complete authentication flow:
 />
 ```
 
+
 ```javascript Sign In Form
 <GatelySignInForm
   projectId="your-project-id"
@@ -140,6 +142,7 @@ Create a complete authentication flow:
   }}
 />
 ```
+
 
 ```javascript User Profile
 <GatelyUserProfile
@@ -348,7 +351,6 @@ Add social login options:
     - Ensure accessibility compliance
     - Test on multiple screen sizes
   </Card>
-  
   <Card title="Development Tips" icon="code">
     - Use environment variables for config
     - Implement proper error handling
@@ -418,19 +420,16 @@ Track user interactions and conversion rates:
     - Verify internet connection
     - Ensure Framer has access to external resources
   </Accordion>
-  
   <Accordion title="Styling not applying">
     - Check theme object syntax
     - Verify CSS property names
     - Test with default theme first
   </Accordion>
-  
   <Accordion title="Authentication not working">
     - Verify domain is whitelisted in dashboard
     - Check browser console for errors
     - Test with different browsers
   </Accordion>
-  
   <Accordion title="Mobile responsiveness issues">
     - Test on actual devices
     - Check responsive breakpoints
@@ -443,10 +442,9 @@ Track user interactions and conversion rates:
 <CardGroup cols={2}>
   <Card title="Documentation" icon="book">
     - [Authentication Guide](/authentication)
-    - [UI Components](/ui-components)  
+    - [UI Components](/ui-components)
     - [API Reference](/api-reference)
   </Card>
-  
   <Card title="External Links" icon="external-link">
     - [Framer Documentation](https://framer.com)
     - [GitHub Repository](https://github.com/your-org/gately-sdk)
@@ -457,25 +455,13 @@ Track user interactions and conversion rates:
 ## Next Steps
 
 <CardGroup cols={3}>
-  <Card
-    title="Authentication"
-    icon="key"
-    href="/authentication"
-  >
+  <Card title="Authentication" icon="key" href="/authentication">
     Learn about authentication methods
   </Card>
-  <Card
-    title="User Management"
-    icon="user"
-    href="/user-management"
-  >
+  <Card title="User Management" icon="user" href="/user-management">
     Manage user profiles and data
   </Card>
-  <Card
-    title="Examples"
-    icon="code"
-    href="/examples"
-  >
+  <Card title="Examples" icon="code" href="/examples">
     View Framer integration examples
   </Card>
 </CardGroup>
