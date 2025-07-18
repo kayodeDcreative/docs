@@ -1,118 +1,90 @@
 ---
-title: "Advanced Installation"
-description: "SDK installation for developers who need programmatic access to Gately features"
+title: Advanced Installation
+description: 'SDK installation for developers who need programmatic access to Gately features'
 ---
 
 <Note>
-  **Most users don't need this\!** If you're using Framer, check out our [simple one-script installation](/framer) instead.
+**Most users don't need this!** If you're using Framer, check out our [simple one-script installation](/framer) instead.
 </Note>
 
 The Gately SDK is for developers who need programmatic access to authentication features. Most Framer users should use our simple embed script instead.
 
-## NPM Installation
+# Installation
 
-Install the SDK using npm or yarn:
+The Gately SDK can be installed and used in multiple ways. Choose the method that best fits your project setup.
 
-<CodeGroup>
+## Quick Start
 
-```bash npm
-npm install @gately/sdk
+### Method 1: Script Tag (Recommended for most projects)
+
+Add the Gately SDK to your HTML page:
+
+```html
+<script src="https://cdn.usegately.com/gately.min.js"></script>
 ```
 
+The SDK will be automatically available as `window.gately` and `window.GatelyBrowserClient`.
 
-```bash yarn
-yarn add @gately/sdk
-```
+### Method 2: ES Module Import
 
-
-```bash pnpm
-pnpm add @gately/sdk
-```
-
-</CodeGroup>
-
-## CDN Installation
-
-For simple HTML pages or when you can't use a package manager:
-
-<CodeGroup>
-
-```html ESM Module
-<script type="module">
-  import { GatelyBrowserClient } from 'https://cdn.usegately.com/sdk/latest/gately-sdk.esm.min.js'
-  
-  const gately = new GatelyBrowserClient('your-project-id')
-</script>
-```
-
-
-```html Widget Script
-<script 
-  src="https://cdn.usegately.com/gately.min.js" 
-  data-project-id="your-project-id"
-  data-domain="https://yoursite.com"
-  data-base-domain="yourdomain.com"
-  data-slug="your-slug">
-</script>
-```
-
-</CodeGroup>
-
-## Basic Setup
-
-Initialize the SDK with your project ID:
+For modern JavaScript projects using ES modules:
 
 ```javascript
-import { GatelyBrowserClient } from '@gately/sdk'
-
-// Initialize the client
-const gately = new GatelyBrowserClient('your-project-id')
-
-// Optional: Configure additional options
-const gately = new GatelyBrowserClient('your-project-id', {
-  apiUrl: 'https://sdk.usegately.com', // Custom API URL
-  autoRefresh: true // Auto-refresh tokens (default: true)
-})
+import { GatelyBrowserClient } from 'https://cdn.usegately.com/gately-sdk.esm.min.js'
 ```
 
-## Framework-Specific Setup
+### Method 3: Versioned Import (Production)
+
+For production applications that need version stability:
+
+```javascript
+import { GatelyBrowserClient } from 'https://cdn.usegately.com/sdk/v1.1.0/gately-sdk.esm.min.js'
+```
+
+## Framework Integration
 
 ### React
 
+#### Script Tag Method
+```html
+<script src="https://cdn.usegately.com/gately.min.js"></script>
+```
+
 ```jsx
-import { useGately } from '@gately/sdk'
+import React from 'react'
 
 function App() {
-  const { user, login, logout, loading } = useGately('your-project-id')
+  const { user, login, logout, isAuthenticated } = window.gately.useGately('your-project-id')
   
-  if (loading) return <div>Loading...</div>
-  
-  return (
-    <div>
-      {user ? (
-        <button onClick={logout}>Logout</button>
-      ) : (
-        <button onClick={() => login('email', 'password')}>Login</button>
-      )}
-    </div>
-  )
+  // Your React component logic
 }
 ```
 
-### Vue 3
+#### ES Module Method
+```jsx
+import { useGately } from 'https://cdn.usegately.com/gately-sdk.esm.min.js'
+
+function App() {
+  const { user, login, logout, isAuthenticated } = useGately('your-project-id')
+  
+  // Your React component logic
+}
+```
+
+### Vue
 
 ```javascript
-import { useGately } from '@gately/sdk/adapters/vue'
+import { useGately } from 'https://cdn.usegately.com/gately-sdk.esm.min.js'
 
 export default {
   setup() {
-    const { user, login, logout, loading } = useGately('your-project-id')
+    const { user, login, logout, isAuthenticated } = useGately('your-project-id')
     
     return {
       user,
       login,
       logout,
-      loading
+      isAuthenticated
     }
   }
 }
@@ -121,75 +93,108 @@ export default {
 ### Svelte
 
 ```javascript
-import { createGatelyStore } from '@gately/sdk/adapters/svelte'
+import { createGatelyStore } from 'https://cdn.usegately.com/gately-sdk.esm.min.js'
 
-const gately = createGatelyStore('your-project-id')
-
-// In your Svelte component
-<script>
-  import { gately } from './stores/gately.js'
-  
-  $: user = $gately.user
-  $: loading = $gately.loading
-  
-  function handleLogin() {
-    gately.login('email', 'password')
-  }
-</script>
+const gatelyStore = createGatelyStore('your-project-id')
 ```
 
-## Environment Variables
-
-For production applications, use environment variables to store your project ID:
-
-<CodeGroup>
-
-```bash .env.local
-VITE_GATELY_PROJECT_ID=your-project-id
-GATELY_API_URL=https://sdk.usegately.com
-```
-
-
-```javascript Usage
-const gately = new GatelyBrowserClient(
-  import.meta.env.VITE_GATELY_PROJECT_ID,
-  {
-    apiUrl: import.meta.env.VITE_GATELY_API_URL
-  }
-)
-```
-
-</CodeGroup>
-
-## TypeScript Support
-
-The SDK includes full TypeScript support out of the box:
+### Angular
 
 ```typescript
-import { GatelyBrowserClient, User, Session } from '@gately/sdk'
+import { GatelyService } from 'https://cdn.usegately.com/gately-sdk.esm.min.js'
 
-const gately = new GatelyBrowserClient('your-project-id')
-
-// Type-safe user data
-const user: User | null = gately.getUser()
-const session: Session | null = gately.getSession()
-
-// Type-safe authentication
-if (gately.isAuthenticated()) {
-  console.log('User is authenticated:', user?.email)
+@Injectable({
+  providedIn: 'root'
+})
+export class GatelyService {
+  // Service implementation
 }
 ```
 
+## Node.js Usage
+
+For server-side applications:
+
+```javascript
+import { GatelyNodeClient } from 'https://cdn.usegately.com/gately-sdk.esm.min.js'
+
+const gately = new GatelyNodeClient('your-project-id')
+```
+
+## CDN URLs
+
+### Latest Version
+- **Script Tag**: `https://cdn.usegately.com/gately.min.js`
+- **ES Module**: `https://cdn.usegately.com/gately-sdk.esm.min.js`
+
+### Versioned (Recommended for Production)
+- **Script Tag**: `https://cdn.usegately.com/sdk/v1.1.0/gately.min.js`
+- **ES Module**: `https://cdn.usegately.com/sdk/v1.1.0/gately-sdk.esm.min.js`
+
+### Development
+- **Script Tag**: `https://dev-cdn.usegately.com/gately.min.js`
+- **ES Module**: `https://dev-cdn.usegately.com/gately-sdk.esm.min.js`
+
+## Configuration
+
+### Basic Setup
+
+```javascript
+const gately = new GatelyBrowserClient('your-project-id')
+```
+
+### Advanced Configuration
+
+```javascript
+const gately = new GatelyBrowserClient('your-project-id', {
+  apiUrl: 'https://sdk.usegately.com', // Optional: custom API URL
+  autoRefresh: true, // Optional: auto-refresh tokens (default: true)
+})
+```
+
+### Environment-Specific Configuration
+
+```javascript
+// Development
+const gately = new GatelyBrowserClient('your-project-id', {
+  apiUrl: 'https://dev-sdk.usegately.com'
+})
+
+// Production
+const gately = new GatelyBrowserClient('your-project-id', {
+  apiUrl: 'https://sdk.usegately.com'
+})
+```
+
+## TypeScript Support
+
+The SDK includes full TypeScript support. When using ES modules, you'll get automatic type checking:
+
+```typescript
+import { GatelyBrowserClient, User, Session } from 'https://cdn.usegately.com/gately-sdk.esm.min.js'
+
+const gately = new GatelyBrowserClient('your-project-id')
+
+async function handleLogin(): Promise<{ user: User; session: Session }> {
+  return await gately.login('user@example.com', 'password')
+}
+```
+
+## Browser Compatibility
+
+The Gately SDK supports all modern browsers:
+
+- Chrome 60+
+- Firefox 55+
+- Safari 12+
+- Edge 79+
+
+For older browsers, consider using a polyfill for ES modules or the script tag method.
+
 ## Next Steps
 
-<CardGroup cols={3}>
-  <Card title="Authentication" icon="key" href="/authentication">
-    Learn about authentication methods
-  </Card>
-  <Card title="Examples" icon="code" href="/examples">
-    View code examples
-  </Card>
-  <Card title="API Reference" icon="book" href="/api-reference">
-    Explore the API reference
-  </Card>
-</CardGroup>
+After installation, check out:
+
+- [Authentication Guide](/docs/authentication) - Learn how to implement user authentication
+- [Quick Start Guide](/docs/quickstart) - Get up and running quickly
+- [API Reference](/docs/api-reference) - Complete API documentation
