@@ -1,0 +1,505 @@
+---
+title: Troubleshooting
+description: 'Common issues and solutions when using the Gately SDK'
+---
+
+Common issues and solutions when using the Gately SDK.
+
+## Authentication Issues
+
+### Login/Signup Not Working
+
+<AccordionGroup>
+  <Accordion title="Invalid Project ID">
+    **Problem:** Authentication fails with "Invalid project ID" error.
+    
+    **Solutions:**
+    - Verify your project ID in the Gately dashboard
+    - Check that you're using the correct environment (dev/staging/prod)
+    - Ensure the project ID is a valid UUID format
+    
+    ```javascript
+    // Check your project ID format
+    const projectId = 'your-project-id' // Should be UUID format
+    console.log('Project ID:', projectId)
+    
+    // Verify initialization
+    const gately = new GatelyBrowserClient(projectId)
+    console.log('SDK initialized:', !!gately)
+    ```
+  </Accordion>
+  
+  <Accordion title="CORS Errors">
+    **Problem:** Cross-origin request blocked errors in browser console.
+    
+    **Solutions:**
+    - Add your domain to allowed origins in the Gately dashboard
+    - Ensure you're using HTTPS in production
+    - Check if you're testing from `localhost` vs `127.0.0.1`
+    
+    ```javascript
+    // Check current origin
+    console.log('Current origin:', window.location.origin)
+    
+    // Verify in dashboard that this origin is whitelisted
+    ```
+  </Accordion>
+  
+  <Accordion title="Network Connectivity">
+    **Problem:** Network errors or timeouts during authentication.
+    
+    **Solutions:**
+    - Check internet connection
+    - Verify firewall settings
+    - Test API connectivity directly
+    
+    ```javascript
+    // Test API connectivity
+    async function testConnectivity() {
+      try {
+        const response = await fetch('https://sdk.usegately.com/health')
+        console.log('API Status:', response.status)
+      } catch (error) {
+        console.error('Connectivity issue:', error)
+      }
+    }
+    ```
+  </Accordion>
+</AccordionGroup>
+
+### Session Management Issues
+
+<AccordionGroup>
+  <Accordion title="User Not Persisting">
+    **Problem:** User session doesn't persist across page reloads.
+    
+    **Solutions:**
+    - Check if cookies are enabled in browser
+    - Verify localStorage is available
+    - Ensure you're not in incognito/private mode
+    
+    ```javascript
+    // Debug session persistence
+    console.log('Cookies enabled:', navigator.cookieEnabled)
+    console.log('LocalStorage available:', typeof Storage !== 'undefined')
+    console.log('Current session:', gately.getSession())
+    
+    // Check for incognito mode
+    if (window.webkitRequestFileSystem) {
+      window.webkitRequestFileSystem(
+        window.TEMPORARY, 1,
+        () => console.log('Not in incognito'),
+        () => console.log('In incognito mode')
+      )
+    }
+    ```
+  </Accordion>
+  
+  <Accordion title="Token Expiration">
+    **Problem:** User gets logged out unexpectedly.
+    
+    **Solutions:**
+    - Enable auto-refresh in SDK options
+    - Handle token refresh manually
+    - Check token expiration times
+    
+    ```javascript
+    // Enable auto-refresh
+    const gately = new GatelyBrowserClient('project-id', {
+      autoRefresh: true
+    })
+    
+    // Manual token refresh check
+    const session = gately.getSession()
+    if (session && session.expires_at < Date.now()) {
+      console.log('Token expired, refreshing...')
+      // SDK will handle refresh automatically
+    }
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## SSO Issues
+
+### OAuth Popup Problems
+
+<AccordionGroup>
+  <Accordion title="Popup Blocked">
+    **Problem:** OAuth popup is blocked by browser.
+    
+    **Solutions:**
+    - Use redirect mode as fallback
+    - Ensure popup is triggered by user action
+    - Add popup blocker detection
+    
+    ```javascript
+    async function loginWithGoogleSafe() {
+      try {
+        await gately.loginWithGoogle({ mode: 'popup' })
+      } catch (error) {
+        if (error.code === 'POPUP_BLOCKED') {
+          console.log('Popup blocked, falling back to redirect')
+          await gately.loginWithGoogle({ mode: 'redirect' })
+        } else {
+          throw error
+        }
+      }
+    }
+    ```
+  </Accordion>
+  
+  <Accordion title="OAuth Configuration">
+    **Problem:** OAuth provider returns configuration errors.
+    
+    **Solutions:**
+    - Verify OAuth app settings in provider dashboard
+    - Check redirect URIs are correctly configured
+    - Ensure client ID and secret are correct
+    
+    ```javascript
+    // Debug OAuth configuration
+    try {
+      await gately.loginWithGoogle()
+    } catch (error) {
+      if (error.code === 'PROVIDER_NOT_CONFIGURED') {
+        console.error('Google OAuth not configured in Gately dashboard')
+      } else if (error.code === 'INVALID_REDIRECT_URL') {
+        console.error('Redirect URL not whitelisted')
+      }
+    }
+    ```
+  </Accordion>
+</AccordionGroup>
+
+### Mobile SSO Issues
+
+<AccordionGroup>
+  <Accordion title="Mobile Popup Issues">
+    **Problem:** OAuth popups don't work well on mobile devices.
+    
+    **Solutions:**
+    - Always use redirect mode on mobile
+    - Detect mobile devices and adjust accordingly
+    
+    ```javascript
+    function isMobile() {
+      return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
+    }
+    
+    async function smartOAuthLogin() {
+      const mode = isMobile() ? 'redirect' : 'popup'
+      await gately.loginWithGoogle({ mode })
+    }
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## UI Control Issues
+
+### Elements Not Showing/Hiding
+
+<AccordionGroup>
+  <Accordion title="Element Not Found">
+    **Problem:** UI control methods don't work because element doesn't exist.
+    
+    **Solutions:**
+    - Ensure element exists in DOM before setting up controls
+    - Use proper element IDs
+    - Check timing of control setup
+    
+    ```javascript
+    // Debug element existence
+    function setupUIControls() {
+      const element = document.getElementById('dashboard')
+      if (!element) {
+        console.error('Dashboard element not found')
+        return
+      }
+      
+      gately.showElementOnAuth('dashboard', { hideIfLoggedOut: true })
+    }
+    
+    // Wait for DOM to be ready
+    document.addEventListener('DOMContentLoaded', setupUIControls)
+    ```
+  </Accordion>
+  
+  <Accordion title="Controls Not Working">
+    **Problem:** UI controls are set up but elements don't show/hide correctly.
+    
+    **Solutions:**
+    - Check authentication state
+    - Verify control options
+    - Debug CSS conflicts
+    
+    ```javascript
+    // Debug UI controls
+    function debugUIControls() {
+      console.log('Is authenticated:', gately.isAuthenticated())
+      console.log('Current user:', gately.getUser())
+      
+      const element = document.getElementById('dashboard')
+      console.log('Element display:', element?.style.display)
+      console.log('Element classes:', element?.className)
+    }
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## React Integration Issues
+
+### Hook Not Working
+
+<AccordionGroup>
+  <Accordion title="Hook Returns Null">
+    **Problem:** `useGately` hook returns null values.
+    
+    **Solutions:**
+    - Check project ID is correct
+    - Ensure hook is used inside component
+    - Verify React version compatibility
+    
+    ```jsx
+    function DebugComponent() {
+      const hookResult = useGately('your-project-id')
+      
+      console.log('Hook result:', hookResult)
+      console.log('User:', hookResult.user)
+      console.log('Loading:', hookResult.loading)
+      console.log('Error:', hookResult.error)
+      
+      return <div>Check console for debug info</div>
+    }
+    ```
+  </Accordion>
+  
+  <Accordion title="Infinite Re-renders">
+    **Problem:** Component re-renders infinitely when using the hook.
+    
+    **Solutions:**
+    - Avoid creating new objects in render
+    - Use proper dependency arrays
+    - Memoize callback functions
+    
+    ```jsx
+    function Component() {
+      const { user, login } = useGately('project-id')
+      
+      // Good: Memoized callback
+      const handleLogin = useCallback(async (email, password) => {
+        await login(email, password)
+      }, [login])
+      
+      // Bad: New function on every render
+      // const handleLogin = async (email, password) => {
+      //   await login(email, password)
+      // }
+      
+      return <button onClick={handleLogin}>Login</button>
+    }
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Performance Issues
+
+### Slow Authentication
+
+<AccordionGroup>
+  <Accordion title="Multiple SDK Instances">
+    **Problem:** Creating multiple SDK instances causes performance issues.
+    
+    **Solutions:**
+    - Create single SDK instance
+    - Use context or global state
+    - Implement proper singleton pattern
+    
+    ```javascript
+    // Good: Single instance
+    const gately = new GatelyBrowserClient('project-id')
+    
+    // Bad: Multiple instances
+    function Component() {
+      const gately = new GatelyBrowserClient('project-id') // Don't do this
+    }
+    ```
+  </Accordion>
+  
+  <Accordion title="Unnecessary API Calls">
+    **Problem:** Too many API calls slowing down the application.
+    
+    **Solutions:**
+    - Cache user data appropriately
+    - Use loading states to prevent duplicate calls
+    - Implement request deduplication
+    
+    ```javascript
+    // Implement simple caching
+    let profileCache = null
+    let profileCacheTime = 0
+    const CACHE_TTL = 5 * 60 * 1000 // 5 minutes
+    
+    async function getCachedProfile() {
+      const now = Date.now()
+      if (profileCache && (now - profileCacheTime) < CACHE_TTL) {
+        return profileCache
+      }
+      
+      profileCache = await gately.getUserProfile()
+      profileCacheTime = now
+      return profileCache
+    }
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Development Environment Issues
+
+### Local Development
+
+<AccordionGroup>
+  <Accordion title="Localhost vs 127.0.0.1">
+    **Problem:** Authentication works on localhost but not 127.0.0.1 or vice versa.
+    
+    **Solutions:**
+    - Add both localhost and 127.0.0.1 to allowed origins
+    - Use consistent URL format
+    - Check browser cookie settings
+    
+    ```javascript
+    // Check current host
+    console.log('Current host:', window.location.host)
+    
+    // Ensure both are whitelisted in dashboard:
+    // - http://localhost:3000
+    // - http://127.0.0.1:3000
+    ```
+  </Accordion>
+  
+  <Accordion title="Hot Reload Issues">
+    **Problem:** Authentication state lost during hot reload in development.
+    
+    **Solutions:**
+    - This is expected behavior in development
+    - Test in production build for accurate behavior
+    - Use development-specific handling if needed
+    
+    ```javascript
+    // Development-specific handling
+    if (process.env.NODE_ENV === 'development') {
+      // Handle hot reload state loss
+      console.log('Development mode: state may reset on hot reload')
+    }
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Error Debugging
+
+### Enable Debug Logging
+
+```javascript
+// Enable detailed logging
+const gately = new GatelyBrowserClient('project-id', {
+  debug: true
+})
+
+// Manual logging
+gately.onAuthStateChange((user, session) => {
+  console.log('Auth state change:', {
+    user: user ? { id: user.id, email: user.email } : null,
+    session: session ? { expires_at: session.expires_at } : null,
+    timestamp: new Date().toISOString()
+  })
+})
+```
+
+### Network Debugging
+
+```javascript
+// Monitor network requests
+const originalFetch = window.fetch
+window.fetch = function(...args) {
+  console.log('Fetch request:', args[0])
+  return originalFetch.apply(this, args)
+    .then(response => {
+      console.log('Fetch response:', response.status, args[0])
+      return response
+    })
+    .catch(error => {
+      console.error('Fetch error:', error, args[0])
+      throw error
+    })
+}
+```
+
+## Getting Help
+
+### Before Contacting Support
+
+1. **Check the Console**: Look for error messages in browser developer tools
+2. **Verify Configuration**: Double-check project ID and domain settings
+3. **Test in Incognito**: Rule out browser extension conflicts
+4. **Try Different Browser**: Check if issue is browser-specific
+5. **Check Network**: Verify internet connection and firewall settings
+
+### Information to Include
+
+When contacting support, include:
+
+- Project ID (without sensitive data)
+- Browser and version
+- Operating system
+- Error messages from console
+- Steps to reproduce the issue
+- Expected vs actual behavior
+
+### Debug Information Script
+
+```javascript
+// Run this script to gather debug information
+function gatherDebugInfo() {
+  const info = {
+    userAgent: navigator.userAgent,
+    url: window.location.href,
+    cookiesEnabled: navigator.cookieEnabled,
+    localStorageAvailable: typeof Storage !== 'undefined',
+    isAuthenticated: gately.isAuthenticated(),
+    user: gately.getUser() ? 'Present' : 'Null',
+    session: gately.getSession() ? 'Present' : 'Null',
+    timestamp: new Date().toISOString()
+  }
+  
+  console.log('Debug Info:', JSON.stringify(info, null, 2))
+  return info
+}
+
+// Call when experiencing issues
+gatherDebugInfo()
+```
+
+## Next Steps
+
+<CardGroup cols={3}>
+  <Card
+    title="Best Practices"
+    icon="star"
+    href="/best-practices"
+  >
+    Tips and recommendations
+  </Card>
+  <Card
+    title="Examples"
+    icon="code"
+    href="/examples"
+  >
+    Working code examples
+  </Card>
+  <Card
+    title="API Reference"
+    icon="book"
+    href="/api-reference"
+  >
+    Complete API documentation
+  </Card>
+</CardGroup>

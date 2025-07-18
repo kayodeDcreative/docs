@@ -1,0 +1,629 @@
+---
+title: Best Practices
+description: 'Tips, recommendations, and best practices for using the Gately SDK'
+---
+
+Tips, recommendations, and best practices for using the Gately SDK effectively and securely.
+
+## Security Best Practices
+
+### Project Configuration
+
+<AccordionGroup>
+  <Accordion title="Environment Variables">
+    Store sensitive configuration in environment variables, never in source code.
+    
+    ```bash
+    # .env.local
+    VITE_GATELY_PROJECT_ID=your-project-id
+    GATELY_API_URL=https://sdk.usegately.com
+    ```
+    
+    ```javascript
+    const gately = new GatelyBrowserClient(
+      import.meta.env.VITE_GATELY_PROJECT_ID
+    )
+    ```
+  </Accordion>
+  
+  <Accordion title="Domain Whitelisting">
+    Always whitelist your domains in the Gately dashboard to prevent unauthorized usage.
+    
+    - Add production domains
+    - Add development/staging domains
+    - Remove unused domains regularly
+    - Use specific subdomains when possible
+  </Accordion>
+  
+  <Accordion title="HTTPS in Production">
+    Always use HTTPS in production environments for secure token transmission.
+    
+    ```javascript
+    // Good: HTTPS URL
+    redirectUrl: 'https://yourapp.com/dashboard'
+    
+    // Bad: HTTP URL in production
+    redirectUrl: 'http://yourapp.com/dashboard'
+    ```
+  </Accordion>
+</AccordionGroup>
+
+### Authentication Security
+
+<AccordionGroup>
+  <Accordion title="Password Requirements">
+    Implement strong password requirements on the client side.
+    
+    ```javascript
+    function validatePassword(password) {
+      const requirements = {
+        minLength: password.length >= 8,
+        hasUppercase: /[A-Z]/.test(password),
+        hasLowercase: /[a-z]/.test(password),
+        hasNumbers: /\d/.test(password),
+        hasSpecialChar: /[!@#$%^&*(),.?":{}|<>]/.test(password)
+      }
+      
+      return Object.values(requirements).every(req => req)
+    }
+    ```
+  </Accordion>
+  
+  <Accordion title="Session Management">
+    Handle sessions securely and implement proper cleanup.
+    
+    ```javascript
+    // Check session validity
+    const session = gately.getSession()
+    if (session && session.expires_at < Date.now()) {
+      await gately.logout()
+    }
+    
+    // Auto-logout on tab close
+    window.addEventListener('beforeunload', () => {
+      if (shouldLogoutOnClose) {
+        gately.logout()
+      }
+    })
+    ```
+  </Accordion>
+  
+  <Accordion title="Rate Limiting">
+    Implement client-side rate limiting for authentication attempts.
+    
+    ```javascript
+    class AuthRateLimiter {
+      constructor(maxAttempts = 5, windowMs = 15 * 60 * 1000) {
+        this.maxAttempts = maxAttempts
+        this.windowMs = windowMs
+        this.attempts = []
+      }
+      
+      canAttempt() {
+        const now = Date.now()
+        this.attempts = this.attempts.filter(time => now - time < this.windowMs)
+        return this.attempts.length < this.maxAttempts
+      }
+      
+      recordAttempt() {
+        this.attempts.push(Date.now())
+      }
+    }
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Performance Optimization
+
+### SDK Initialization
+
+<AccordionGroup>
+  <Accordion title="Single Instance">
+    Initialize the SDK once per application to avoid unnecessary overhead.
+    
+    ```javascript
+    // Good: Single instance
+    const gately = new GatelyBrowserClient('project-id')
+    
+    // Bad: Multiple instances
+    function login() {
+      const gately = new GatelyBrowserClient('project-id') // Don't do this
+      return gately.login(email, password)
+    }
+    ```
+  </Accordion>
+  
+  <Accordion title="Lazy Loading">
+    Load the SDK only when needed for better initial page load performance.
+    
+    ```javascript
+    // Lazy load SDK
+    async function loadGately() {
+      const { GatelyBrowserClient } = await import('@gately/sdk')
+      return new GatelyBrowserClient('project-id')
+    }
+    
+    // Use when authentication is needed
+    const gately = await loadGately()
+    ```
+  </Accordion>
+  
+  <Accordion title="Framework Integration">
+    Use framework-specific adapters for better performance and integration.
+    
+    ```jsx
+    // Good: Use React hook
+    const { user, login } = useGately('project-id')
+    
+    // Less optimal: Manual state management
+    const [user, setUser] = useState(null)
+    const gately = new GatelyBrowserClient('project-id')
+    ```
+  </Accordion>
+</AccordionGroup>
+
+### Caching and State Management
+
+<AccordionGroup>
+  <Accordion title="User Data Caching">
+    Cache user data appropriately to reduce API calls.
+    
+    ```javascript
+    class UserCache {
+      constructor(ttl = 5 * 60 * 1000) { // 5 minutes
+        this.cache = new Map()
+        this.ttl = ttl
+      }
+      
+      set(key, value) {
+        this.cache.set(key, {
+          value,
+          timestamp: Date.now()
+        })
+      }
+      
+      get(key) {
+        const item = this.cache.get(key)
+        if (!item) return null
+        
+        if (Date.now() - item.timestamp > this.ttl) {
+          this.cache.delete(key)
+          return null
+        }
+        
+        return item.value
+      }
+    }
+    ```
+  </Accordion>
+  
+  <Accordion title="Optimistic Updates">
+    Implement optimistic updates for better user experience.
+    
+    ```javascript
+    async function updateProfile(updates) {
+      // Optimistically update UI
+      setProfile(prev => ({ ...prev, ...updates }))
+      
+      try {
+        const updatedProfile = await gately.updateUserProfile(updates)
+        setProfile(updatedProfile)
+      } catch (error) {
+        // Revert on error
+        setProfile(originalProfile)
+        throw error
+      }
+    }
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## User Experience
+
+### Loading States
+
+<AccordionGroup>
+  <Accordion title="Authentication Loading">
+    Always show loading states during authentication operations.
+    
+    ```jsx
+    function LoginForm() {
+      const [loading, setLoading] = useState(false)
+      
+      const handleLogin = async (e) => {
+        e.preventDefault()
+        setLoading(true)
+        
+        try {
+          await login(email, password)
+        } catch (error) {
+          setError(error.message)
+        } finally {
+          setLoading(false)
+        }
+      }
+      
+      return (
+        <form onSubmit={handleLogin}>
+          <button type="submit" disabled={loading}>
+            {loading ? 'Signing in...' : 'Sign In'}
+          </button>
+        </form>
+      )
+    }
+    ```
+  </Accordion>
+  
+  <Accordion title="Progressive Loading">
+    Load critical authentication state first, then additional data.
+    
+    ```javascript
+    async function initializeApp() {
+      // 1. Check authentication status (fast)
+      const isAuth = gately.isAuthenticated()
+      setAuthChecked(true)
+      
+      if (isAuth) {
+        // 2. Load user data (medium)
+        const user = gately.getUser()
+        setUser(user)
+        
+        // 3. Load profile data (slower)
+        const profile = await gately.getUserProfile()
+        setProfile(profile)
+      }
+    }
+    ```
+  </Accordion>
+</AccordionGroup>
+
+### Error Handling
+
+<AccordionGroup>
+  <Accordion title="User-Friendly Messages">
+    Provide clear, actionable error messages to users.
+    
+    ```javascript
+    function getErrorMessage(error) {
+      const messages = {
+        'INVALID_CREDENTIALS': 'Invalid email or password. Please try again.',
+        'USER_NOT_FOUND': 'No account found with this email. Would you like to sign up?',
+        'EMAIL_NOT_CONFIRMED': 'Please check your email and click the confirmation link.',
+        'RATE_LIMITED': 'Too many attempts. Please wait a few minutes and try again.',
+        'NETWORK_ERROR': 'Connection problem. Please check your internet and try again.'
+      }
+      
+      return messages[error.code] || 'Something went wrong. Please try again.'
+    }
+    ```
+  </Accordion>
+  
+  <Accordion title="Error Recovery">
+    Provide ways for users to recover from errors.
+    
+    ```jsx
+    function ErrorBoundary({ error, retry }) {
+      if (error.code === 'NETWORK_ERROR') {
+        return (
+          <div className="error-message">
+            <p>Connection problem detected.</p>
+            <button onClick={retry}>Try Again</button>
+            <button onClick={() => window.location.reload()}>
+              Refresh Page
+            </button>
+          </div>
+        )
+      }
+      
+      // Handle other errors...
+    }
+    ```
+  </Accordion>
+</AccordionGroup>
+
+### Accessibility
+
+<AccordionGroup>
+  <Accordion title="Keyboard Navigation">
+    Ensure all authentication flows work with keyboard navigation.
+    
+    ```jsx
+    function AuthForm() {
+      return (
+        <form>
+          <label htmlFor="email">Email</label>
+          <input 
+            id="email"
+            type="email" 
+            required
+            aria-describedby="email-error"
+          />
+          
+          <label htmlFor="password">Password</label>
+          <input 
+            id="password"
+            type="password" 
+            required
+            aria-describedby="password-error"
+          />
+          
+          <button type="submit">
+            Sign In
+          </button>
+        </form>
+      )
+    }
+    ```
+  </Accordion>
+  
+  <Accordion title="Screen Reader Support">
+    Provide appropriate ARIA labels and announcements.
+    
+    ```jsx
+    function AuthStatus({ user, loading }) {
+      return (
+        <div role="status" aria-live="polite">
+          {loading && <span>Checking authentication...</span>}
+          {user && <span>Welcome back, {user.name}!</span>}
+          {!user && !loading && <span>Please sign in to continue</span>}
+        </div>
+      )
+    }
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Development Workflow
+
+### Testing
+
+<AccordionGroup>
+  <Accordion title="Unit Testing">
+    Mock the SDK for unit tests to avoid external dependencies.
+    
+    ```javascript
+    // __mocks__/@gately/sdk.js
+    export const GatelyBrowserClient = jest.fn(() => ({
+      login: jest.fn(),
+      logout: jest.fn(),
+      getUser: jest.fn(),
+      isAuthenticated: jest.fn()
+    }))
+    
+    export const useGately = jest.fn(() => ({
+      user: null,
+      loading: false,
+      login: jest.fn(),
+      logout: jest.fn()
+    }))
+    ```
+  </Accordion>
+  
+  <Accordion title="Integration Testing">
+    Test authentication flows with a test project.
+    
+    ```javascript
+    // Create a separate test project for integration tests
+    const testGately = new GatelyBrowserClient('test-project-id')
+    
+    describe('Authentication Flow', () => {
+      it('should login successfully', async () => {
+        await testGately.signup('test@example.com', 'password123')
+        const response = await testGately.login('test@example.com', 'password123')
+        expect(response.user.email).toBe('test@example.com')
+      })
+    })
+    ```
+  </Accordion>
+</AccordionGroup>
+
+### Debugging
+
+<AccordionGroup>
+  <Accordion title="Debug Mode">
+    Enable debug logging for development.
+    
+    ```javascript
+    const gately = new GatelyBrowserClient('project-id', {
+      debug: process.env.NODE_ENV === 'development'
+    })
+    
+    // Or manually enable logging
+    gately.onAuthStateChange((user, session) => {
+      console.log('Auth state changed:', { user: user?.email, session: !!session })
+    })
+    ```
+  </Accordion>
+  
+  <Accordion title="Error Tracking">
+    Implement proper error tracking for production.
+    
+    ```javascript
+    try {
+      await gately.login(email, password)
+    } catch (error) {
+      // Log to error tracking service
+      errorTracker.captureException(error, {
+        tags: {
+          operation: 'login',
+          projectId: 'your-project-id'
+        },
+        user: {
+          email: email
+        }
+      })
+      
+      throw error
+    }
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Production Deployment
+
+### Environment Configuration
+
+<AccordionGroup>
+  <Accordion title="Multi-Environment Setup">
+    Use different project IDs for different environments.
+    
+    ```javascript
+    const projectIds = {
+      development: 'dev-project-id',
+      staging: 'staging-project-id',
+      production: 'prod-project-id'
+    }
+    
+    const projectId = projectIds[process.env.NODE_ENV] || projectIds.development
+    const gately = new GatelyBrowserClient(projectId)
+    ```
+  </Accordion>
+  
+  <Accordion title="Feature Flags">
+    Use feature flags to control authentication features.
+    
+    ```javascript
+    const features = {
+      ssoEnabled: process.env.VITE_SSO_ENABLED === 'true',
+      magicLinksEnabled: process.env.VITE_MAGIC_LINKS_ENABLED === 'true'
+    }
+    
+    function AuthOptions() {
+      return (
+        <div>
+          <EmailPasswordForm />
+          {features.ssoEnabled && <SSOButtons />}
+          {features.magicLinksEnabled && <MagicLinkForm />}
+        </div>
+      )
+    }
+    ```
+  </Accordion>
+</AccordionGroup>
+
+### Monitoring
+
+<AccordionGroup>
+  <Accordion title="Analytics">
+    Track authentication events for insights.
+    
+    ```javascript
+    gately.onAuthStateChange((user, session) => {
+      if (user) {
+        analytics.track('User Logged In', {
+          userId: user.id,
+          email: user.email,
+          method: session.provider || 'email'
+        })
+      } else {
+        analytics.track('User Logged Out')
+      }
+    })
+    ```
+  </Accordion>
+  
+  <Accordion title="Performance Monitoring">
+    Monitor authentication performance.
+    
+    ```javascript
+    async function timedLogin(email, password) {
+      const startTime = performance.now()
+      
+      try {
+        const result = await gately.login(email, password)
+        const duration = performance.now() - startTime
+        
+        analytics.track('Login Performance', {
+          duration,
+          success: true
+        })
+        
+        return result
+      } catch (error) {
+        const duration = performance.now() - startTime
+        
+        analytics.track('Login Performance', {
+          duration,
+          success: false,
+          error: error.code
+        })
+        
+        throw error
+      }
+    }
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Common Pitfalls
+
+### Avoid These Mistakes
+
+<Warning>
+**Don't store sensitive data in localStorage**
+```javascript
+// Bad: Storing sensitive data
+localStorage.setItem('user_token', session.access_token)
+
+// Good: Let the SDK handle token storage
+const session = gately.getSession()
+```
+</Warning>
+
+<Warning>
+**Don't ignore error handling**
+```javascript
+// Bad: No error handling
+await gately.login(email, password)
+
+// Good: Proper error handling
+try {
+  await gately.login(email, password)
+} catch (error) {
+  handleAuthError(error)
+}
+```
+</Warning>
+
+<Warning>
+**Don't create multiple SDK instances**
+```javascript
+// Bad: Multiple instances
+function Component1() {
+  const gately = new GatelyBrowserClient('project-id')
+  // ...
+}
+
+// Good: Shared instance
+const gately = new GatelyBrowserClient('project-id')
+function Component1() {
+  // Use shared instance
+}
+```
+</Warning>
+
+## Next Steps
+
+<CardGroup cols={3}>
+  <Card
+    title="Examples"
+    icon="code"
+    href="/examples"
+  >
+    Practical implementation examples
+  </Card>
+  <Card
+    title="Troubleshooting"
+    icon="wrench"
+    href="/troubleshooting"
+  >
+    Common issues and solutions
+  </Card>
+  <Card
+    title="API Reference"
+    icon="book"
+    href="/api-reference"
+  >
+    Complete API documentation
+  </Card>
+</CardGroup>
