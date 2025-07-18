@@ -1,130 +1,76 @@
 ---
-title: "Quick Start"
-description: "Get up and running with Gately in under 5 minutes"
+title: Quick Start
+description: 'Get up and running with Gately in under 5 minutes'
 ---
 
-This guide will help you integrate Gately authentication into your application in just a few minutes.
+# Quick Start
 
-## Step 1: Get Your Project ID
+Get up and running with the Gately SDK in minutes.
 
-First, you'll need to create a Gately project and get your project ID:
+## 1. Add the SDK
 
-1. Sign up at [app.usegately.com](https://app.usegately.com)
-2. Create a new project
-3. Copy your project ID from the dashboard
+Choose one of these methods to add the Gately SDK to your project:
 
-## Step 2: Install the SDK
+### Script Tag (Easiest)
 
-<CodeGroup>
-
-```bash npm
-npm install @gately/sdk
+```html
+<script src="https://cdn.usegately.com/gately.min.js"></script>
 ```
 
-
-```bash yarn
-yarn add @gately/sdk
-```
-
-
-```html CDN
-<script src="https://cdn.usegately.com/sdk/latest/gately.min.js"></script>
-```
-
-</CodeGroup>
-
-## Step 3: Initialize the Client
+### ES Module Import
 
 ```javascript
-import { GatelyBrowserClient } from '@gately/sdk'
+import { GatelyBrowserClient } from 'https://cdn.usegately.com/gately-sdk.esm.min.js'
+```
 
+## 2. Initialize the Client
+
+```javascript
+// Get your project ID from the Gately dashboard
 const gately = new GatelyBrowserClient('your-project-id')
 ```
 
-## Step 4: Add Authentication
+## 3. Basic Authentication
 
-### Basic Login Form
-
-```html
-<form id="login-form">
-  <input type="email" name="email" placeholder="Email" required>
-  <input type="password" name="password" placeholder="Password" required>
-  <button type="submit">Login</button>
-</form>
-
-<div id="user-info" style="display: none;">
-  <p>Welcome, <span id="user-email"></span>!</p>
-  <button id="logout-btn">Logout</button>
-</div>
-```
-
-### JavaScript Logic
+### Login with Email/Password
 
 ```javascript
-// Handle login form
-document.getElementById('login-form').addEventListener('submit', async (e) => {
-  e.preventDefault()
-  const formData = new FormData(e.target)
-  
-  try {
-    await gately.login(
-      formData.get('email'),
-      formData.get('password')
-    )
-  } catch (error) {
-    alert('Login failed: ' + error.message)
-  }
-})
-
-// Handle logout
-document.getElementById('logout-btn').addEventListener('click', async () => {
-  await gately.logout()
-})
-
-// Listen for auth state changes
-gately.onAuthStateChange((user) => {
-  if (user) {
-    // User is logged in
-    document.getElementById('login-form').style.display = 'none'
-    document.getElementById('user-info').style.display = 'block'
-    document.getElementById('user-email').textContent = user.email
-  } else {
-    // User is logged out
-    document.getElementById('login-form').style.display = 'block'
-    document.getElementById('user-info').style.display = 'none'
-  }
-})
-```
-
-## Step 5: Add Sign Up (Optional)
-
-```javascript
-// Add signup functionality
-async function signup(email, password) {
-  try {
-    await gately.signup(email, password, {
-      tier: 'basic',
-      role: 'user'
-    })
-    console.log('Signup successful!')
-  } catch (error) {
-    console.error('Signup failed:', error.message)
-  }
+try {
+  const { user, session } = await gately.login('user@example.com', 'password')
+  console.log('Logged in:', user.email)
+} catch (error) {
+  console.error('Login failed:', error.message)
 }
 ```
 
-## React Quick Start
+### Check Authentication Status
 
-If you're using React, here's a complete component:
+```javascript
+if (gately.isAuthenticated()) {
+  const user = gately.getUser()
+  console.log('User is logged in:', user.email)
+} else {
+  console.log('User is not logged in')
+}
+```
+
+### Logout
+
+```javascript
+await gately.logout()
+console.log('User logged out')
+```
+
+## 4. React Integration
+
+### Using Script Tag
 
 ```jsx
-import React from 'react'
-import { useGately } from '@gately/sdk'
-
-function App() {
-  const { user, login, logout, signup, loading, error } = useGately('your-project-id')
-  const [email, setEmail] = React.useState('')
-  const [password, setPassword] = React.useState('')
+// After loading the script tag
+function LoginForm() {
+  const { user, login, logout, isAuthenticated } = window.gately.useGately('your-project-id')
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
 
   const handleLogin = async (e) => {
     e.preventDefault()
@@ -135,12 +81,10 @@ function App() {
     }
   }
 
-  if (loading) return <div>Loading...</div>
-
-  if (user) {
+  if (isAuthenticated) {
     return (
       <div>
-        <h1>Welcome, {user.email}!</h1>
+        <h1>Welcome, {user?.email}!</h1>
         <button onClick={logout}>Logout</button>
       </div>
     )
@@ -150,78 +94,198 @@ function App() {
     <form onSubmit={handleLogin}>
       <input
         type="email"
-        placeholder="Email"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
+        placeholder="Email"
         required
       />
       <input
         type="password"
-        placeholder="Password"
         value={password}
         onChange={(e) => setPassword(e.target.value)}
+        placeholder="Password"
         required
       />
       <button type="submit">Login</button>
-      {error && <p style={{color: 'red'}}>{error}</p>}
     </form>
   )
 }
-
-export default App
 ```
 
-## Testing Your Integration
+### Using ES Module
 
-1. **Sign Up**: Create a test user account
-2. **Sign In**: Log in with your test credentials
-3. **Check State**: Verify the user object is populated
-4. **Sign Out**: Test the logout functionality
+```jsx
+import { useGately } from 'https://cdn.usegately.com/gately-sdk.esm.min.js'
+
+function LoginForm() {
+  const { user, login, logout, isAuthenticated } = useGately('your-project-id')
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+
+  const handleLogin = async (e) => {
+    e.preventDefault()
+    try {
+      await login(email, password)
+    } catch (error) {
+      console.error('Login failed:', error)
+    }
+  }
+
+  if (isAuthenticated) {
+    return (
+      <div>
+        <h1>Welcome, {user?.email}!</h1>
+        <button onClick={logout}>Logout</button>
+      </div>
+    )
+  }
+
+  return (
+    <form onSubmit={handleLogin}>
+      <input
+        type="email"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        placeholder="Email"
+        required
+      />
+      <input
+        type="password"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+        placeholder="Password"
+        required
+      />
+      <button type="submit">Login</button>
+    </form>
+  )
+}
+```
+
+## 5. Advanced Features
+
+### Magic Link Authentication
 
 ```javascript
-// Test authentication state
-console.log('Is authenticated:', gately.isAuthenticated())
-console.log('Current user:', gately.getUser())
-console.log('Current session:', gately.getSession())
+// Send magic link
+await gately.sendMagicLink('user@example.com')
+console.log('Magic link sent!')
+```
+
+### SSO Authentication
+
+```javascript
+// Google SSO
+await gately.loginWithSSO('google')
+
+// GitHub SSO
+await gately.loginWithSSO('github')
+```
+
+### Form Submissions
+
+```javascript
+import { GatelyFormsClient } from 'https://cdn.usegately.com/gately-sdk.esm.min.js'
+
+const forms = new GatelyFormsClient('your-project-id')
+
+// Submit a form
+const submission = await forms.submit('form-id', {
+  name: 'John Doe',
+  email: 'john@example.com',
+  message: 'Hello world!'
+})
+```
+
+### Analytics
+
+```javascript
+import { GatelyAnalyticsClient } from 'https://cdn.usegately.com/gately-sdk.esm.min.js'
+
+const analytics = new GatelyAnalyticsClient('your-project-id')
+
+// Track an event
+await analytics.track('page_view', {
+  page: '/home',
+  referrer: 'google.com'
+})
+```
+
+## 6. Complete Example
+
+Here's a complete working example:
+
+```html
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Gately SDK Demo</title>
+</head>
+<body>
+  <div id="app">
+    <h1>Gately SDK Demo</h1>
+    <div id="auth-status">Loading...</div>
+    <div id="login-form" style="display: none;">
+      <input type="email" id="email" placeholder="Email" />
+      <input type="password" id="password" placeholder="Password" />
+      <button onclick="handleLogin()">Login</button>
+    </div>
+    <div id="user-info" style="display: none;">
+      <p>Welcome, <span id="user-email"></span>!</p>
+      <button onclick="handleLogout()">Logout</button>
+    </div>
+  </div>
+
+  <script src="https://cdn.usegately.com/gately.min.js"></script>
+  <script>
+    const gately = new window.GatelyBrowserClient('your-project-id')
+    
+    // Check auth status on load
+    updateAuthStatus()
+    
+    async function handleLogin() {
+      const email = document.getElementById('email').value
+      const password = document.getElementById('password').value
+      
+      try {
+        await gately.login(email, password)
+        updateAuthStatus()
+      } catch (error) {
+        alert('Login failed: ' + error.message)
+      }
+    }
+    
+    async function handleLogout() {
+      await gately.logout()
+      updateAuthStatus()
+    }
+    
+    function updateAuthStatus() {
+      const authStatus = document.getElementById('auth-status')
+      const loginForm = document.getElementById('login-form')
+      const userInfo = document.getElementById('user-info')
+      const userEmail = document.getElementById('user-email')
+      
+      if (gately.isAuthenticated()) {
+        const user = gately.getUser()
+        authStatus.textContent = 'Authenticated'
+        loginForm.style.display = 'none'
+        userInfo.style.display = 'block'
+        userEmail.textContent = user.email
+      } else {
+        authStatus.textContent = 'Not authenticated'
+        loginForm.style.display = 'block'
+        userInfo.style.display = 'none'
+      }
+    }
+  </script>
+</body>
+</html>
 ```
 
 ## Next Steps
 
-Now that you have basic authentication working, explore these features:
-
-<CardGroup cols={2}>
-  <Card title="SSO Integration" icon="google" href="/sso">
-    Add Google and GitHub OAuth
-  </Card>
-  <Card title="User Management" icon="user" href="/user-management">
-    Manage user profiles and data
-  </Card>
-  <Card title="UI Components" icon="palette" href="/ui-components">
-    Control UI based on auth state
-  </Card>
-  <Card title="Framework Adapters" icon="react" href="/framework-adapters">
-    React, Vue, Svelte, and Angular
-  </Card>
-</CardGroup>
-
-## Common Issues
-
-<AccordionGroup>
-  <Accordion title="Authentication not working">
-    - Check your project ID is correct
-    - Verify your domain is whitelisted in the dashboard
-    - Check browser console for errors
-  </Accordion>
-  <Accordion title="User state not persisting">
-    - Ensure cookies are enabled
-    - Check if you're in incognito/private mode
-    - Verify localStorage is available
-  </Accordion>
-  <Accordion title="CORS errors">
-    - Add your domain to allowed origins in the dashboard
-    - Check if you're using the correct API URL
-    - Ensure HTTPS in production
-  </Accordion>
-</AccordionGroup>
-
-Need help? Check out our [troubleshooting guide](/troubleshooting) or [contact support](mailto:support@gately.com).
+- [Authentication Guide](/docs/authentication) - Learn about all authentication methods
+- [Forms Guide](/docs/forms) - Handle form submissions
+- [Analytics Guide](/docs/analytics) - Track user behavior
+- [API Reference](/docs/api-reference) - Complete API documentation
