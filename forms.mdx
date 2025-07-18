@@ -235,44 +235,44 @@ Gately supports a comprehensive range of field types through Framer components:
 ### Payment Fields
 
 <CardGroup cols={2}>
-  <Card title="Stripe Payment" icon="credit-card">
-    Secure payment processing with Stripe integration.
+  <Card title="Payment Button" icon="credit-card">
+    Simple payment button with Stripe Checkout integration.
     
+    - **Easy setup**: Just set amount and currency
+    - **Secure processing**: PCI compliant payment handling
+    - **Multiple currencies**: Support for 135+ currencies
     - **Payment methods**: Credit cards, debit cards, digital wallets
-    - **Currencies**: Support for 135+ currencies
-    - **Security**: PCI compliant, encrypted data
-    - **Recurring**: One-time or subscription payments
-    - **Framer controls**: Payment amount, currency, styling
+    - **Framer controls**: Payment amount, currency, button styling
   </Card>
   
   <Card title="Payment Amount" icon="dollar-sign">
-    Configurable payment amounts.
+    Configurable payment amounts with fee calculation.
     
     - **Fixed amount**: Set specific payment amount
     - **Variable amount**: Let users choose amount
-    - **Currency**: Select payment currency
+    - **Fee calculation**: Automatic transaction fee handling
+    - **Currency selection**: Choose payment currency
+    - **Framer controls**: Amount, currency, fee settings
+  </Card>
+  
+  <Card title="Payment Methods" icon="credit-card">
+    Select which payment methods to accept.
+    
+    - **Credit cards**: Visa, Mastercard, American Express
+    - **Digital wallets**: Apple Pay, Google Pay, PayPal
+    - **Bank transfers**: ACH, SEPA, other local methods
+    - **Custom branding**: Match your brand styling
+    - **Framer controls**: Payment method selection, styling
+  </Card>
+  
+  <Card title="Billing Information" icon="user">
+    Collect billing address automatically.
+    
+    - **Auto-complete**: Address suggestions and validation
+    - **Required fields**: Configure which fields are required
+    - **International**: Support for global addresses
     - **Tax calculation**: Automatic tax handling
-    - **Framer controls**: Amount, currency, tax settings
-  </Card>
-  
-  <Card title="Payment Button" icon="shopping-cart">
-    Stripe-powered payment button.
-    
-    - **Integration**: Direct Stripe Checkout
-    - **Customization**: Match your brand styling
-    - **Success handling**: Automatic success redirects
-    - **Error handling**: Clear error messages
-    - **Framer controls**: Button text, styling, behavior
-  </Card>
-  
-  <Card title="Subscription Setup" icon="repeat">
-    Recurring payment configuration.
-    
-    - **Billing cycles**: Monthly, yearly, custom
-    - **Trial periods**: Free trial options
-    - **Proration**: Automatic proration handling
-    - **Cancellation**: Easy subscription management
-    - **Framer controls**: Billing cycle, trial settings, styling
+    - **Framer controls**: Required fields, validation, styling
   </Card>
 </CardGroup>
 
@@ -347,11 +347,14 @@ Each Gately form component includes comprehensive property controls in Framer:
 - **Loading States**: Loading indicators
 
 ### Payment Controls
-- **Payment Amount**: Fixed or variable amounts
-- **Currency**: Select payment currency
-- **Payment Methods**: Enable/disable payment types
-- **Success URL**: Redirect after payment
-- **Error URL**: Redirect on payment error
+- **Payment Amount**: Set fixed amount or allow user input
+- **Currency**: Choose payment currency (USD, EUR, etc.)
+- **Transaction Fee**: Enable automatic fee calculation
+- **Payment Methods**: Select which payment methods to show
+- **Success Page**: Where to redirect after successful payment
+- **Error Page**: Where to redirect if payment fails
+- **Button Text**: Customize payment button text
+- **Button Styling**: Match your brand colors and design
 
 ## Form Analytics
 
@@ -433,38 +436,61 @@ Configure what happens after form submission:
 - **Backup**: Automatic file backups
 - **Cleanup**: Automatic cleanup of old files
 
-## Stripe Payment Integration
+## Payment Integration
 
-### Payment Processing
+### Setting Up Payments
 
-Gately integrates seamlessly with Stripe for secure payments:
+To enable payment collection in your forms:
 
-- **Secure Processing**: PCI compliant payment handling
-- **Multiple Currencies**: Support for 135+ currencies
-- **Payment Methods**: Credit cards, debit cards, digital wallets
-- **Recurring Payments**: Subscription and installment plans
-- **Tax Handling**: Automatic tax calculation and collection
-- **Refunds**: Easy refund processing
+1. **Connect Stripe Account**
+   - Go to your Gately dashboard
+   - Navigate to **Settings** → **Payments**
+   - Click **Connect Stripe Account**
+   - Follow the Stripe authorization process
+   - Your Stripe account is now connected
+
+2. **Configure Payment Settings**
+   - Set your default currency
+   - Choose payment methods to accept
+   - Configure transaction fees (optional)
+   - Set up webhook endpoints
+   - Configure success and error pages
+
+3. **Add Payment Fields to Forms**
+   - In Framer, add payment field components
+   - Set payment amount in property controls
+   - Choose payment methods to display
+   - Configure button text and styling
 
 ### Payment Field Types
 
-**Payment Button**: Direct Stripe Checkout integration
-**Card Input**: Custom card input with validation
-**Amount Field**: Configurable payment amounts
-**Currency Selector**: Multiple currency support
-**Billing Address**: Automatic billing address collection
-**Receipt Generation**: Automatic receipt emails
+**Payment Button**: Simple payment button with Stripe Checkout
+**Payment Amount**: Configurable payment amounts with fee calculation
+**Payment Methods**: Select which payment methods to accept
+**Billing Information**: Collect billing address automatically
+**Receipt Settings**: Configure automatic receipt emails
 
-### Payment Settings
+### Payment Configuration
 
-Configure payment behavior in your dashboard:
+Configure payment behavior through your dashboard:
 
-- **Test Mode**: Test payments without charging
-- **Live Mode**: Process real payments
-- **Webhook URLs**: Custom webhook endpoints
-- **Success Pages**: Custom success page URLs
-- **Error Handling**: Custom error page URLs
-- **Email Receipts**: Automatic receipt emails
+- **Test Mode**: Test payments without charging real money
+- **Live Mode**: Process real payments from customers
+- **Transaction Fees**: Set automatic fee calculation (e.g., 2% + $0.30)
+- **Success Pages**: Where to redirect after successful payment
+- **Error Pages**: Where to redirect if payment fails
+- **Email Receipts**: Automatic receipt emails to customers
+- **Webhook Notifications**: Get notified of payment events
+
+### Payment Security
+
+Gately ensures secure payment processing:
+
+- **PCI Compliance**: All payment data is PCI compliant
+- **Encryption**: Payment data is encrypted in transit and at rest
+- **Tokenization**: Sensitive data is tokenized for security
+- **Fraud Protection**: Built-in fraud detection and prevention
+- **Secure Storage**: Payment data stored securely in Stripe
 
 ## Best Practices
 
