@@ -22,8 +22,8 @@
     }
   ],
   "topbarCtaButton": {
-    "name": "Dashboard",
-    "url": "https://dashboard.gately.com"
+    "name": "Get started",
+    "url": "https://usegately.com"
   },
   "tabs": [
     {
@@ -35,7 +35,7 @@
     {
       "name": "Documentation",
       "icon": "book-open-cover",
-      "url": "https://docs.gately.com"
+      "url": "https://docs.usegately.com"
     },
     {
       "name": "Community",
