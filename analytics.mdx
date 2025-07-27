@@ -1,0 +1,453 @@
+---
+title: Analytics & Tracking
+description: 'Track user behavior, form submissions, and custom events with Gately'
+sidebarTitle: Analytics
+icon: bar-chart
+---
+
+# Analytics & Tracking
+
+Gately provides comprehensive analytics and tracking capabilities to help you understand user behavior, measure form performance, and track custom events across your application.
+
+## Overview
+
+The analytics system includes:
+- **Event Tracking**: Track custom user interactions
+- **Form Analytics**: Monitor form performance and conversions
+- **User Behavior**: Understand user journeys and patterns
+- **Performance Metrics**: Measure application performance
+- **Custom Properties**: Add context to your analytics data
+
+## Event Tracking
+
+### Basic Event Tracking
+
+```javascript
+import { GatelyBrowserClient } from 'https://cdn.usegately.com/gately-sdk.esm.min.js'
+
+const gately = new GatelyBrowserClient('your-project-id')
+
+// Track a simple event
+gately.trackEvent('button_click', {
+  button_name: 'signup',
+  page_url: window.location.href
+})
+
+// Track with user context
+gately.trackEvent('feature_used', {
+  feature: 'advanced_search',
+  user_tier: gately.getUser()?.tier || 'anonymous'
+})
+```
+
+### Custom Event Properties
+
+```javascript
+// Track detailed user interactions
+gately.trackEvent('product_view', {
+  product_id: 'prod_123',
+  product_name: 'Premium Plan',
+  category: 'subscription',
+  price: 29.99,
+  currency: 'USD',
+  user_tier: 'basic',
+  referrer: document.referrer,
+  page_url: window.location.href,
+  timestamp: new Date().toISOString()
+})
+```
+
+### User Journey Tracking
+
+```javascript
+// Track user progression through your app
+const userJourney = {
+  step: 'pricing_page_view',
+  step_number: 3,
+  total_steps: 5,
+  time_on_page: 45, // seconds
+  scroll_depth: 75 // percentage
+}
+
+gately.trackEvent('user_journey', userJourney)
+```
+
+## Form Analytics
+
+### Automatic Form Tracking
+
+Gately automatically tracks form-related events:
+
+```javascript
+// Form submission is automatically tracked
+await gately.submitForm('contact-form', formData)
+
+// You can also manually track form interactions
+gately.trackEvent('form_view', {
+  form_id: 'contact-form',
+  form_name: 'Contact Us',
+  page_url: window.location.href
+})
+
+gately.trackEvent('form_start', {
+  form_id: 'contact-form',
+  user_tier: gately.getUser()?.tier || 'anonymous'
+})
+```
+
+### Form Performance Metrics
+
+```javascript
+// Track form completion rates
+gately.trackEvent('form_completion', {
+  form_id: 'newsletter-signup',
+  completion_time: 120, // seconds
+  fields_completed: 3,
+  total_fields: 3,
+  success: true
+})
+
+// Track form abandonment
+gately.trackEvent('form_abandonment', {
+  form_id: 'checkout-form',
+  abandonment_step: 'payment_info',
+  time_spent: 180, // seconds
+  fields_completed: 2,
+  total_fields: 5
+})
+```
+
+## User Behavior Tracking
+
+### Page Views and Navigation
+
+```javascript
+// Track page views
+gately.trackEvent('page_view', {
+  page_url: window.location.href,
+  page_title: document.title,
+  referrer: document.referrer,
+  user_agent: navigator.userAgent,
+  screen_resolution: `${screen.width}x${screen.height}`
+})
+
+// Track navigation events
+gately.trackEvent('navigation', {
+  from_page: '/pricing',
+  to_page: '/checkout',
+  navigation_type: 'link_click',
+  link_text: 'Get Started'
+})
+```
+
+### User Engagement
+
+```javascript
+// Track time spent on page
+let startTime = Date.now()
+
+window.addEventListener('beforeunload', () => {
+  const timeSpent = Math.round((Date.now() - startTime) / 1000)
+  
+  gately.trackEvent('page_exit', {
+    page_url: window.location.href,
+    time_spent: timeSpent,
+    scroll_depth: getScrollDepth()
+  })
+})
+
+// Track scroll depth
+function getScrollDepth() {
+  const scrollTop = window.pageYOffset || document.documentElement.scrollTop
+  const documentHeight = document.documentElement.scrollHeight - window.innerHeight
+  return Math.round((scrollTop / documentHeight) * 100)
+}
+```
+
+## React Integration
+
+```jsx
+import React, { useEffect, useState } from 'react'
+import { useGately } from 'https://cdn.usegately.com/gately-sdk.esm.min.js'
+
+function ProductPage({ productId }) {
+  const { trackEvent, user } = useGately('your-project-id')
+  const [viewTime, setViewTime] = useState(0)
+
+  useEffect(() => {
+    const startTime = Date.now()
+    
+    // Track page view
+    trackEvent('product_page_view', {
+      product_id: productId,
+      user_tier: user?.tier || 'anonymous'
+    })
+
+    // Track time spent
+    const interval = setInterval(() => {
+      setViewTime(Math.round((Date.now() - startTime) / 1000))
+    }, 1000)
+
+    return () => {
+      clearInterval(interval)
+      
+      // Track exit
+      trackEvent('product_page_exit', {
+        product_id: productId,
+        time_spent: viewTime
+      })
+    }
+  }, [productId, trackEvent, user, viewTime])
+
+  const handlePurchaseClick = () => {
+    trackEvent('purchase_button_click', {
+      product_id: productId,
+      button_location: 'product_page',
+      user_tier: user?.tier || 'anonymous'
+    })
+  }
+
+  return (
+    <div>
+      <h1>Product Details</h1>
+      <button onClick={handlePurchaseClick}>Buy Now</button>
+      <p>Time on page: {viewTime}s</p>
+    </div>
+  )
+}
+```
+
+## Performance Tracking
+
+### Application Performance
+
+```javascript
+// Track page load performance
+window.addEventListener('load', () => {
+  const performance = window.performance
+  const navigation = performance.getEntriesByType('navigation')[0]
+  
+  gately.trackEvent('page_performance', {
+    page_url: window.location.href,
+    load_time: navigation.loadEventEnd - navigation.loadEventStart,
+    dom_content_loaded: navigation.domContentLoadedEventEnd - navigation.domContentLoadedEventStart,
+    first_paint: performance.getEntriesByName('first-paint')[0]?.startTime,
+    first_contentful_paint: performance.getEntriesByName('first-contentful-paint')[0]?.startTime
+  })
+})
+```
+
+### API Performance
+
+```javascript
+// Track API call performance
+async function trackApiCall(apiName, apiCall) {
+  const startTime = Date.now()
+  
+  try {
+    const result = await apiCall()
+    const duration = Date.now() - startTime
+    
+    gately.trackEvent('api_call', {
+      api_name: apiName,
+      duration: duration,
+      success: true
+    })
+    
+    return result
+  } catch (error) {
+    const duration = Date.now() - startTime
+    
+    gately.trackEvent('api_call', {
+      api_name: apiName,
+      duration: duration,
+      success: false,
+      error: error.message
+    })
+    
+    throw error
+  }
+}
+```
+
+## Custom Analytics Dashboard
+
+### Building Custom Reports
+
+```javascript
+// Track conversion funnel
+const funnelSteps = [
+  'page_view',
+  'signup_start',
+  'signup_complete',
+  'payment_start',
+  'payment_complete'
+]
+
+let currentStep = 0
+
+function trackFunnelStep(stepName) {
+  gately.trackEvent('funnel_step', {
+    step_name: stepName,
+    step_number: currentStep + 1,
+    total_steps: funnelSteps.length,
+    user_tier: gately.getUser()?.tier || 'anonymous'
+  })
+  
+  currentStep++
+}
+
+// Usage
+trackFunnelStep('page_view')
+trackFunnelStep('signup_start')
+// ... continue through funnel
+```
+
+### A/B Testing
+
+```javascript
+// Track A/B test variations
+function trackABTest(testName, variation) {
+  gately.trackEvent('ab_test', {
+    test_name: testName,
+    variation: variation,
+    user_id: gately.getUser()?.id || 'anonymous'
+  })
+}
+
+// Track conversion for A/B test
+function trackABConversion(testName, variation, conversionType) {
+  gately.trackEvent('ab_conversion', {
+    test_name: testName,
+    variation: variation,
+    conversion_type: conversionType,
+    user_id: gately.getUser()?.id || 'anonymous'
+  })
+}
+```
+
+## Error Tracking
+
+### Application Errors
+
+```javascript
+// Track JavaScript errors
+window.addEventListener('error', (event) => {
+  gately.trackEvent('javascript_error', {
+    message: event.message,
+    filename: event.filename,
+    lineno: event.lineno,
+    colno: event.colno,
+    stack: event.error?.stack,
+    page_url: window.location.href,
+    user_agent: navigator.userAgent
+  })
+})
+
+// Track unhandled promise rejections
+window.addEventListener('unhandledrejection', (event) => {
+  gately.trackEvent('unhandled_promise_rejection', {
+    reason: event.reason,
+    page_url: window.location.href
+  })
+})
+```
+
+### User-Reported Issues
+
+```javascript
+// Track user feedback and issues
+function reportUserIssue(issueType, description, severity = 'medium') {
+  gately.trackEvent('user_issue', {
+    issue_type: issueType,
+    description: description,
+    severity: severity,
+    page_url: window.location.href,
+    user_tier: gately.getUser()?.tier || 'anonymous',
+    user_id: gately.getUser()?.id || 'anonymous'
+  })
+}
+```
+
+## Privacy and Compliance
+
+### GDPR Compliance
+
+```javascript
+// Check user consent before tracking
+function trackWithConsent(eventName, properties) {
+  if (hasUserConsent()) {
+    gately.trackEvent(eventName, properties)
+  }
+}
+
+// Respect user privacy preferences
+function hasUserConsent() {
+  return localStorage.getItem('analytics_consent') === 'true'
+}
+```
+
+### Data Anonymization
+
+```javascript
+// Anonymize sensitive data
+function anonymizeUserData(userData) {
+  return {
+    ...userData,
+    email: userData.email ? hashEmail(userData.email) : null,
+    ip_address: null, // Don't track IP addresses
+    user_agent: null  // Don't track user agent
+  }
+}
+
+function hashEmail(email) {
+  // Simple hash function (use a proper hashing library in production)
+  return btoa(email).replace(/[^a-zA-Z0-9]/g, '')
+}
+```
+
+## Best Practices
+
+<CardGroup cols={2}>
+  <Card title="Consistent Naming" icon="tag">
+    Use consistent event names and property keys
+  </Card>
+  <Card title="Meaningful Properties" icon="list">
+    Include relevant context with each event
+  </Card>
+  <Card title="Respect Privacy" icon="shield">
+    Follow privacy regulations and user preferences
+  </Card>
+  <Card title="Performance Impact" icon="zap">
+    Minimize tracking overhead on page performance
+  </Card>
+</CardGroup>
+
+## Analytics Dashboard
+
+Access your analytics data through the Gately dashboard:
+
+1. **Event Overview**: See all tracked events and their frequency
+2. **User Behavior**: Understand user journeys and patterns
+3. **Form Analytics**: Monitor form performance and conversions
+4. **Performance Metrics**: Track application performance
+5. **Custom Reports**: Create custom analytics reports
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card
+    title="Form Analytics"
+    icon="file-text"
+    href="/forms"
+  >
+    Learn about form tracking and optimization
+  </Card>
+  <Card
+    title="User Management"
+    icon="user"
+    href="/user-management"
+  >
+    Understand user behavior and segmentation
+  </Card>
+</CardGroup> 

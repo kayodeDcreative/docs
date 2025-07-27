@@ -1,7 +1,8 @@
 ---
 title: 'Components'
 description: 'Ready-to-use Framer components for authentication and user management'
-icon:"puzzle-piece"
+sidebarTitle: Components
+icon: box
 ---
 
 # Components
@@ -95,7 +96,7 @@ After importing, configure the component with your Gately project ID:
 
 ```javascript
 // In your Framer component's code
-import { GatelyBrowserClient } from '@gately/sdk'
+import { GatelyBrowserClient } from 'https://cdn.usegately.com/gately-sdk.esm.min.js'
 
 const gately = new GatelyBrowserClient('your-project-id')
 ```
@@ -514,7 +515,7 @@ function MyComponent() {
 
 ```javascript
 // Initialize Gately in your Framer project
-import { GatelyBrowserClient } from '@gately/sdk'
+import { GatelyBrowserClient } from 'https://cdn.usegately.com/gately-sdk.esm.min.js'
 
 const gately = new GatelyBrowserClient('your-project-id')
 
