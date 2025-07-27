@@ -1,6 +1,6 @@
 {
   "$schema": "https://mintlify.com/schema.json",
-  "theme": "maple",
+  "theme": "palm",
   "name": "Gately SDK",
   "logo": {
     "dark": "/logo/icon.png",
@@ -11,14 +11,6 @@
     "primary": "#FFC599",
     "light": "#FFB17A",
     "dark": "#FFC599"
-  },
-  "fonts": {
-    "heading": {
-      "family": "Onest"
-    },
-    "body": {
-      "family": "Onest"
-    }
   },
   "topbarLinks": [
     {
