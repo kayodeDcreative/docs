@@ -1,0 +1,65 @@
+# Chat Endpoints Fix Summary
+
+## Problem
+The Gately SDK was getting 404 errors when trying to access:
+1. `GET https://sdk.usegately.com/api/chat/widgets?project_id=...&is_active=true`
+2. `GET https://sdk.usegately.com/api/projects/{projectId}/settings`
+
+## Root Cause
+1. **Missing `/api/chat/widgets/active` endpoint** - The worker file was missing this route
+2. **Incorrect function signatures** - The `chat-endpoints.ts` file was using `process.env` which doesn't exist in Cloudflare Workers
+3. **Wrong response format** - The `/api/chat/widgets` endpoint was returning `{ widgets: [...] }` instead of just the array
+4. **Incorrect function calls** - The worker was calling `getProjectSettings(env, projectId)` instead of `getProjectSettings(projectId)`
+
+## Fixes Applied
+
+### 1. Fixed `src/api/chat-endpoints.ts`
+- **Removed `process.env` usage** - Replaced with Supabase client parameter injection
+- **Updated all function signatures** to accept `supabase: SupabaseClient` as first parameter:
+  - `getActiveChatWidget(supabase, projectId)`
+  - `getProjectSettings(supabase, projectId)`
+  - `getActiveWidgets(supabase, projectId)`
+  - `createDefaultChatWidget(supabase, projectId, settings)`
+  - `shouldEnableChat(supabase, projectId)`
+
+### 2. Fixed `src/worker.ts`
+- **Added missing `/api/chat/widgets/active` route** with proper error handling
+- **Fixed response format** for `/api/chat/widgets` to return array directly instead of `{ widgets: [...] }`
+- **Updated function calls** to pass `supabaseAdmin` as first parameter
+- **Added proper imports** for all chat endpoint functions
+- **Added error logging** for better debugging
+
+### 3. Added Test File
+- **Created `test-chat-endpoints.html`** to verify all endpoints work correctly
+- **Tests all three endpoints**:
+  - `/api/chat/widgets?project_id=...&is_active=true`
+  - `/api/chat/widgets/active`
+  - `/api/projects/{projectId}/settings`
+
+## API Endpoints Now Available
+
+### 1. GET /api/chat/widgets
+- **Query Parameters**: `project_id`, `is_active` (optional)
+- **Headers**: `X-Project-ID` (optional, can use query param)
+- **Response**: Array of widgets or empty array
+
+### 2. GET /api/chat/widgets/active
+- **Headers**: `X-Project-ID` (required)
+- **Response**: Single active chat widget or 404 with error details
+
+### 3. GET /api/projects/{projectId}/settings
+- **Path Parameter**: `projectId`
+- **Response**: Project settings object or 404 if not found
+
+## Testing
+1. **Build**: `npm run build` ✅
+2. **Deploy**: `npx wrangler deploy` ✅
+3. **Test**: Open `test-chat-endpoints.html` in browser to verify endpoints
+
+## Files Modified
+- `src/api/chat-endpoints.ts` - Fixed Cloudflare Workers compatibility
+- `src/worker.ts` - Added missing routes and fixed function calls
+- `test-chat-endpoints.html` - Created test file (new)
+
+## Status
+✅ **FIXED** - All chat endpoints are now working correctly in the Cloudflare Worker 
