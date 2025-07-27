@@ -69,6 +69,8 @@
           "authentication",
           "user-management",
           "sso",
+          "livechat",
+          "helpdesk",
           "ui-components",
           "forms",
           "plans",

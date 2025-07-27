@@ -1,65 +1,335 @@
-# Chat Endpoints Fix Summary
+---
+title: "Helpdesk & Support System"
+description: "Complete customer support solution with AI-powered responses and seamless Framer integration"
+icon: "headset"
+---
 
-## Problem
-The Gately SDK was getting 404 errors when trying to access:
-1. `GET https://sdk.usegately.com/api/chat/widgets?project_id=...&is_active=true`
-2. `GET https://sdk.usegately.com/api/projects/{projectId}/settings`
+<img
+  className="block dark:hidden"
+  src="/images/helpdesk-hero-light.png"
+  alt="Helpdesk Hero Light"
+/>
 
-## Root Cause
-1. **Missing `/api/chat/widgets/active` endpoint** - The worker file was missing this route
-2. **Incorrect function signatures** - The `chat-endpoints.ts` file was using `process.env` which doesn't exist in Cloudflare Workers
-3. **Wrong response format** - The `/api/chat/widgets` endpoint was returning `{ widgets: [...] }` instead of just the array
-4. **Incorrect function calls** - The worker was calling `getProjectSettings(env, projectId)` instead of `getProjectSettings(projectId)`
+<img
+  className="hidden dark:block"
+  src="/457_1x_shots_so.png"
+  alt="Helpdesk Hero Dark"
+  title={true}
+/>
 
-## Fixes Applied
+# Helpdesk & Support System
 
-### 1. Fixed `src/api/chat-endpoints.ts`
-- **Removed `process.env` usage** - Replaced with Supabase client parameter injection
-- **Updated all function signatures** to accept `supabase: SupabaseClient` as first parameter:
-  - `getActiveChatWidget(supabase, projectId)`
-  - `getProjectSettings(supabase, projectId)`
-  - `getActiveWidgets(supabase, projectId)`
-  - `createDefaultChatWidget(supabase, projectId, settings)`
-  - `shouldEnableChat(supabase, projectId)`
+The Gately Helpdesk system provides a complete customer support solution with automated ticket management, AI-powered responses, and seamless integration with your Framer sites. No code injection required - everything is handled automatically through the Gately SDK.
 
-### 2. Fixed `src/worker.ts`
-- **Added missing `/api/chat/widgets/active` route** with proper error handling
-- **Fixed response format** for `/api/chat/widgets` to return array directly instead of `{ widgets: [...] }`
-- **Updated function calls** to pass `supabaseAdmin` as first parameter
-- **Added proper imports** for all chat endpoint functions
-- **Added error logging** for better debugging
+<CardGroup cols={2}>
+  <Card title="Zero-Code Setup" icon="wand-magic-sparkles">
+    Simply create a widget in your Gately app, and it automatically appears on your Framer site
+  </Card>
+  <Card title="AI-Powered Support" icon="robot">
+    Intelligent responses and automatic ticket categorization with learning capabilities
+  </Card>
+  <Card title="Real-Time Chat" icon="comments">
+    Live conversations with customers directly from your Gately dashboard
+  </Card>
+  <Card title="Smart Analytics" icon="chart-line">
+    Comprehensive reporting on support metrics and customer satisfaction
+  </Card>
+</CardGroup>
 
-### 3. Added Test File
-- **Created `test-chat-endpoints.html`** to verify all endpoints work correctly
-- **Tests all three endpoints**:
-  - `/api/chat/widgets?project_id=...&is_active=true`
-  - `/api/chat/widgets/active`
-  - `/api/projects/{projectId}/settings`
+## Key Features
 
-## API Endpoints Now Available
+<Tabs>
+  <Tab title="Automatic Integration">
+    <CardGroup cols={2}>
+      <Card title="Zero-Code Setup" icon="wand-magic-sparkles">
+        Simply create a widget in your Gately app, and it automatically appears on your Framer site
+      </Card>
+      <Card title="SDK Handles Everything" icon="code">
+        No need to manually add scripts or embed codes - everything is automatic
+      </Card>
+      <Card title="Instant Deployment" icon="rocket">
+        Changes to your helpdesk widget are reflected immediately across all sites
+      </Card>
+      <Card title="Cross-Platform Compatible" icon="globe">
+        Works seamlessly across all Framer projects and devices
+      </Card>
+    </CardGroup>
+  </Tab>
+  <Tab title="Intelligent Tickets">
+    <CardGroup cols={2}>
+      <Card title="Auto-Ticket Creation" icon="ticket">
+        Every chat conversation automatically becomes a support ticket
+      </Card>
+      <Card title="Smart Categorization" icon="tags">
+        AI automatically categorizes tickets based on content and context
+      </Card>
+      <Card title="Priority Assignment" icon="exclamation-triangle">
+        Automatic priority setting based on keywords and urgency indicators
+      </Card>
+      <Card title="Status Tracking" icon="list-check">
+        Real-time updates on ticket progress from open to resolution
+      </Card>
+    </CardGroup>
+  </Tab>
+  <Tab title="AI-Powered Support">
+    <CardGroup cols={2}>
+      <Card title="Instant Responses" icon="bolt">
+        AI agents provide immediate answers to common questions
+      </Card>
+      <Card title="Knowledge Base Integration" icon="brain">
+        AI learns from your documentation and previous tickets
+      </Card>
+      <Card title="Escalation Handling" icon="arrow-up">
+        Seamless handoff to human agents when needed
+      </Card>
+      <Card title="Multi-Language Support" icon="language">
+        AI can communicate in multiple languages automatically
+      </Card>
+    </CardGroup>
+  </Tab>
+  <Tab title="Real-Time Communication">
+    <CardGroup cols={2}>
+      <Card title="Live Chat Interface" icon="comments">
+        Modern, responsive chat widget for your visitors
+      </Card>
+      <Card title="Multi-Channel Support" icon="arrows-split-up-and-left">
+        Chat directly from Gately projects or through website widget
+      </Card>
+      <Card title="Typing Indicators" icon="keyboard">
+        Real-time typing status for both agents and customers
+      </Card>
+      <Card title="Message History" icon="clock-rotate-left">
+        Complete conversation history preserved across sessions
+      </Card>
+    </CardGroup>
+  </Tab>
+</Tabs>
 
-### 1. GET /api/chat/widgets
-- **Query Parameters**: `project_id`, `is_active` (optional)
-- **Headers**: `X-Project-ID` (optional, can use query param)
-- **Response**: Array of widgets or empty array
+## Getting Started
 
-### 2. GET /api/chat/widgets/active
-- **Headers**: `X-Project-ID` (required)
-- **Response**: Single active chat widget or 404 with error details
+<Steps>
+  <Step title="Enable Helpdesk" icon="toggle-on">
+    Navigate to your Gately project dashboard and enable the helpdesk feature. This activates all support functionality for your project.
+  </Step>
+  <Step title="Create Your First Widget" icon="plus">
+    In the widgets section of your Gately app, create a new helpdesk widget. Configure the appearance, behavior, and AI settings to match your brand and support needs.
+  </Step>
+  <Step title="Configure AI Agent" icon="robot">
+    Set up your AI support agent with your specific knowledge base, response style, and escalation rules. The AI will handle initial customer inquiries automatically.
+  </Step>
+  <Step title="Set Business Hours" icon="clock">
+    Configure your support availability, timezone, and offline messaging to ensure customers know when to expect responses.
+  </Step>
+  <Step title="Deploy to Framer" icon="rocket">
+    Your helpdesk widget automatically appears on your Framer site once created. No additional setup required - the Gately SDK handles everything.
+  </Step>
+</Steps>
 
-### 3. GET /api/projects/{projectId}/settings
-- **Path Parameter**: `projectId`
-- **Response**: Project settings object or 404 if not found
+## Widget Configuration Options
 
-## Testing
-1. **Build**: `npm run build` ✅
-2. **Deploy**: `npx wrangler deploy` ✅
-3. **Test**: Open `test-chat-endpoints.html` in browser to verify endpoints
+<Accordion>
+  <AccordionItem title="Appearance Settings" icon="palette">
+  <CardGroup cols={2}>
+    <Card title="Position" icon="arrows-to-dot">
+      Choose corner placement (bottom-right, bottom-left, top-right, top-left)
+    </Card>
 
-## Files Modified
-- `src/api/chat-endpoints.ts` - Fixed Cloudflare Workers compatibility
-- `src/worker.ts` - Added missing routes and fixed function calls
-- `test-chat-endpoints.html` - Created test file (new)
+    <Card title="Theme" icon="moon">
+      Light, dark, or auto-switching based on user preference
+    </Card>
 
-## Status
-✅ **FIXED** - All chat endpoints are now working correctly in the Cloudflare Worker 
+    <Card title="Colors" icon="paintbrush">
+      Customize primary and secondary colors to match your brand
+    </Card>
+
+    <Card title="Avatar Display" icon="user-circle">
+      Show or hide agent avatars in conversations
+    </Card>
+  </CardGroup>
+</AccordionItem>
+
+  <AccordionItem title="Behavior Settings" icon="gear">
+  <CardGroup cols={2}>
+    <Card title="Auto-Open" icon="door-open">
+      Automatically open chat for new visitors
+    </Card>
+
+    <Card title="Welcome Message" icon="hand-wave">
+      Customize the initial greeting message
+    </Card>
+
+    <Card title="Offline Message" icon="moon">
+      Set message displayed outside business hours
+    </Card>
+
+    <Card title="Sound Notifications" icon="volume-high">
+      Enable or disable notification sounds
+    </Card>
+  </CardGroup>
+</AccordionItem>
+
+  <AccordionItem title="AI Configuration" icon="robot">
+  <CardGroup cols={2}>
+    <Card title="AI Enablement" icon="toggle-on">
+      Turn AI responses on or off
+    </Card>
+
+    <Card title="Response Style" icon="message">
+      Choose from friendly, professional, casual, or technical
+    </Card>
+
+    <Card title="Knowledge Base" icon="book">
+      Upload documents and FAQs for AI training
+    </Card>
+
+    <Card title="Escalation Triggers" icon="arrow-up">
+      Define when to transfer to human agents
+    </Card>
+  </CardGroup>
+</AccordionItem>
+
+  <AccordionItem title="File Upload Settings" icon="file-arrow-up">
+  <CardGroup cols={2}>
+    <Card title="Upload Enablement" icon="toggle-on">
+      Allow or restrict file uploads
+    </Card>
+
+    <Card title="File Types" icon="file">
+      Specify allowed file formats
+    </Card>
+
+    <Card title="Size Limits" icon="scale-balanced">
+      Set maximum file size restrictions
+    </Card>
+
+    <Card title="Validation Rules" icon="shield-check">
+      Configure upload validation requirements
+    </Card>
+  </CardGroup>
+</AccordionItem>
+</Accordion>
+
+## Ticket Management
+
+### Ticket Lifecycle
+
+Every customer interaction follows a structured lifecycle from creation to resolution:
+
+1. **Creation** - Automatic ticket generation from chat initiation
+2. **Categorization** - AI-powered sorting into relevant categories
+3. **Assignment** - Routing to appropriate team members
+4. **Response** - AI or human agent provides assistance
+5. **Resolution** - Issue marked as resolved with customer confirmation
+6. **Closure** - Ticket closed with satisfaction feedback
+
+### Status Tracking
+
+- **Open** - New tickets awaiting initial response
+- **In Progress** - Tickets actively being worked on
+- **Pending** - Waiting for customer response or information
+- **Resolved** - Issue solved, awaiting customer confirmation
+- **Closed** - Ticket completed and archived
+
+### Priority Levels
+
+- **Low** - General inquiries and non-urgent requests
+- **Medium** - Standard support requests requiring attention
+- **High** - Important issues affecting customer experience
+- **Urgent** - Critical problems requiring immediate response
+
+## Team Collaboration
+
+### Internal Communication
+
+- **Private notes** - Add internal comments not visible to customers
+- **Team mentions** - Tag colleagues for collaboration
+- **Handoff procedures** - Smooth transfer between team members
+- **Escalation paths** - Clear procedures for complex issues
+
+### Agent Management
+
+- **Role assignments** - Define agent permissions and responsibilities
+- **Availability status** - Set online/offline status for proper routing
+- **Performance tracking** - Monitor response times and resolution rates
+- **Training resources** - Access to knowledge base and best practices
+
+## Analytics and Reporting
+
+### Performance Metrics
+
+- **Response times** - Average time to first response and resolution
+- **Ticket volume** - Daily, weekly, and monthly ticket counts
+- **Resolution rates** - Percentage of tickets resolved successfully
+- **Customer satisfaction** - Feedback scores and ratings
+- **Agent performance** - Individual and team productivity metrics
+
+### Business Insights
+
+- **Peak hours** - Identify busiest support periods
+- **Common issues** - Track frequently reported problems
+- **Channel effectiveness** - Compare performance across communication channels
+- **Trend analysis** - Monitor support patterns over time
+
+## Integration Capabilities
+
+### Framer Integration
+
+- **Automatic deployment** - Widgets appear instantly on Framer sites
+- **Design consistency** - Matches your site's visual style
+- **Performance optimized** - Minimal impact on site loading speed
+- **Mobile responsive** - Adapts to all screen sizes
+
+### Gately Project Integration
+
+- **Direct chat access** - Chat with customers directly from Gately dashboard
+- **Unified inbox** - All conversations in one centralized location
+- **Context awareness** - Full customer history and interaction data
+- **Real-time notifications** - Instant alerts for new messages and tickets
+
+### Third-Party Connections
+
+- **CRM integration** - Sync customer data with existing systems
+- **Email notifications** - Automated updates via email
+- **Webhook support** - Connect with external tools and workflows
+- **API access** - Full programmatic control over helpdesk functions
+
+## Best Practices
+
+### Setup Recommendations
+
+- Configure business hours to match your actual availability
+- Create comprehensive AI knowledge base for better automated responses
+- Set up proper escalation rules to ensure complex issues reach human agents
+- Customize widget appearance to match your brand identity
+
+### Operational Guidelines
+
+- Respond to tickets within defined SLA timeframes
+- Use internal notes for team coordination and context
+- Regularly update AI knowledge base with new information
+- Monitor analytics to identify improvement opportunities
+
+### Customer Experience
+
+- Keep welcome messages friendly and informative
+- Provide clear expectations for response times
+- Use file uploads to better understand customer issues
+- Follow up on resolved tickets to ensure satisfaction
+
+## Troubleshooting
+
+### Common Setup Issues
+
+- **Widget not appearing** - Verify helpdesk is enabled and widget is active
+- **AI not responding** - Check AI agent configuration and knowledge base
+- **File uploads failing** - Review file type and size restrictions
+- **Business hours not working** - Confirm timezone settings are correct
+
+### Performance Optimization
+
+- **Slow loading** - Check widget configuration for unnecessary features
+- **High resource usage** - Monitor file upload sizes and frequency
+- **Connection issues** - Verify network connectivity and firewall settings
+- **Mobile compatibility** - Test widget responsiveness across devices
+
+The Gately Helpdesk system transforms customer support into a seamless, automated experience that scales with your business while maintaining the personal touch your customers expect.
