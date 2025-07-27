@@ -2,7 +2,6 @@
 title: "Live Chat System"
 description: "Real-time chat functionality with AI integration and seamless Framer deployment"
 icon: "comments"
-sidebarTitle: "Live chat"
 ---
 
 <img
@@ -13,9 +12,8 @@ sidebarTitle: "Live chat"
 
 <img
   className="hidden dark:block"
-  src="/747shots_so1.png"
+  src="/images/live-chat-hero-dark.png"
   alt="Live Chat Hero Dark"
-  title={true}
 />
 
 # Live Chat System
@@ -127,8 +125,6 @@ The Gately Live Chat system provides real-time chat functionality with AI agent 
   </Tab>
 </Tabs>
 
-```filename
-
 ## Ticket Management
 
 <CardGroup cols={2}>
@@ -148,31 +144,34 @@ The Gately Live Chat system provides real-time chat functionality with AI agent 
 
 <Accordion>
   <AccordionItem title="Ticket Creation Process" icon="plus">
-    When a customer starts a chat conversation, Gately automatically creates a support ticket with:
-    - Unique ticket number for tracking
-    - Customer information and context
-    - Initial message and conversation history
-    - Automatic priority and category assignment
-    - Assignment to available agents based on rules
-  </AccordionItem>
-  
+  When a customer starts a chat conversation, Gately automatically creates a support ticket with:
+
+  * Unique ticket number for tracking
+  * Customer information and context
+  * Initial message and conversation history
+  * Automatic priority and category assignment
+  * Assignment to available agents based on rules
+</AccordionItem>
+
   <AccordionItem title="Ticket Updates" icon="pen">
-    Tickets are automatically updated throughout the conversation:
-    - Status changes based on agent actions
-    - Priority adjustments based on conversation content
-    - Category refinement through AI analysis
-    - Resolution tracking and customer satisfaction
-    - Complete audit trail of all changes
-  </AccordionItem>
-  
+  Tickets are automatically updated throughout the conversation:
+
+  * Status changes based on agent actions
+  * Priority adjustments based on conversation content
+  * Category refinement through AI analysis
+  * Resolution tracking and customer satisfaction
+  * Complete audit trail of all changes
+</AccordionItem>
+
   <AccordionItem title="Ticket Resolution" icon="check">
-    The resolution process includes:
-    - Automatic resolution detection based on conversation flow
-    - Customer satisfaction surveys
-    - Resolution confirmation workflows
-    - Ticket closure with detailed summaries
-    - Follow-up scheduling for complex issues
-  </AccordionItem>
+  The resolution process includes:
+
+  * Automatic resolution detection based on conversation flow
+  * Customer satisfaction surveys
+  * Resolution confirmation workflows
+  * Ticket closure with detailed summaries
+  * Follow-up scheduling for complex issues
+</AccordionItem>
 </Accordion>
 
 ## Message Management
@@ -194,7 +193,6 @@ The Gately Live Chat system provides real-time chat functionality with AI agent 
       </Card>
     </CardGroup>
   </Tab>
-  
   <Tab title="Message Types">
     <CardGroup cols={2}>
       <Card title="Customer Messages" icon="user">
@@ -211,7 +209,6 @@ The Gately Live Chat system provides real-time chat functionality with AI agent 
       </Card>
     </CardGroup>
   </Tab>
-  
   <Tab title="File Attachments">
     <CardGroup cols={2}>
       <Card title="Drag & Drop" icon="hand">
@@ -248,55 +245,64 @@ The Gately Live Chat system provides real-time chat functionality with AI agent 
 
 <Accordion>
   <AccordionItem title="Message Events" icon="message">
-    <CardGroup cols={2}>
-      <Card title="Message Sent" icon="paper-plane">
-        Confirmation when messages are successfully delivered
-      </Card>
-      <Card title="Message Received" icon="inbox">
-        Instant notifications for new incoming messages
-      </Card>
-      <Card title="Typing Indicators" icon="keyboard">
-        Real-time typing status for both agents and customers
-      </Card>
-      <Card title="Read Status" icon="eye">
-        Message read confirmations and status updates
-      </Card>
-    </CardGroup>
-  </AccordionItem>
-  
+  <CardGroup cols={2}>
+    <Card title="Message Sent" icon="paper-plane">
+      Confirmation when messages are successfully delivered
+    </Card>
+
+    <Card title="Message Received" icon="inbox">
+      Instant notifications for new incoming messages
+    </Card>
+
+    <Card title="Typing Indicators" icon="keyboard">
+      Real-time typing status for both agents and customers
+    </Card>
+
+    <Card title="Read Status" icon="eye">
+      Message read confirmations and status updates
+    </Card>
+  </CardGroup>
+</AccordionItem>
+
   <AccordionItem title="Ticket Events" icon="ticket">
-    <CardGroup cols={2}>
-      <Card title="Ticket Created" icon="plus">
-        Notifications when new support tickets are generated
-      </Card>
-      <Card title="Ticket Updated" icon="pen">
-        Real-time updates for status, priority, and assignment changes
-      </Card>
-      <Card title="Agent Assignment" icon="user-plus">
-        Notifications when tickets are assigned to team members
-      </Card>
-      <Card title="Resolution Updates" icon="check">
-        Status updates for ticket resolution and closure
-      </Card>
-    </CardGroup>
-  </AccordionItem>
-  
+  <CardGroup cols={2}>
+    <Card title="Ticket Created" icon="plus">
+      Notifications when new support tickets are generated
+    </Card>
+
+    <Card title="Ticket Updated" icon="pen">
+      Real-time updates for status, priority, and assignment changes
+    </Card>
+
+    <Card title="Agent Assignment" icon="user-plus">
+      Notifications when tickets are assigned to team members
+    </Card>
+
+    <Card title="Resolution Updates" icon="check">
+      Status updates for ticket resolution and closure
+    </Card>
+  </CardGroup>
+</AccordionItem>
+
   <AccordionItem title="Session Events" icon="clock">
-    <CardGroup cols={2}>
-      <Card title="Session Started" icon="play">
-        Notifications when chat sessions begin
-      </Card>
-      <Card title="Session Ended" icon="stop">
-        Automatic cleanup when chat sessions conclude
-      </Card>
-      <Card title="Agent Online" icon="circle">
-        Status updates when agents become available
-      </Card>
-      <Card title="Business Hours" icon="clock">
-        Automatic handling of availability and offline periods
-      </Card>
-    </CardGroup>
-  </AccordionItem>
+  <CardGroup cols={2}>
+    <Card title="Session Started" icon="play">
+      Notifications when chat sessions begin
+    </Card>
+
+    <Card title="Session Ended" icon="stop">
+      Automatic cleanup when chat sessions conclude
+    </Card>
+
+    <Card title="Agent Online" icon="circle">
+      Status updates when agents become available
+    </Card>
+
+    <Card title="Business Hours" icon="clock">
+      Automatic handling of availability and offline periods
+    </Card>
+  </CardGroup>
+</AccordionItem>
 </Accordion>
 
 ## Chat Widget Controls
@@ -349,7 +355,6 @@ The Gately Live Chat system provides real-time chat functionality with AI agent 
       </Card>
     </CardGroup>
   </Tab>
-  
   <Tab title="Configuration">
     <CardGroup cols={2}>
       <Card title="Knowledge Base" icon="book">
@@ -397,14 +402,13 @@ The Gately Live Chat system provides real-time chat functionality with AI agent 
         Set position to bottom-right, choose light theme, and customize colors to match your brand
       </Step>
       <Step title="Set Welcome Message" icon="hand-wave">
-        Add a friendly greeting like "Hello! How can we help you today?"
+        Add a friendly greeting like "Hello\! How can we help you today?"
       </Step>
       <Step title="Auto-Deploy" icon="rocket">
         Save your widget and it automatically appears on your Framer site
       </Step>
     </Steps>
   </Tab>
-  
   <Tab title="AI-Enhanced Chat">
     <Steps>
       <Step title="Enable AI" icon="robot">
@@ -421,7 +425,6 @@ The Gately Live Chat system provides real-time chat functionality with AI agent 
       </Step>
     </Steps>
   </Tab>
-  
   <Tab title="File Upload Setup">
     <Steps>
       <Step title="Enable Uploads" icon="toggle-on">
@@ -438,7 +441,6 @@ The Gately Live Chat system provides real-time chat functionality with AI agent 
       </Step>
     </Steps>
   </Tab>
-  
   <Tab title="Business Hours">
     <Steps>
       <Step title="Set Timezone" icon="globe">
@@ -521,79 +523,91 @@ The Gately Live Chat system provides real-time chat functionality with AI agent 
 </CardGroup>
 
 <Note>
-The Gately SDK automatically handles technical best practices like error handling, reconnection, and resource cleanup, so you can focus on optimizing the customer experience.
+  The Gately SDK automatically handles technical best practices like error handling, reconnection, and resource cleanup, so you can focus on optimizing the customer experience.
 </Note>
 
 ## Troubleshooting
 
 <Accordion>
   <AccordionItem title="Widget Not Appearing" icon="eye-slash">
-    <CardGroup cols={2}>
-      <Card title="Check Widget Status" icon="toggle-on">
-        Verify that your live chat widget is active and published in your Gately dashboard
-      </Card>
-      <Card title="Verify Project Settings" icon="gear">
-        Ensure live chat is enabled in your project settings and properly configured
-      </Card>
-      <Card title="Browser Compatibility" icon="browser">
-        Test across different browsers to ensure compatibility and proper loading
-      </Card>
-      <Card title="Page Loading" icon="refresh">
-        Allow sufficient time for the widget to load, especially on slower connections
-      </Card>
-    </CardGroup>
-  </AccordionItem>
-  
+  <CardGroup cols={2}>
+    <Card title="Check Widget Status" icon="toggle-on">
+      Verify that your live chat widget is active and published in your Gately dashboard
+    </Card>
+
+    <Card title="Verify Project Settings" icon="gear">
+      Ensure live chat is enabled in your project settings and properly configured
+    </Card>
+
+    <Card title="Browser Compatibility" icon="browser">
+      Test across different browsers to ensure compatibility and proper loading
+    </Card>
+
+    <Card title="Page Loading" icon="refresh">
+      Allow sufficient time for the widget to load, especially on slower connections
+    </Card>
+  </CardGroup>
+</AccordionItem>
+
   <AccordionItem title="Messages Not Working" icon="message-slash">
-    <CardGroup cols={2}>
-      <Card title="Connection Status" icon="wifi">
-        Check your internet connection and ensure stable connectivity
-      </Card>
-      <Card title="Widget Configuration" icon="wrench">
-        Verify that messaging is enabled in your widget settings
-      </Card>
-      <Card title="Business Hours" icon="clock">
-        Confirm you're within configured business hours or offline messaging is enabled
-      </Card>
-      <Card title="Browser Refresh" icon="arrows-rotate">
-        Try refreshing the page to re-establish the connection
-      </Card>
-    </CardGroup>
-  </AccordionItem>
-  
+  <CardGroup cols={2}>
+    <Card title="Connection Status" icon="wifi">
+      Check your internet connection and ensure stable connectivity
+    </Card>
+
+    <Card title="Widget Configuration" icon="wrench">
+      Verify that messaging is enabled in your widget settings
+    </Card>
+
+    <Card title="Business Hours" icon="clock">
+      Confirm you're within configured business hours or offline messaging is enabled
+    </Card>
+
+    <Card title="Browser Refresh" icon="arrows-rotate">
+      Try refreshing the page to re-establish the connection
+    </Card>
+  </CardGroup>
+</AccordionItem>
+
   <AccordionItem title="File Upload Issues" icon="file-slash">
-    <CardGroup cols={2}>
-      <Card title="File Size Limits" icon="scale-balanced">
-        Ensure files are within the configured size limits for your widget
-      </Card>
-      <Card title="File Type Support" icon="file-check">
-        Verify the file format is supported in your widget configuration
-      </Card>
-      <Card title="Upload Permissions" icon="shield">
-        Check that file uploads are enabled in your widget settings
-      </Card>
-      <Card title="Network Issues" icon="network-wired">
-        Large files may require stable internet connection for successful upload
-      </Card>
-    </CardGroup>
-  </AccordionItem>
-  
+  <CardGroup cols={2}>
+    <Card title="File Size Limits" icon="scale-balanced">
+      Ensure files are within the configured size limits for your widget
+    </Card>
+
+    <Card title="File Type Support" icon="file-check">
+      Verify the file format is supported in your widget configuration
+    </Card>
+
+    <Card title="Upload Permissions" icon="shield">
+      Check that file uploads are enabled in your widget settings
+    </Card>
+
+    <Card title="Network Issues" icon="network-wired">
+      Large files may require stable internet connection for successful upload
+    </Card>
+  </CardGroup>
+</AccordionItem>
+
   <AccordionItem title="AI Agent Problems" icon="robot">
-    <CardGroup cols={2}>
-      <Card title="Agent Status" icon="power-off">
-        Verify your AI agent is active and properly configured
-      </Card>
-      <Card title="Knowledge Base" icon="book">
-        Ensure your AI agent has sufficient knowledge base content for responses
-      </Card>
-      <Card title="Response Settings" icon="message">
-        Check response style and escalation settings are properly configured
-      </Card>
-      <Card title="Fallback Messages" icon="life-ring">
-        Verify fallback messages are set for when AI cannot provide assistance
-      </Card>
-    </CardGroup>
-  </AccordionItem>
+  <CardGroup cols={2}>
+    <Card title="Agent Status" icon="power-off">
+      Verify your AI agent is active and properly configured
+    </Card>
+
+    <Card title="Knowledge Base" icon="book">
+      Ensure your AI agent has sufficient knowledge base content for responses
+    </Card>
+
+    <Card title="Response Settings" icon="message">
+      Check response style and escalation settings are properly configured
+    </Card>
+
+    <Card title="Fallback Messages" icon="life-ring">
+      Verify fallback messages are set for when AI cannot provide assistance
+    </Card>
+  </CardGroup>
+</AccordionItem>
 </Accordion>
 
 ## Getting Help
@@ -606,11 +620,10 @@ The Gately SDK automatically handles technical best practices like error handlin
     Join our community forum to get help from other Gately users and experts
   </Card>
   <Card title="Direct Support" icon="headset">
-    Contact our support team directly at support@usegately.com for personalized assistance
+    Contact our support team directly at [support@usegately.com](mailto:support@usegately.com) for personalized assistance
   </Card>
 </CardGroup>
 
 <Note>
-Most issues are resolved by ensuring your widget is active, properly configured, and that your Framer site has the latest Gately SDK integration.
-</Note> 
-```
+  Most issues are resolved by ensuring your widget is active, properly configured, and that your Framer site has the latest Gately SDK integration.
+</Note>
