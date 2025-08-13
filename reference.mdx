@@ -1,6 +1,7 @@
-# Gately SDK Complete Reference
-
-This is the complete reference for the Gately SDK, covering all API methods, features, types, and functionality.
+---
+title: "Gately SDK Complete Reference"
+description: "This is the complete reference for the Gately SDK, covering all API methods, features, types, and functionality."
+---
 
 ## Table of Contents
 
@@ -33,10 +34,12 @@ new GatelyClient(projectId: string, options?: GatelyOptions)
 ```
 
 **Parameters:**
+
 - `projectId` (string): Your unique project identifier
 - `options` (GatelyOptions): Configuration options
 
 **Example:**
+
 ```typescript
 const gately = new GatelyClient('your-project-id', {
   apiUrl: 'https://sdk.usegately.com',
@@ -49,6 +52,7 @@ const gately = new GatelyClient('your-project-id', {
 ### Basic Authentication
 
 #### `login(email: string, password: string): Promise<AuthResponse>`
+
 Authenticate a user with email and password.
 
 ```typescript
@@ -56,6 +60,7 @@ const response = await gately.login('user@example.com', 'password123')
 ```
 
 #### `signup(email: string, password: string, metadata?: SignupMetadata): Promise<AuthResponse>`
+
 Create a new user account.
 
 ```typescript
@@ -66,6 +71,7 @@ const response = await gately.signup('user@example.com', 'password123', {
 ```
 
 #### `logout(): Promise<void>`
+
 Sign out the current user.
 
 ```typescript
@@ -73,6 +79,7 @@ await gately.logout()
 ```
 
 #### `sendMagicLink(email: string, options?: LoginOptions): Promise<void>`
+
 Send a magic link for passwordless authentication.
 
 ```typescript
@@ -82,6 +89,7 @@ await gately.sendMagicLink('user@example.com', {
 ```
 
 #### `resetPassword(email: string): Promise<void>`
+
 Send a password reset email.
 
 ```typescript
@@ -91,6 +99,7 @@ await gately.resetPassword('user@example.com')
 ### OAuth Authentication
 
 #### `loginWithGoogle(options?: LoginOptions): Promise<void>`
+
 Authenticate with Google OAuth (redirect mode by default).
 
 ```typescript
@@ -100,6 +109,7 @@ await gately.loginWithGoogle({
 ```
 
 #### `loginWithGoogleSSO(options?: SSOOptions): Promise<void>`
+
 Google OAuth with configurable mode (popup/redirect).
 
 ```typescript
@@ -110,6 +120,7 @@ await gately.loginWithGoogleSSO({
 ```
 
 #### `loginWithGithubSSO(options?: SSOOptions): Promise<void>`
+
 GitHub OAuth with configurable mode (popup/redirect).
 
 ```typescript
@@ -122,6 +133,7 @@ await gately.loginWithGithubSSO({
 ### Session Management
 
 #### `getSession(): Session | null`
+
 Get the current session.
 
 ```typescript
@@ -132,6 +144,7 @@ if (session) {
 ```
 
 #### `getUser(): User | null`
+
 Get the current authenticated user.
 
 ```typescript
@@ -142,6 +155,7 @@ if (user) {
 ```
 
 #### `fetchSession(): Promise<Session | null>`
+
 Fetch and refresh the current session.
 
 ```typescript
@@ -149,6 +163,7 @@ const session = await gately.fetchSession()
 ```
 
 #### `isAuthenticated(): boolean`
+
 Check if user is currently authenticated.
 
 ```typescript
@@ -158,6 +173,7 @@ if (gately.isAuthenticated()) {
 ```
 
 #### `getProjectId(): string`
+
 Get the current project ID.
 
 ```typescript
@@ -169,6 +185,7 @@ const projectId = gately.getProjectId()
 ### Profile Management
 
 #### `getUserProfile(): Promise<UserProfile | null>`
+
 Get the current user's profile from the project_members table.
 
 ```typescript
@@ -181,6 +198,7 @@ if (profile) {
 ```
 
 #### `updateUserProfile(updates: UpdateProfileRequest): Promise<UserProfile>`
+
 Update the user's profile with custom fields support.
 
 ```typescript
@@ -195,6 +213,7 @@ const updatedProfile = await gately.updateUserProfile({
 ```
 
 #### `deleteUserAccount(): Promise<void>`
+
 Delete the current user account.
 
 ```typescript
@@ -202,6 +221,7 @@ await gately.deleteUserAccount()
 ```
 
 #### `changePassword(currentPassword: string, newPassword: string): Promise<void>`
+
 Change the user's password.
 
 ```typescript
@@ -213,6 +233,7 @@ await gately.changePassword('oldpass123', 'newpass456')
 ### Content Access
 
 #### `getMemberContent(contentId: string): Promise<MemberContent | null>`
+
 Get member content by ID.
 
 ```typescript
@@ -220,6 +241,7 @@ const content = await gately.getMemberContent('content-uuid')
 ```
 
 #### `checkMemberContentAccess(url: string, options?: MemberContentOptions): Promise<MemberContentAccessResponse | null>`
+
 Check if user has access to specific content by URL.
 
 ```typescript
@@ -232,6 +254,7 @@ const access = await gately.checkMemberContentAccess('/dashboard', {
 ```
 
 #### `checkContentAccessByUrl(url: string): Promise<MemberContentAccessResponse | null>`
+
 Check content access by URL using the member content handler.
 
 ```typescript
@@ -241,6 +264,7 @@ const access = await gately.checkContentAccessByUrl('/premium-content')
 ### Content Management
 
 #### `createMemberContent(content: CreateMemberContentRequest): Promise<MemberContent>`
+
 Create new member content.
 
 ```typescript
@@ -258,6 +282,7 @@ const newContent = await gately.createMemberContent({
 ```
 
 #### `updateMemberContent(contentId: string, updates: UpdateMemberContentRequest): Promise<MemberContent>`
+
 Update existing member content.
 
 ```typescript
@@ -268,6 +293,7 @@ const updatedContent = await gately.updateMemberContent('content-uuid', {
 ```
 
 #### `deleteMemberContent(contentId: string): Promise<boolean>`
+
 Delete member content.
 
 ```typescript
@@ -275,6 +301,7 @@ const deleted = await gately.deleteMemberContent('content-uuid')
 ```
 
 #### `listMemberContent(options?: ListOptions): Promise<{ content: MemberContent[], count: number }>`
+
 Get all member content for the current project.
 
 ```typescript
@@ -289,6 +316,7 @@ const { content, count } = await gately.listMemberContent({
 ### Content Protection
 
 #### `protectUrl(url: string, options?: MemberContentOptions): Promise<void>`
+
 Protect a specific URL by checking member content access.
 
 ```typescript
@@ -300,6 +328,7 @@ await gately.protectUrl('/dashboard', {
 ```
 
 #### `autoProtectLinks(options?: MemberContentOptions): void`
+
 Automatically protect all links on the current page.
 
 ```typescript
@@ -311,6 +340,7 @@ gately.autoProtectLinks({
 ```
 
 #### `getContentStats(): Promise<ContentStats>`
+
 Get content statistics for the current user.
 
 ```typescript
@@ -324,6 +354,7 @@ console.log('Accessible content:', stats.accessible)
 ### Progress Management
 
 #### `markPageComplete(pageSlug: string, options?: MarkCompleteRequest): Promise<UserProgress>`
+
 Mark a page as completed by the user.
 
 ```typescript
@@ -337,6 +368,7 @@ const progress = await gately.markPageComplete('/dashboard', {
 ```
 
 #### `getPageProgress(pageSlug: string): Promise<UserProgress | null>`
+
 Get completion status for a specific page.
 
 ```typescript
@@ -348,6 +380,7 @@ if (progress?.completed) {
 ```
 
 #### `getUserProgress(options?: ListOptions): Promise<{ progress: UserProgress[], count: number }>`
+
 Get all user progress across the project.
 
 ```typescript
@@ -366,6 +399,7 @@ progress.forEach(p => {
 ### Domain Information
 
 #### `getProjectDomains(): Promise<ProjectDomains>`
+
 Get project domain information from the database.
 
 ```typescript
@@ -376,6 +410,7 @@ console.log('Primary domain:', domains.primary_domain)
 ```
 
 #### `getCurrentDomain(): string`
+
 Get the current domain the user is on.
 
 ```typescript
@@ -384,6 +419,7 @@ console.log('Current domain:', currentDomain)
 ```
 
 #### `isDomainProtected(domain: string): Promise<boolean>`
+
 Check if a domain is protected by the current project.
 
 ```typescript
@@ -398,6 +434,7 @@ if (isProtected) {
 ### Auto-Protection
 
 #### `autoProtectCurrentPage(options?: AutoProtectionOptions): Promise<void>`
+
 Automatically check and protect the current page.
 
 ```typescript
@@ -413,6 +450,7 @@ await gately.autoProtectCurrentPage({
 ```
 
 #### `initPageProtection(options?: PageProtectionOptions): void`
+
 Initialize automatic page protection for the entire application.
 
 ```typescript
@@ -433,6 +471,7 @@ gately.initPageProtection({
 ### Payment Intents
 
 #### `createPaymentIntent(options: PaymentIntentOptions): Promise<PaymentIntentResponse>`
+
 Create a new payment intent.
 
 ```typescript
@@ -445,6 +484,7 @@ const paymentIntent = await gately.createPaymentIntent({
 ```
 
 #### `confirmPaymentIntent(paymentIntentId: string, options?: PaymentOptions): Promise<PaymentIntentConfirmResponse>`
+
 Confirm a payment intent.
 
 ```typescript
@@ -454,6 +494,7 @@ const confirmation = await gately.confirmPaymentIntent('pi_123', {
 ```
 
 #### `getPaymentIntent(paymentIntentId: string, options?: PaymentOptions): Promise<PaymentIntentResponse>`
+
 Get payment intent details.
 
 ```typescript
@@ -463,6 +504,7 @@ const intent = await gately.getPaymentIntent('pi_123')
 ### Payment Collection
 
 #### `collectPayment(options: PaymentCollectionOptions): Promise<PaymentCollectionResponse>`
+
 Collect payment with automatic fee calculation.
 
 ```typescript
@@ -477,6 +519,7 @@ const payment = await gately.collectPayment({
 ### Payment Methods
 
 #### `createPaymentMethod(request: CreatePaymentMethodRequest): Promise<CreatePaymentMethodResponse>`
+
 Create a new payment method.
 
 ```typescript
@@ -496,6 +539,7 @@ const paymentMethod = await gately.createPaymentMethod({
 ### Form Submissions
 
 #### `submitForm(request: SubmitFormRequest): Promise<SubmitFormResponse>`
+
 Submit a form with optional payment support.
 
 ```typescript
@@ -516,6 +560,7 @@ const submission = await gately.submitForm({
 ### Form Data
 
 #### `getForm(formId: string): Promise<Form | null>`
+
 Get form details by ID.
 
 ```typescript
@@ -523,6 +568,7 @@ const form = await gately.getForm('contact-form')
 ```
 
 #### `getFormSubmissions(formId: string, options?: ListOptions): Promise<{ submissions: FormSubmission[], count: number }>`
+
 Get form submissions.
 
 ```typescript
@@ -537,6 +583,7 @@ const { submissions, count } = await gately.getFormSubmissions('contact-form', {
 ### Comments
 
 #### `getComments(pageSlug: string, options?: CommentOptions): Promise<CommentResponse>`
+
 Get comments for a specific page.
 
 ```typescript
@@ -547,6 +594,7 @@ const { comments, count } = await gately.getComments('/blog-post', {
 ```
 
 #### `createComment(pageSlug: string, content: string, parentId?: string): Promise<Comment>`
+
 Create a new comment.
 
 ```typescript
@@ -554,6 +602,7 @@ const comment = await gately.createComment('/blog-post', 'Great article!', undef
 ```
 
 #### `updateComment(commentId: string, content: string): Promise<Comment>`
+
 Update an existing comment.
 
 ```typescript
@@ -561,6 +610,7 @@ const updatedComment = await gately.updateComment('comment-uuid', 'Updated comme
 ```
 
 #### `deleteComment(commentId: string): Promise<boolean>`
+
 Delete a comment.
 
 ```typescript
@@ -568,6 +618,7 @@ const deleted = await gately.deleteComment('comment-uuid')
 ```
 
 #### `toggleCommentLike(commentId: string): Promise<LikeResponse>`
+
 Toggle like on a comment.
 
 ```typescript
@@ -579,6 +630,7 @@ console.log('Total likes:', likeResponse.likes)
 ### Discussions
 
 #### `initDiscussions(options?: DiscussionOptions): Promise<DiscussionInstance>`
+
 Initialize discussions for a page.
 
 ```typescript
@@ -594,6 +646,7 @@ const discussions = await gately.initDiscussions({
 ### Tracking
 
 #### `trackEvent(eventName: string, properties?: Record<string, any>): Promise<void>`
+
 Track custom analytics events.
 
 ```typescript
@@ -605,6 +658,7 @@ await gately.trackEvent('page_view', {
 ```
 
 #### `trackPageView(url?: string, properties?: Record<string, any>): Promise<void>`
+
 Track page view events.
 
 ```typescript
@@ -619,6 +673,7 @@ await gately.trackPageView('/dashboard', {
 ### Element Visibility
 
 #### `showElementOnAuth(elementId: string, options?: UIControlOptions): void`
+
 Show/hide elements based on authentication state.
 
 ```typescript
@@ -629,6 +684,7 @@ gately.showElementOnAuth('user-menu', {
 ```
 
 #### `hideElementOnAuth(elementId: string, options?: UIControlOptions): void`
+
 Hide elements based on authentication state.
 
 ```typescript
@@ -638,6 +694,7 @@ gately.hideElementOnAuth('login-form', {
 ```
 
 #### `showElementOnNoAuth(elementId: string, options?: UIControlOptions): void`
+
 Show elements only when user is not authenticated.
 
 ```typescript
@@ -649,6 +706,7 @@ gately.showElementOnNoAuth('signup-prompt', {
 ### Auth State Changes
 
 #### `onAuthStateChange(callback: (user: User | null, session: Session | null) => void): void`
+
 Listen for authentication state changes.
 
 ```typescript
@@ -662,6 +720,7 @@ gately.onAuthStateChange((user, session) => {
 ```
 
 #### `offAuthStateChange(callback: (user: User | null, session: Session | null) => void): void`
+
 Remove auth state change listener.
 
 ```typescript
@@ -676,6 +735,7 @@ gately.offAuthStateChange(callback)
 ### Badge Display
 
 #### `showBadge(options?: BadgeOptions): void`
+
 Show the Gately badge.
 
 ```typescript
@@ -688,6 +748,7 @@ gately.showBadge({
 ```
 
 #### `hideBadge(): void`
+
 Hide the Gately badge.
 
 ```typescript
@@ -695,6 +756,7 @@ gately.hideBadge()
 ```
 
 #### `removeBadge(): void`
+
 Remove the badge completely.
 
 ```typescript
@@ -702,6 +764,7 @@ gately.removeBadge()
 ```
 
 #### `updateBadge(options?: BadgeOptions): void`
+
 Update badge options.
 
 ```typescript
@@ -716,6 +779,7 @@ gately.updateBadge({
 ### Rule Management
 
 #### `getRedirectRules(): Promise<RedirectRule[]>`
+
 Get all redirect rules for the project.
 
 ```typescript
@@ -723,6 +787,7 @@ const rules = await gately.getRedirectRules()
 ```
 
 #### `createRedirectRule(rule: CreateRedirectRuleRequest): Promise<RedirectRule>`
+
 Create a new redirect rule.
 
 ```typescript
@@ -734,6 +799,7 @@ const rule = await gately.createRedirectRule({
 ```
 
 #### `updateRedirectRule(ruleId: string, updates: UpdateRedirectRuleRequest): Promise<RedirectRule>`
+
 Update an existing redirect rule.
 
 ```typescript
@@ -743,6 +809,7 @@ const updatedRule = await gately.updateRedirectRule('rule-uuid', {
 ```
 
 #### `deleteRedirectRule(ruleId: string): Promise<boolean>`
+
 Delete a redirect rule.
 
 ```typescript
@@ -752,6 +819,7 @@ const deleted = await gately.deleteRedirectRule('rule-uuid')
 ### Redirect Handling
 
 #### `getRedirectUrl(options: RedirectOptions): Promise<string>`
+
 Get redirect URL for a specific event.
 
 ```typescript
@@ -762,6 +830,7 @@ const redirectUrl = await gately.getRedirectUrl({
 ```
 
 #### `handleRedirect(options: RedirectOptions): Promise<void>`
+
 Handle redirect for a specific event.
 
 ```typescript
@@ -1111,12 +1180,14 @@ interface BadgeOptions {
 ## Best Practices
 
 ### 1. Initialize Early
+
 ```typescript
 // Initialize as early as possible in your app
 const gately = new GatelyClient('your-project-id')
 ```
 
 ### 2. Handle Authentication State
+
 ```typescript
 gately.onAuthStateChange((user, session) => {
   if (user) {
@@ -1130,6 +1201,7 @@ gately.onAuthStateChange((user, session) => {
 ```
 
 ### 3. Use Auto-Protection
+
 ```typescript
 // Set up automatic page protection
 gately.initPageProtection({
@@ -1141,6 +1213,7 @@ gately.initPageProtection({
 ```
 
 ### 4. Error Handling
+
 ```typescript
 try {
   await gately.updateUserProfile(updates)
@@ -1154,6 +1227,7 @@ try {
 ```
 
 ### 5. Progress Tracking
+
 ```typescript
 // Track user progress for better engagement
 await gately.markPageComplete('/tutorial', {
