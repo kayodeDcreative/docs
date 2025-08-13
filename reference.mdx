@@ -1,0 +1,1191 @@
+# Gately SDK Complete Reference
+
+This is the complete reference for the Gately SDK, covering all API methods, features, types, and functionality.
+
+## Table of Contents
+
+- [Core Client](#core-client)
+- [Authentication Methods](#authentication-methods)
+- [User Management](#user-management)
+- [Profile Management](#profile-management)
+- [Member Content Management](#member-content-management)
+- [User Progress Tracking](#user-progress-tracking)
+- [Project Domain Management](#project-domain-management)
+- [Page Protection & Auto-Redirects](#page-protection--auto-redirects)
+- [Payment Methods](#payment-methods)
+- [Form Management](#form-management)
+- [Discussions & Comments](#discussions--comments)
+- [Analytics](#analytics)
+- [UI Control Methods](#ui-control-methods)
+- [Badge Management](#badge-management)
+- [Redirect Rules](#redirect-rules)
+- [TypeScript Types](#typescript-types)
+- [Framework Adapters](#framework-adapters)
+- [Error Handling](#error-handling)
+- [Configuration Options](#configuration-options)
+
+## Core Client
+
+### Constructor
+
+```typescript
+new GatelyClient(projectId: string, options?: GatelyOptions)
+```
+
+**Parameters:**
+- `projectId` (string): Your unique project identifier
+- `options` (GatelyOptions): Configuration options
+
+**Example:**
+```typescript
+const gately = new GatelyClient('your-project-id', {
+  apiUrl: 'https://sdk.usegately.com',
+  autoRefresh: true
+})
+```
+
+## Authentication Methods
+
+### Basic Authentication
+
+#### `login(email: string, password: string): Promise<AuthResponse>`
+Authenticate a user with email and password.
+
+```typescript
+const response = await gately.login('user@example.com', 'password123')
+```
+
+#### `signup(email: string, password: string, metadata?: SignupMetadata): Promise<AuthResponse>`
+Create a new user account.
+
+```typescript
+const response = await gately.signup('user@example.com', 'password123', {
+  plan: 'premium',
+  role: 'member'
+})
+```
+
+#### `logout(): Promise<void>`
+Sign out the current user.
+
+```typescript
+await gately.logout()
+```
+
+#### `sendMagicLink(email: string, options?: LoginOptions): Promise<void>`
+Send a magic link for passwordless authentication.
+
+```typescript
+await gately.sendMagicLink('user@example.com', {
+  redirectTo: '/dashboard'
+})
+```
+
+#### `resetPassword(email: string): Promise<void>`
+Send a password reset email.
+
+```typescript
+await gately.resetPassword('user@example.com')
+```
+
+### OAuth Authentication
+
+#### `loginWithGoogle(options?: LoginOptions): Promise<void>`
+Authenticate with Google OAuth (redirect mode by default).
+
+```typescript
+await gately.loginWithGoogle({
+  redirectTo: '/dashboard'
+})
+```
+
+#### `loginWithGoogleSSO(options?: SSOOptions): Promise<void>`
+Google OAuth with configurable mode (popup/redirect).
+
+```typescript
+await gately.loginWithGoogleSSO({
+  mode: 'redirect',
+  redirectUrl: '/dashboard'
+})
+```
+
+#### `loginWithGithubSSO(options?: SSOOptions): Promise<void>`
+GitHub OAuth with configurable mode (popup/redirect).
+
+```typescript
+await gately.loginWithGithubSSO({
+  mode: 'redirect',
+  redirectUrl: '/dashboard'
+})
+```
+
+### Session Management
+
+#### `getSession(): Session | null`
+Get the current session.
+
+```typescript
+const session = gately.getSession()
+if (session) {
+  console.log('User ID:', session.user.id)
+}
+```
+
+#### `getUser(): User | null`
+Get the current authenticated user.
+
+```typescript
+const user = gately.getUser()
+if (user) {
+  console.log('Email:', user.email)
+}
+```
+
+#### `fetchSession(): Promise<Session | null>`
+Fetch and refresh the current session.
+
+```typescript
+const session = await gately.fetchSession()
+```
+
+#### `isAuthenticated(): boolean`
+Check if user is currently authenticated.
+
+```typescript
+if (gately.isAuthenticated()) {
+  console.log('User is logged in')
+}
+```
+
+#### `getProjectId(): string`
+Get the current project ID.
+
+```typescript
+const projectId = gately.getProjectId()
+```
+
+## User Management
+
+### Profile Management
+
+#### `getUserProfile(): Promise<UserProfile | null>`
+Get the current user's profile from the project_members table.
+
+```typescript
+const profile = await gately.getUserProfile()
+if (profile) {
+  console.log('Full Name:', profile.full_name)
+  console.log('Role:', profile.role)
+  console.log('Custom Fields:', profile.metadata)
+}
+```
+
+#### `updateUserProfile(updates: UpdateProfileRequest): Promise<UserProfile>`
+Update the user's profile with custom fields support.
+
+```typescript
+const updatedProfile = await gately.updateUserProfile({
+  full_name: 'John Doe',
+  bio: 'Software Developer',
+  company: 'Tech Corp',
+  // Any custom fields
+  favorite_color: 'blue',
+  skills: ['JavaScript', 'React']
+})
+```
+
+#### `deleteUserAccount(): Promise<void>`
+Delete the current user account.
+
+```typescript
+await gately.deleteUserAccount()
+```
+
+#### `changePassword(currentPassword: string, newPassword: string): Promise<void>`
+Change the user's password.
+
+```typescript
+await gately.changePassword('oldpass123', 'newpass456')
+```
+
+## Member Content Management
+
+### Content Access
+
+#### `getMemberContent(contentId: string): Promise<MemberContent | null>`
+Get member content by ID.
+
+```typescript
+const content = await gately.getMemberContent('content-uuid')
+```
+
+#### `checkMemberContentAccess(url: string, options?: MemberContentOptions): Promise<MemberContentAccessResponse | null>`
+Check if user has access to specific content by URL.
+
+```typescript
+const access = await gately.checkMemberContentAccess('/dashboard', {
+  checkAccess: true,
+  onAccessDenied: (content, reason) => {
+    console.log('Access denied:', reason)
+  }
+})
+```
+
+#### `checkContentAccessByUrl(url: string): Promise<MemberContentAccessResponse | null>`
+Check content access by URL using the member content handler.
+
+```typescript
+const access = await gately.checkContentAccessByUrl('/premium-content')
+```
+
+### Content Management
+
+#### `createMemberContent(content: CreateMemberContentRequest): Promise<MemberContent>`
+Create new member content.
+
+```typescript
+const newContent = await gately.createMemberContent({
+  title: 'Premium Dashboard',
+  description: 'Exclusive dashboard for premium users',
+  url: '/dashboard',
+  url_pattern: 'exact',
+  content_type: 'link',
+  access_type: 'plan',
+  required_plans: ['premium', 'enterprise'],
+  redirect_url: '/upgrade',
+  redirect_message: 'Upgrade to access this content'
+})
+```
+
+#### `updateMemberContent(contentId: string, updates: UpdateMemberContentRequest): Promise<MemberContent>`
+Update existing member content.
+
+```typescript
+const updatedContent = await gately.updateMemberContent('content-uuid', {
+  title: 'Updated Dashboard',
+  required_plans: ['premium', 'enterprise', 'pro']
+})
+```
+
+#### `deleteMemberContent(contentId: string): Promise<boolean>`
+Delete member content.
+
+```typescript
+const deleted = await gately.deleteMemberContent('content-uuid')
+```
+
+#### `listMemberContent(options?: ListOptions): Promise<{ content: MemberContent[], count: number }>`
+Get all member content for the current project.
+
+```typescript
+const { content, count } = await gately.listMemberContent({
+  content_type: 'link',
+  access_type: 'plan',
+  limit: 10,
+  offset: 0
+})
+```
+
+### Content Protection
+
+#### `protectUrl(url: string, options?: MemberContentOptions): Promise<void>`
+Protect a specific URL by checking member content access.
+
+```typescript
+await gately.protectUrl('/dashboard', {
+  onAccessDenied: (content, reason) => {
+    window.location.href = content.redirect_url
+  }
+})
+```
+
+#### `autoProtectLinks(options?: MemberContentOptions): void`
+Automatically protect all links on the current page.
+
+```typescript
+gately.autoProtectLinks({
+  onAccessDenied: (content, reason) => {
+    console.log('Link protected:', content.url)
+  }
+})
+```
+
+#### `getContentStats(): Promise<ContentStats>`
+Get content statistics for the current user.
+
+```typescript
+const stats = await gately.getContentStats()
+console.log('Total content:', stats.total)
+console.log('Accessible content:', stats.accessible)
+```
+
+## User Progress Tracking
+
+### Progress Management
+
+#### `markPageComplete(pageSlug: string, options?: MarkCompleteRequest): Promise<UserProgress>`
+Mark a page as completed by the user.
+
+```typescript
+const progress = await gately.markPageComplete('/dashboard', {
+  completed: true,
+  metadata: {
+    timeSpent: '5 minutes',
+    completedSections: ['overview', 'analytics']
+  }
+})
+```
+
+#### `getPageProgress(pageSlug: string): Promise<UserProgress | null>`
+Get completion status for a specific page.
+
+```typescript
+const progress = await gately.getPageProgress('/dashboard')
+if (progress?.completed) {
+  console.log('User completed dashboard!')
+  console.log('Completed at:', progress.completed_at)
+}
+```
+
+#### `getUserProgress(options?: ListOptions): Promise<{ progress: UserProgress[], count: number }>`
+Get all user progress across the project.
+
+```typescript
+const { progress, count } = await gately.getUserProgress({
+  limit: 20,
+  sort: { field: 'completed_at', direction: 'desc' }
+})
+
+progress.forEach(p => {
+  console.log(`${p.page_slug}: ${p.completed ? '✅' : '⏳'}`)
+})
+```
+
+## Project Domain Management
+
+### Domain Information
+
+#### `getProjectDomains(): Promise<ProjectDomains>`
+Get project domain information from the database.
+
+```typescript
+const domains = await gately.getProjectDomains()
+console.log('Live domain:', domains.live_domain)
+console.log('Framer domain:', domains.framer_domain)
+console.log('Primary domain:', domains.primary_domain)
+```
+
+#### `getCurrentDomain(): string`
+Get the current domain the user is on.
+
+```typescript
+const currentDomain = gately.getCurrentDomain()
+console.log('Current domain:', currentDomain)
+```
+
+#### `isDomainProtected(domain: string): Promise<boolean>`
+Check if a domain is protected by the current project.
+
+```typescript
+const isProtected = await gately.isDomainProtected('example.com')
+if (isProtected) {
+  console.log('Domain is protected by this project')
+}
+```
+
+## Page Protection & Auto-Redirects
+
+### Auto-Protection
+
+#### `autoProtectCurrentPage(options?: AutoProtectionOptions): Promise<void>`
+Automatically check and protect the current page.
+
+```typescript
+await gately.autoProtectCurrentPage({
+  redirectIfDenied: true,
+  onAccessDenied: (content, reason) => {
+    console.log('Access denied:', reason)
+  },
+  onRedirect: (url, message) => {
+    console.log('Redirecting to:', url)
+  }
+})
+```
+
+#### `initPageProtection(options?: PageProtectionOptions): void`
+Initialize automatic page protection for the entire application.
+
+```typescript
+gately.initPageProtection({
+  redirectIfDenied: true,
+  checkOnLoad: true,
+  onAccessDenied: (content, reason) => {
+    // Custom access denied handling
+  },
+  onRedirect: (url, message) => {
+    // Custom redirect handling
+  }
+})
+```
+
+## Payment Methods
+
+### Payment Intents
+
+#### `createPaymentIntent(options: PaymentIntentOptions): Promise<PaymentIntentResponse>`
+Create a new payment intent.
+
+```typescript
+const paymentIntent = await gately.createPaymentIntent({
+  amount: 2000, // $20.00
+  currency: 'usd',
+  description: 'Premium Plan',
+  metadata: { plan: 'premium' }
+})
+```
+
+#### `confirmPaymentIntent(paymentIntentId: string, options?: PaymentOptions): Promise<PaymentIntentConfirmResponse>`
+Confirm a payment intent.
+
+```typescript
+const confirmation = await gately.confirmPaymentIntent('pi_123', {
+  payment_method_id: 'pm_456'
+})
+```
+
+#### `getPaymentIntent(paymentIntentId: string, options?: PaymentOptions): Promise<PaymentIntentResponse>`
+Get payment intent details.
+
+```typescript
+const intent = await gately.getPaymentIntent('pi_123')
+```
+
+### Payment Collection
+
+#### `collectPayment(options: PaymentCollectionOptions): Promise<PaymentCollectionResponse>`
+Collect payment with automatic fee calculation.
+
+```typescript
+const payment = await gately.collectPayment({
+  amount: 5000, // $50.00
+  currency: 'usd',
+  description: 'Enterprise Plan',
+  application_fee_percent: 2.5
+})
+```
+
+### Payment Methods
+
+#### `createPaymentMethod(request: CreatePaymentMethodRequest): Promise<CreatePaymentMethodResponse>`
+Create a new payment method.
+
+```typescript
+const paymentMethod = await gately.createPaymentMethod({
+  type: 'card',
+  card: {
+    number: '4242424242424242',
+    exp_month: 12,
+    exp_year: 2025,
+    cvc: '123'
+  }
+})
+```
+
+## Form Management
+
+### Form Submissions
+
+#### `submitForm(request: SubmitFormRequest): Promise<SubmitFormResponse>`
+Submit a form with optional payment support.
+
+```typescript
+const submission = await gately.submitForm({
+  formId: 'contact-form',
+  data: {
+    name: 'John Doe',
+    email: 'john@example.com',
+    message: 'Hello World'
+  },
+  metadata: {
+    page_url: '/contact',
+    utm_source: 'google'
+  }
+})
+```
+
+### Form Data
+
+#### `getForm(formId: string): Promise<Form | null>`
+Get form details by ID.
+
+```typescript
+const form = await gately.getForm('contact-form')
+```
+
+#### `getFormSubmissions(formId: string, options?: ListOptions): Promise<{ submissions: FormSubmission[], count: number }>`
+Get form submissions.
+
+```typescript
+const { submissions, count } = await gately.getFormSubmissions('contact-form', {
+  limit: 50,
+  sort: { field: 'created_at', direction: 'desc' }
+})
+```
+
+## Discussions & Comments
+
+### Comments
+
+#### `getComments(pageSlug: string, options?: CommentOptions): Promise<CommentResponse>`
+Get comments for a specific page.
+
+```typescript
+const { comments, count } = await gately.getComments('/blog-post', {
+  limit: 20,
+  parentId: undefined // Get top-level comments
+})
+```
+
+#### `createComment(pageSlug: string, content: string, parentId?: string): Promise<Comment>`
+Create a new comment.
+
+```typescript
+const comment = await gately.createComment('/blog-post', 'Great article!', undefined)
+```
+
+#### `updateComment(commentId: string, content: string): Promise<Comment>`
+Update an existing comment.
+
+```typescript
+const updatedComment = await gately.updateComment('comment-uuid', 'Updated comment content')
+```
+
+#### `deleteComment(commentId: string): Promise<boolean>`
+Delete a comment.
+
+```typescript
+const deleted = await gately.deleteComment('comment-uuid')
+```
+
+#### `toggleCommentLike(commentId: string): Promise<LikeResponse>`
+Toggle like on a comment.
+
+```typescript
+const likeResponse = await gately.toggleCommentLike('comment-uuid')
+console.log('User liked:', likeResponse.user_liked)
+console.log('Total likes:', likeResponse.likes)
+```
+
+### Discussions
+
+#### `initDiscussions(options?: DiscussionOptions): Promise<DiscussionInstance>`
+Initialize discussions for a page.
+
+```typescript
+const discussions = await gately.initDiscussions({
+  pageSlug: '/blog-post',
+  containerId: 'comments-container',
+  autoLoad: true
+})
+```
+
+## Analytics
+
+### Tracking
+
+#### `trackEvent(eventName: string, properties?: Record<string, any>): Promise<void>`
+Track custom analytics events.
+
+```typescript
+await gately.trackEvent('page_view', {
+  page: '/dashboard',
+  user_type: 'premium',
+  referrer: document.referrer
+})
+```
+
+#### `trackPageView(url?: string, properties?: Record<string, any>): Promise<void>`
+Track page view events.
+
+```typescript
+await gately.trackPageView('/dashboard', {
+  title: 'Dashboard',
+  user_authenticated: true
+})
+```
+
+## UI Control Methods
+
+### Element Visibility
+
+#### `showElementOnAuth(elementId: string, options?: UIControlOptions): void`
+Show/hide elements based on authentication state.
+
+```typescript
+gately.showElementOnAuth('user-menu', {
+  hideIfLoggedOut: true,
+  customClass: 'auth-status'
+})
+```
+
+#### `hideElementOnAuth(elementId: string, options?: UIControlOptions): void`
+Hide elements based on authentication state.
+
+```typescript
+gately.hideElementOnAuth('login-form', {
+  hideIfLoggedIn: true
+})
+```
+
+#### `showElementOnNoAuth(elementId: string, options?: UIControlOptions): void`
+Show elements only when user is not authenticated.
+
+```typescript
+gately.showElementOnNoAuth('signup-prompt', {
+  customStyle: { backgroundColor: '#f0f0f0' }
+})
+```
+
+### Auth State Changes
+
+#### `onAuthStateChange(callback: (user: User | null, session: Session | null) => void): void`
+Listen for authentication state changes.
+
+```typescript
+gately.onAuthStateChange((user, session) => {
+  if (user) {
+    console.log('User logged in:', user.email)
+  } else {
+    console.log('User logged out')
+  }
+})
+```
+
+#### `offAuthStateChange(callback: (user: User | null, session: Session | null) => void): void`
+Remove auth state change listener.
+
+```typescript
+const callback = (user, session) => { /* ... */ }
+gately.onAuthStateChange(callback)
+// Later...
+gately.offAuthStateChange(callback)
+```
+
+## Badge Management
+
+### Badge Display
+
+#### `showBadge(options?: BadgeOptions): void`
+Show the Gately badge.
+
+```typescript
+gately.showBadge({
+  position: 'bottom-right',
+  theme: 'dark',
+  showLogo: true,
+  customText: 'Powered by Gately'
+})
+```
+
+#### `hideBadge(): void`
+Hide the Gately badge.
+
+```typescript
+gately.hideBadge()
+```
+
+#### `removeBadge(): void`
+Remove the badge completely.
+
+```typescript
+gately.removeBadge()
+```
+
+#### `updateBadge(options?: BadgeOptions): void`
+Update badge options.
+
+```typescript
+gately.updateBadge({
+  position: 'top-left',
+  theme: 'light'
+})
+```
+
+## Redirect Rules
+
+### Rule Management
+
+#### `getRedirectRules(): Promise<RedirectRule[]>`
+Get all redirect rules for the project.
+
+```typescript
+const rules = await gately.getRedirectRules()
+```
+
+#### `createRedirectRule(rule: CreateRedirectRuleRequest): Promise<RedirectRule>`
+Create a new redirect rule.
+
+```typescript
+const rule = await gately.createRedirectRule({
+  trigger_event: 'login',
+  redirect_url: '/dashboard',
+  conditions: { user_plan: 'premium' }
+})
+```
+
+#### `updateRedirectRule(ruleId: string, updates: UpdateRedirectRuleRequest): Promise<RedirectRule>`
+Update an existing redirect rule.
+
+```typescript
+const updatedRule = await gately.updateRedirectRule('rule-uuid', {
+  redirect_url: '/new-dashboard'
+})
+```
+
+#### `deleteRedirectRule(ruleId: string): Promise<boolean>`
+Delete a redirect rule.
+
+```typescript
+const deleted = await gately.deleteRedirectRule('rule-uuid')
+```
+
+### Redirect Handling
+
+#### `getRedirectUrl(options: RedirectOptions): Promise<string>`
+Get redirect URL for a specific event.
+
+```typescript
+const redirectUrl = await gately.getRedirectUrl({
+  triggerEvent: 'login',
+  userData: { plan: 'premium' }
+})
+```
+
+#### `handleRedirect(options: RedirectOptions): Promise<void>`
+Handle redirect for a specific event.
+
+```typescript
+await gately.handleRedirect({
+  triggerEvent: 'purchase',
+  userData: { plan: 'enterprise' },
+  fallbackUrl: '/thank-you'
+})
+```
+
+## TypeScript Types
+
+### Core Types
+
+```typescript
+interface User {
+  id: string
+  email: string
+  name?: string
+  avatar_url?: string
+  created_at: string
+  project_id?: string
+  project_member?: ProjectMember
+  project_memberships?: ProjectMember[]
+  last_sign_in_at?: string
+  user_metadata?: Record<string, any>
+  app_metadata?: Record<string, any>
+}
+
+interface Session {
+  access_token: string
+  refresh_token: string
+  expires_at: number
+  user: User
+}
+
+interface AuthResponse {
+  user: User
+  session: Session
+  project_id?: string
+  project_memberships?: ProjectMember[]
+}
+```
+
+### Profile Types
+
+```typescript
+interface UserProfile {
+  id: string
+  project_id: string
+  email: string
+  full_name?: string
+  role: string
+  status: string
+  user_type: string
+  joined_date: string
+  created_at: string
+  updated_at: string
+  email_verified?: boolean
+  last_sign_in_at?: string
+  oauth_provider?: string
+  oauth_provider_id?: string
+  metadata: Record<string, any>
+  first_name?: string
+  last_name?: string
+  display_name?: string
+  avatar_url?: string
+  bio?: string
+  phone?: string
+  website?: string
+  location?: string
+  company?: string
+  job_title?: string
+  displayName?: string
+}
+
+interface UpdateProfileRequest {
+  full_name?: string
+  first_name?: string
+  last_name?: string
+  display_name?: string
+  avatar_url?: string
+  bio?: string
+  phone?: string
+  website?: string
+  location?: string
+  company?: string
+  job_title?: string
+  [key: string]: any
+}
+```
+
+### Member Content Types
+
+```typescript
+interface MemberContent {
+  id: string
+  project_id: string
+  title: string
+  description?: string
+  url: string
+  url_pattern: 'exact' | 'contains' | 'startsWith' | 'endsWith' | 'regex'
+  content_type: 'link' | 'file' | 'video' | 'article'
+  access_type: 'plan' | 'auth' | 'both'
+  required_plans: string[]
+  require_auth?: boolean
+  redirect_url?: string
+  redirect_message?: string
+  is_active: boolean
+  metadata: Record<string, any>
+  created_at: string
+  updated_at: string
+}
+
+interface MemberContentAccessResponse {
+  content: MemberContent
+  hasAccess: boolean
+  reason?: string
+  redirect_url?: string
+  redirect_message?: string
+}
+```
+
+### User Progress Types
+
+```typescript
+interface UserProgress {
+  id: string
+  project_id: string
+  user_id: string
+  page_slug: string
+  completed: boolean
+  completed_at?: string
+  metadata?: Record<string, any>
+  created_at: string
+  updated_at: string
+}
+
+interface MarkCompleteRequest {
+  page_slug: string
+  completed?: boolean
+  metadata?: Record<string, any>
+}
+```
+
+### Project Domain Types
+
+```typescript
+interface ProjectDomains {
+  id: string
+  project_id: string
+  framer_domain?: string
+  live_domain?: string
+  custom_domains?: string[]
+  primary_domain?: string
+  created_at: string
+  updated_at: string
+}
+```
+
+## Framework Adapters
+
+### React Hooks
+
+```typescript
+import { useGately } from '@gately/sdk/react'
+
+function MyComponent() {
+  const { 
+    user, 
+    session, 
+    login, 
+    logout, 
+    getUserProfile,
+    updateUserProfile 
+  } = useGately()
+
+  return (
+    <div>
+      {user ? (
+        <button onClick={logout}>Logout</button>
+      ) : (
+        <button onClick={() => login('user@example.com', 'password')}>
+          Login
+        </button>
+      )}
+    </div>
+  )
+}
+```
+
+### Vue Composition API
+
+```typescript
+import { useGately } from '@gately/sdk/vue'
+
+export default {
+  setup() {
+    const { 
+      user, 
+      session, 
+      login, 
+      logout, 
+      getUserProfile 
+    } = useGately()
+
+    return {
+      user,
+      session,
+      login,
+      logout,
+      getUserProfile
+    }
+  }
+}
+```
+
+### Svelte Stores
+
+```typescript
+import { gately } from '@gately/sdk/svelte'
+
+// Access reactive stores
+$: user = $gately.user
+$: session = $gately.session
+
+// Use methods
+function handleLogin() {
+  gately.login('user@example.com', 'password')
+}
+```
+
+### Angular Services
+
+```typescript
+import { GatelyService } from '@gately/sdk/angular'
+
+@Component({...})
+export class MyComponent {
+  constructor(private gately: GatelyService) {}
+
+  async login() {
+    await this.gately.login('user@example.com', 'password')
+  }
+}
+```
+
+## Error Handling
+
+### Error Types
+
+```typescript
+interface GatelyError extends Error {
+  code?: string
+  status?: number
+}
+```
+
+### Common Error Codes
+
+- `MISSING_PROJECT_ID`: Project ID is required
+- `USER_NOT_FOUND`: User not found in project
+- `INVALID_TOKEN`: Authentication token is invalid
+- `ACCESS_DENIED`: User doesn't have permission
+- `PROFILE_UPDATE_FAILED`: Failed to update profile
+- `MEMBER_CONTENT_NOT_FOUND`: Member content not found
+- `MARK_COMPLETE_FAILED`: Failed to mark page complete
+
+### Error Handling Example
+
+```typescript
+try {
+  const profile = await gately.updateUserProfile({
+    bio: 'New bio'
+  })
+} catch (error) {
+  if (error instanceof GatelyError) {
+    switch (error.code) {
+      case 'MISSING_PROJECT_ID':
+        console.error('Project ID missing')
+        break
+      case 'USER_NOT_FOUND':
+        console.error('User not found')
+        break
+      default:
+        console.error('Unknown error:', error.message)
+    }
+  }
+}
+```
+
+## Configuration Options
+
+### GatelyOptions
+
+```typescript
+interface GatelyOptions {
+  apiUrl?: string                    // Default: 'https://sdk.usegately.com'
+  autoRefresh?: boolean              // Default: true
+}
+```
+
+### SSOOptions
+
+```typescript
+interface SSOOptions extends LoginOptions {
+  mode?: 'popup' | 'redirect'       // Default: 'redirect'
+  redirectUrl?: string
+  popupOptions?: {
+    width?: number                   // Default: 500
+    height?: number                  // Default: 600
+    scrollbars?: boolean             // Default: true
+    resizable?: boolean              // Default: true
+  }
+}
+```
+
+### UIControlOptions
+
+```typescript
+interface UIControlOptions {
+  hideIfLoggedOut?: boolean          // Default: false
+  hideIfLoggedIn?: boolean           // Default: false
+  showLoader?: boolean               // Default: false
+  customClass?: string
+  customStyle?: Record<string, string>
+}
+```
+
+### BadgeOptions
+
+```typescript
+interface BadgeOptions {
+  position?: 'bottom-left' | 'bottom-right' | 'top-left' | 'top-right'
+  theme?: 'light' | 'dark' | 'auto'
+  showLogo?: boolean                 // Default: true
+  customText?: string
+  customUrl?: string
+  utmSource?: string
+  utmMedium?: string
+  utmCampaign?: string
+  delay?: number                     // Default: 0
+  zIndex?: number                    // Default: 999999
+}
+```
+
+## Best Practices
+
+### 1. Initialize Early
+```typescript
+// Initialize as early as possible in your app
+const gately = new GatelyClient('your-project-id')
+```
+
+### 2. Handle Authentication State
+```typescript
+gately.onAuthStateChange((user, session) => {
+  if (user) {
+    // User is authenticated
+    initializeUserFeatures()
+  } else {
+    // User is not authenticated
+    cleanupUserFeatures()
+  }
+})
+```
+
+### 3. Use Auto-Protection
+```typescript
+// Set up automatic page protection
+gately.initPageProtection({
+  redirectIfDenied: true,
+  onAccessDenied: (content, reason) => {
+    console.log('Access denied:', reason)
+  }
+})
+```
+
+### 4. Error Handling
+```typescript
+try {
+  await gately.updateUserProfile(updates)
+} catch (error) {
+  if (error instanceof GatelyError) {
+    handleGatelyError(error)
+  } else {
+    handleGenericError(error)
+  }
+}
+```
+
+### 5. Progress Tracking
+```typescript
+// Track user progress for better engagement
+await gately.markPageComplete('/tutorial', {
+  completed: true,
+  metadata: { timeSpent: '10 minutes' }
+})
+```
+
+## Migration Guide
+
+### From v1.0 to v1.1
+
+1. **Profile System**: Now uses `project_members` table instead of `profiles`
+2. **OAuth Defaults**: All OAuth methods now default to redirect mode
+3. **Member Content**: New system replaces old "protected pages"
+4. **User Progress**: New feature for tracking user completion
+5. **Auto-Protection**: New automatic page protection system
+
+### Breaking Changes
+
+- `getUserProfile()` now returns data from `project_members` table
+- OAuth methods default to redirect mode (popup mode deprecated)
+- Old protected pages system replaced with member content system
+
+### New Features
+
+- User progress tracking
+- Project domain-based redirects
+- Automatic page protection
+- Enhanced member content management
+- Better error handling and types
+
+---
+
+This reference covers all the features and methods available in the Gately SDK. For specific implementation examples, see the [Examples](./examples.mdx) documentation.
