@@ -49,54 +49,136 @@
     "pages": [
       {
         "group": "Get Started",
+        "icon": "rocket",
         "pages": [
-          "introduction",
-          "framer-integration",
-          "quickstart"
+          {
+            "page": "introduction",
+            "icon": "hand-wave"
+          },
+          {
+            "page": "framer-integrations",
+            "icon": "square-f"
+          },
+          {
+            "page": "quickstart",
+            "icon": "bolt"
+          }
         ]
       },
       {
         "group": "Features",
+        "icon": "sparkles",
         "pages": [
-          "authentication",
-          "user-management",
-          "sso",
-          "livechat",
-          "helpdesk",
-          "ui-components",
-          "forms",
-          "plans",
-          "components",
-          "analytics"
+          {
+            "page": "authentication",
+            "icon": "shield-check"
+          },
+          {
+            "page": "user-management",
+            "icon": "users"
+          },
+          {
+            "page": "sso",
+            "icon": "key"
+          },
+          {
+            "page": "livechat",
+            "icon": "chat-bubble-left-right"
+          },
+          {
+            "page": "helpdesk",
+            "icon": "question-mark-circle"
+          },
+          {
+            "page": "ui-components",
+            "icon": "puzzle-piece"
+          },
+          {
+            "page": "forms",
+            "icon": "document-text"
+          },
+          {
+            "page": "plans",
+            "icon": "credit-card"
+          },
+          {
+            "page": "components",
+            "icon": "cube"
+          },
+          {
+            "page": "analytics",
+            "icon": "chart-bar"
+          }
         ]
       },
       {
         "group": "No-Code Tools",
+        "icon": "wrench-screwdriver",
         "pages": [
-          "framer-integration",
-          "webflow-integration",
-          "bubble-integration",
-          "other-platforms"
+          {
+            "page": "framer-integrations",
+            "icon": "square-f"
+          },
+          {
+            "page": "webflow-integrations",
+            "icon": "globe-alt"
+          },
+          {
+            "page": "other-platforms",
+            "icon": "building-office"
+          }
         ]
       },
       {
         "group": "Developers",
+        "icon": "code-bracket",
         "pages": [
-          "installation",
-          "framework-adapters",
-          "examples",
-          "best-practices",
-          "troubleshooting"
+          {
+            "page": "installation",
+            "icon": "arrow-down-tray"
+          },
+          {
+            "page": "framework-adapters",
+            "icon": "squares-plus"
+          },
+          {
+            "page": "examples",
+            "icon": "light-bulb"
+          },
+          {
+            "page": "best-practices",
+            "icon": "star"
+          },
+          {
+            "page": "troubleshooting",
+            "icon": "wrench"
+          }
         ]
       },
       {
         "group": "API Documentation",
+        "icon": "document-duplicate",
         "pages": [
-          "api-reference/introduction",
-          "api-reference/authentication",
-          "api-reference/user-management",
-          "api-reference/sso",
-          "api-reference/types"
+          {
+            "page": "api-reference/introduction",
+            "icon": "information-circle"
+          },
+          {
+            "page": "api-reference/authentication",
+            "icon": "lock-closed"
+          },
+          {
+            "page": "api-reference/user-management",
+            "icon": "user-group"
+          },
+          {
+            "page": "api-reference/sso",
+            "icon": "identification"
+          },
+          {
+            "page": "api-reference/types",
+            "icon": "variable"
+          }
         ]
       }
     ]

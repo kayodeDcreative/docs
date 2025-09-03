@@ -1,0 +1,225 @@
+---
+title: Bubble Integration
+description: 'Learn how to integrate Gately with Bubble no-code platform'
+---
+
+# Bubble Integration
+
+Integrate Gately with your Bubble application to add powerful user authentication, management, and engagement features without writing code.
+
+<CardGroup cols={2}>
+  <Card title="No-Code Setup" icon="magic-wand">
+    Configure Gately directly in Bubble's visual editor
+  </Card>
+  <Card title="API Integration" icon="link">
+    Use Bubble's API connector for advanced features
+  </Card>
+</CardGroup>
+
+## Quick Start
+
+### Step 1: Add Gately to Your Bubble App
+
+1. **Install the Plugin** (if available) or use custom code
+2. **Configure API Settings** in Bubble's API connector
+3. **Set up Authentication** workflows
+
+### Step 2: Configure API Connector
+
+In your Bubble editor:
+
+1. Go to **Plugins** → **API Connector**
+2. Add a new API called "Gately"
+3. Configure the base URL: `https://api.usegately.com`
+4. Add your API key in headers
+
+```json
+{
+  "Authorization": "Bearer YOUR_API_KEY",
+  "Content-Type": "application/json"
+}
+```
+
+### Step 3: Create API Calls
+
+#### User Authentication
+
+Create a new API call for user login:
+
+- **Name**: `Login User`
+- **Method**: `POST`
+- **Endpoint**: `/auth/login`
+- **Body type**: `JSON`
+
+```json
+{
+  "email": "<email>",
+  "password": "<password>"
+}
+```
+
+#### User Registration
+
+Create a new API call for user registration:
+
+- **Name**: `Register User`
+- **Method**: `POST`
+- **Endpoint**: `/auth/register`
+- **Body type**: `JSON`
+
+```json
+{
+  "email": "<email>",
+  "password": "<password>",
+  "name": "<name>"
+}
+```
+
+## Workflows
+
+### Login Workflow
+
+1. **Trigger**: Button click on login form
+2. **Action**: API Connector - Login User
+3. **Parameters**: 
+   - email: Input Email's value
+   - password: Input Password's value
+4. **Success Action**: Navigate to dashboard
+5. **Error Action**: Show error message
+
+### Registration Workflow
+
+1. **Trigger**: Button click on registration form
+2. **Action**: API Connector - Register User
+3. **Parameters**:
+   - email: Input Email's value
+   - password: Input Password's value
+   - name: Input Name's value
+4. **Success Action**: Navigate to welcome page
+5. **Error Action**: Show validation errors
+
+## Data Management
+
+### User Data Storage
+
+Store user information in Bubble's database:
+
+1. **Create User Data Type**:
+   - gately_id (text)
+   - email (text)
+   - name (text)
+   - subscription_plan (text)
+
+2. **Sync with Gately**:
+   - Use webhooks to keep data in sync
+   - Update user records when changes occur
+
+### Privacy Settings
+
+Configure privacy rules:
+
+1. **User Data**: Only viewable by the user themselves
+2. **Admin Data**: Only viewable by admin users
+3. **Public Data**: Configure based on your app's needs
+
+## Advanced Features
+
+### Webhooks
+
+Set up webhooks to receive real-time updates:
+
+1. **Configure Endpoint**: In your Bubble app, create an API workflow
+2. **Add Webhook URL**: In Gately dashboard, add your Bubble webhook URL
+3. **Handle Events**: Process user events, subscription changes, etc.
+
+### Custom Fields
+
+Add custom user fields:
+
+```json
+{
+  "custom_fields": {
+    "company": "<company>",
+    "role": "<role>",
+    "preferences": {
+      "notifications": true,
+      "newsletter": false
+    }
+  }
+}
+```
+
+## Troubleshooting
+
+### Common Issues
+
+<AccordionGroup>
+  <Accordion title="API calls failing">
+    - Check your API key is correct
+    - Verify the endpoint URLs
+    - Ensure headers are properly configured
+    - Check Bubble's server logs for errors
+  </Accordion>
+
+  <Accordion title="User data not syncing">
+    - Verify webhook endpoints are accessible
+    - Check webhook payload format
+    - Ensure database privacy rules allow updates
+    - Test webhook delivery in Gately dashboard
+  </Accordion>
+
+  <Accordion title="Authentication not working">
+    - Verify API connector configuration
+    - Check user credentials are being passed correctly
+    - Ensure proper error handling in workflows
+    - Test API calls in Bubble's API connector debugger
+  </Accordion>
+</AccordionGroup>
+
+### Debug Mode
+
+Enable debug mode in your Bubble workflows:
+
+1. Add **Custom Events** to track API responses
+2. Use **Browser Console** to view detailed errors
+3. Check **Server Logs** for backend issues
+4. Test with **Step-by-step debugger**
+
+## Best Practices
+
+- **Error Handling**: Always implement proper error handling for API calls
+- **Loading States**: Show loading indicators during API operations
+- **Data Validation**: Validate user input before sending to Gately
+- **Security**: Never expose API keys in client-side code
+- **Performance**: Cache user data locally when possible
+
+## Example Implementation
+
+Here's a complete example of a login form in Bubble:
+
+### Elements
+- **Input Email** (type: email)
+- **Input Password** (type: password) 
+- **Button Login** (type: button)
+- **Text Error** (type: text, initially hidden)
+
+### Workflow
+**When Button Login is clicked:**
+1. **API Connector - Login User**
+   - email: Input Email's value
+   - password: Input Password's value
+2. **When Success:**
+   - Set state: current_user to API response
+   - Navigate to: dashboard page
+3. **When Error:**
+   - Show: Text Error
+   - Set text: API response error message
+
+## Next Steps
+
+- [User Management](/user-management) - Manage user profiles and permissions
+- [Authentication](/authentication) - Advanced authentication features
+- [API Reference](/api-reference/introduction) - Complete API documentation
+- [Best Practices](/best-practices) - Security and performance guidelines
+
+Need help? Contact our support team at [support@usegately.com](mailto:support@usegately.com).
