@@ -87,7 +87,7 @@
       },
       {
         "group": "Webflow Integration",
-        "icon": "globe",
+        "icon": "webflow",
         "pages": [
           "webflow-integrations"
         ]
