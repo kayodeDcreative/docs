@@ -45,65 +45,67 @@
       "url": "https://usegately.com/blog"
     }
   ],
-  "navigation": [
-    {
-      "group": "Get Started",
-      "icon": "rocket",
-      "pages": [
-        "introduction",
-        "framer-integrations",
-        "quickstart"
-      ]
-    },
-    {
-      "group": "Features",
-      "icon": "sparkles",
-      "pages": [
-        "authentication",
-        "user-management",
-        "sso",
-        "livechat",
-        "helpdesk",
-        "ui-components",
-        "forms",
-        "plans",
-        "components",
-        "analytics"
-      ]
-    },
-    {
-      "group": "No-Code Tools",
-      "icon": "wrench-screwdriver",
-      "pages": [
-        "framer-integrations",
-        "webflow-integrations",
-        "bubble-integration",
-        "other-platforms"
-      ]
-    },
-    {
-      "group": "Developers",
-      "icon": "code-bracket",
-      "pages": [
-        "installation",
-        "framework-adapters",
-        "examples",
-        "best-practices",
-        "troubleshooting"
-      ]
-    },
-    {
-      "group": "API Documentation",
-      "icon": "document-duplicate",
-      "pages": [
-        "api-reference/introduction",
-        "api-reference/authentication",
-        "api-reference/user-management",
-        "api-reference/sso",
-        "api-reference/types"
-      ]
-    }
-  ],
+  "navigation": {
+    "pages": [
+      {
+        "group": "Get Started",
+        "icon": "rocket",
+        "pages": [
+          "introduction",
+          "framer-integrations",
+          "quickstart"
+        ]
+      },
+      {
+        "group": "Features",
+        "icon": "sparkles",
+        "pages": [
+          "authentication",
+          "user-management",
+          "sso",
+          "livechat",
+          "helpdesk",
+          "ui-components",
+          "forms",
+          "plans",
+          "components",
+          "analytics"
+        ]
+      },
+      {
+        "group": "No-Code Tools",
+        "icon": "wrench-screwdriver",
+        "pages": [
+          "framer-integrations",
+          "webflow-integrations",
+          "bubble-integration",
+          "other-platforms"
+        ]
+      },
+      {
+        "group": "Developers",
+        "icon": "code-bracket",
+        "pages": [
+          "installation",
+          "framework-adapters",
+          "examples",
+          "best-practices",
+          "troubleshooting"
+        ]
+      },
+      {
+        "group": "API Documentation",
+        "icon": "document-duplicate",
+        "pages": [
+          "api-reference/introduction",
+          "api-reference/authentication",
+          "api-reference/user-management",
+          "api-reference/sso",
+          "api-reference/types"
+        ]
+      }
+    ]
+  },
   "footerSocials": {
     "x": "https://x.com/usegately",
     "github": "https://github.com/usegately",
