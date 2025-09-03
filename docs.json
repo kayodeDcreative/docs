@@ -52,8 +52,14 @@
         "icon": "rocket",
         "pages": [
           "introduction",
-          "framer-integrations",
           "quickstart"
+        ]
+      },
+      {
+        "group": "Framer Integration",
+        "icon": "framer",
+        "pages": [
+          "framer-integrations"
         ]
       },
       {
@@ -76,7 +82,6 @@
         "group": "No-Code Tools",
         "icon": "wrench",
         "pages": [
-          "framer-integrations",
           "webflow-integrations",
           "bubble-integration",
           "other-platforms"
