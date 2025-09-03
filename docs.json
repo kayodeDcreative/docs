@@ -58,7 +58,7 @@
       },
       {
         "group": "Features",
-        "icon": "sparkles",
+        "icon": "star",
         "pages": [
           "authentication",
           "user-management",
@@ -74,7 +74,7 @@
       },
       {
         "group": "No-Code Tools",
-        "icon": "wrench-screwdriver",
+        "icon": "wrench",
         "pages": [
           "framer-integrations",
           "webflow-integrations",
@@ -84,7 +84,7 @@
       },
       {
         "group": "Developers",
-        "icon": "code-bracket",
+        "icon": "code",
         "pages": [
           "installation",
           "framework-adapters",
@@ -95,7 +95,7 @@
       },
       {
         "group": "API Documentation",
-        "icon": "document-duplicate",
+        "icon": "book",
         "pages": [
           "api-reference/introduction",
           "api-reference/authentication",
