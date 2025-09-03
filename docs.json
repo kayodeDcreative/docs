@@ -79,10 +79,23 @@
         ]
       },
       {
+        "group": "React Integration",
+        "icon": "react",
+        "pages": [
+          "react-integrations"
+        ]
+      },
+      {
+        "group": "Webflow Integration",
+        "icon": "globe",
+        "pages": [
+          "webflow-integrations"
+        ]
+      },
+      {
         "group": "No-Code Tools",
         "icon": "wrench",
         "pages": [
-          "webflow-integrations",
           "bubble-integration",
           "other-platforms"
         ]

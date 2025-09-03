@@ -1,0 +1,378 @@
+---
+title: React Integration
+description: 'Integrate Gately with your React application using hooks and components'
+---
+
+# React Integration
+
+Integrate Gately seamlessly into your React application with custom hooks, TypeScript support, and authentication components.
+
+<CardGroup cols={2}>
+  <Card title="React Hooks" icon="react">
+    Use custom hooks for easy integration
+  </Card>
+  <Card title="TypeScript Support" icon="code">
+    Full TypeScript definitions included
+  </Card>
+</CardGroup>
+
+## Quick Start
+
+### Step 1: Add Gately Script
+
+Add the Gately script to your `public/index.html` in the `<head>` section:
+
+```html
+<!-- Add to public/index.html in the <head> section -->
+<script 
+  src="https://cdn.usegately.com/gately.min.js" 
+  data-project-id="projectID" 
+  data-domain="https://gately.framer.website/">
+</script>
+```
+
+### Step 2: React Hook Implementation
+
+Create a custom hook to manage Gately integration:
+
+```tsx
+import { useEffect } from 'react';
+
+const useGately = () => {
+  useEffect(() => {
+    // Check if script is already loaded
+    if (window.gately) return;
+
+    const script = document.createElement('script');
+    script.src = 'https://cdn.usegately.com/gately.min.js';
+    script.setAttribute('data-project-id', '6da7042b-22c0-4568-801c-ec608649cd19');
+    script.setAttribute('data-domain', 'https://gately.framer.website/');
+    script.async = true;
+    
+    document.head.appendChild(script);
+    
+    return () => {
+      // Cleanup if needed
+      document.head.removeChild(script);
+    };
+  }, []);
+};
+
+// Use in your components
+const App = () => {
+  useGately();
+  
+  return (
+    <div>
+      <button onClick={() => window.gately?.login()}>
+        Sign In
+      </button>
+      <button onClick={() => window.gately?.signup()}>
+        Sign Up
+      </button>
+    </div>
+  );
+};
+```
+
+## TypeScript Support
+
+### Type Definitions
+
+Create `types/gately.d.ts` for full TypeScript support:
+
+```typescript
+// types/gately.d.ts
+declare global {
+  interface Window {
+    gately: {
+      login: (email?: string, password?: string) => Promise<any>;
+      signup: (email: string, password: string, metadata?: any) => Promise<any>;
+      logout: () => Promise<void>;
+      getSession: () => any | null;
+      onAuthStateChange: (callback: (event: string, session: any) => void) => void;
+    };
+  }
+}
+
+export {};
+```
+
+## Authentication Hook
+
+### Complete Auth Hook Implementation
+
+```tsx
+import { useState, useEffect } from 'react';
+
+const useAuth = () => {
+  const [session, setSession] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // Initialize auth state
+    const initAuth = () => {
+      if (window.gately) {
+        const currentSession = window.gately.getSession();
+        setSession(currentSession);
+        setLoading(false);
+
+        // Listen for auth changes
+        window.gately.onAuthStateChange((event, session) => {
+          setSession(session);
+        });
+      } else {
+        // Retry if Gately not loaded yet
+        setTimeout(initAuth, 100);
+      }
+    };
+
+    initAuth();
+  }, []);
+
+  const login = async (email: string, password: string) => {
+    if (window.gately) {
+      return await window.gately.login(email, password);
+    }
+    throw new Error('Gately not loaded');
+  };
+
+  const signup = async (email: string, password: string, metadata?: any) => {
+    if (window.gately) {
+      return await window.gately.signup(email, password, metadata);
+    }
+    throw new Error('Gately not loaded');
+  };
+
+  const logout = async () => {
+    if (window.gately) {
+      await window.gately.logout();
+    }
+  };
+
+  return {
+    session,
+    loading,
+    login,
+    signup,
+    logout,
+    isAuthenticated: !!session
+  };
+};
+
+export default useAuth;
+```
+
+## Google OAuth Integration
+
+### OAuth Callback URL
+
+Configure your Google OAuth callback URL:
+
+```
+https://sdk.usegately.com/api/auth/google/callback
+```
+
+### Using the Auth Hook
+
+```tsx
+import React, { useState } from 'react';
+import useAuth from './hooks/useAuth';
+
+const LoginForm = () => {
+  const { login, signup, logout, session, loading, isAuthenticated } = useAuth();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (isAuthenticated) {
+    return (
+      <div>
+        <h2>Welcome, {session.user.email}!</h2>
+        <button onClick={logout}>Logout</button>
+      </div>
+    );
+  }
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    try {
+      await login(email, password);
+    } catch (error) {
+      console.error('Login failed:', error);
+    }
+  };
+
+  const handleSignup = async (e) => {
+    e.preventDefault();
+    try {
+      await signup(email, password);
+    } catch (error) {
+      console.error('Signup failed:', error);
+    }
+  };
+
+  return (
+    <div>
+      <form>
+        <input
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="Email"
+          required
+        />
+        <input
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          placeholder="Password"
+          required
+        />
+        <button type="button" onClick={handleLogin}>
+          Login
+        </button>
+        <button type="button" onClick={handleSignup}>
+          Sign Up
+        </button>
+      </form>
+    </div>
+  );
+};
+
+export default LoginForm;
+```
+
+## Advanced Features
+
+### Protected Routes
+
+Create a higher-order component for protected routes:
+
+```tsx
+import React from 'react';
+import useAuth from './hooks/useAuth';
+
+const ProtectedRoute = ({ children }) => {
+  const { isAuthenticated, loading } = useAuth();
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (!isAuthenticated) {
+    return <div>Please log in to access this page.</div>;
+  }
+
+  return children;
+};
+
+export default ProtectedRoute;
+```
+
+### User Profile Component
+
+```tsx
+import React, { useEffect, useState } from 'react';
+import useAuth from './hooks/useAuth';
+
+const UserProfile = () => {
+  const { session, isAuthenticated } = useAuth();
+  const [profile, setProfile] = useState(null);
+
+  useEffect(() => {
+    if (isAuthenticated && session) {
+      // Fetch user profile data
+      setProfile(session.user);
+    }
+  }, [isAuthenticated, session]);
+
+  if (!isAuthenticated) {
+    return <div>Please log in to view your profile.</div>;
+  }
+
+  return (
+    <div>
+      <h2>User Profile</h2>
+      {profile && (
+        <div>
+          <p><strong>Email:</strong> {profile.email}</p>
+          <p><strong>Name:</strong> {profile.name}</p>
+          <p><strong>ID:</strong> {profile.id}</p>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default UserProfile;
+```
+
+## Error Handling
+
+### Error Boundary
+
+```tsx
+import React, { Component, ErrorInfo, ReactNode } from 'react';
+
+interface Props {
+  children: ReactNode;
+}
+
+interface State {
+  hasError: boolean;
+  error?: Error;
+}
+
+class GatelyErrorBoundary extends Component<Props, State> {
+  public state: State = {
+    hasError: false
+  };
+
+  public static getDerivedStateFromError(error: Error): State {
+    return { hasError: true, error };
+  }
+
+  public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
+    console.error('Gately Error:', error, errorInfo);
+  }
+
+  public render() {
+    if (this.state.hasError) {
+      return (
+        <div>
+          <h2>Authentication Error</h2>
+          <p>Something went wrong with Gately integration.</p>
+          <button onClick={() => this.setState({ hasError: false })}>
+            Try Again
+          </button>
+        </div>
+      );
+    }
+
+    return this.props.children;
+  }
+}
+
+export default GatelyErrorBoundary;
+```
+
+## Best Practices
+
+- **Environment Variables**: Store your project ID in environment variables
+- **Error Handling**: Always wrap Gately calls in try-catch blocks
+- **Loading States**: Show loading indicators during authentication
+- **Type Safety**: Use the provided TypeScript definitions
+- **Cleanup**: Properly cleanup event listeners and scripts
+
+## Next Steps
+
+- [Authentication](/authentication) - Advanced authentication features
+- [User Management](/user-management) - Manage user profiles and permissions
+- [API Reference](/api-reference/introduction) - Complete API documentation
+- [Best Practices](/best-practices) - Security and performance guidelines
+
+Need help? Contact our support team at [support@usegately.com](mailto:support@usegately.com).
