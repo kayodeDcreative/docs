@@ -19,8 +19,8 @@
     }
   ],
   "topbarCtaButton": {
-    "name": "Dashboard",
-    "url": "https://app.usegately.com"
+    "name": "Get Started",
+    "url": "/quickstart"
   },
   "tabs": [
     {
@@ -70,12 +70,19 @@
           "user-management",
           "sso",
           "livechat",
-          "helpdesk",
           "ui-components",
           "forms",
           "plans",
           "components",
           "analytics"
+        ]
+      },
+      {
+        "group": "Knowledge Base",
+        "icon": "lightbulb",
+        "pages": [
+          "helpdesk",
+          "troubleshooting"
         ]
       },
       {
@@ -107,8 +114,7 @@
           "installation",
           "framework-adapters",
           "examples",
-          "best-practices",
-          "troubleshooting"
+          "best-practices"
         ]
       },
       {
