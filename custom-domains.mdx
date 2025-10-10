@@ -1,0 +1,311 @@
+---
+title: Custom Domains
+description: "Use your own domain for external SDK authentication instead of Gately's default domain."
+sidebarTitle: Custom Domains
+icon: globe
+---
+
+# Custom Domains for Gately
+
+## Overview
+
+Custom domains allow you to use your own domain (e.g., `auth.yourcompany.com`) for external SDK authentication instead of Gately's default domain. This provides a seamless, branded experience for your users when they authenticate through your applications.
+
+## Features
+
+- **Branded Authentication**: Users authenticate through your domain instead of Gately's
+- **SSL Certificates**: Automatic SSL certificate provisioning
+- **Domain Verification**: Built-in DNS verification process
+- **Status Monitoring**: Real-time domain status tracking
+- **SDK Integration**: Easy integration with external SDKs and applications
+
+## Requirements
+
+- **Paid Plan**: Custom domains are available for Starter plan and above
+- **DNS Access**: Ability to modify DNS records for your domain
+- **Domain Ownership**: You must own the domain you want to use
+
+## Setup Guide
+
+### Step 1: Configure Your Custom Domain
+
+1. Navigate to **Settings** → **Custom Domain** in your Gately dashboard
+2. Enter your desired subdomain (e.g., `auth.yourcompany.com`)
+3. Enable the custom domain checkbox
+4. Click **Save Domain Settings**
+
+### Step 2: DNS Configuration
+
+After adding your domain, you'll need to configure DNS records:
+
+#### CNAME Record
+Add a CNAME record pointing your subdomain to Gately's servers:
+
+```
+Type: CNAME
+Name: auth (or your chosen subdomain)
+Value: custom-domains.usegately.com
+TTL: 300 (or your DNS provider's default)
+```
+
+#### Example DNS Configuration
+```
+auth.yourcompany.com → CNAME → custom-domains.usegately.com
+```
+
+### Step 3: Verification
+
+1. After DNS configuration, verification typically takes 5-15 minutes
+2. Check the status in your Custom Domain settings page
+3. Status indicators:
+   - 🟡 **Pending Verification**: DNS propagation in progress
+   - 🟢 **Active**: Domain is verified and SSL is provisioned
+   - 🔴 **Verification Failed**: DNS configuration issue
+
+### Step 4: SSL Certificate Provisioning
+
+Once DNS verification is complete:
+- SSL certificates are automatically provisioned
+- This process typically takes 2-5 minutes
+- Your domain will show "Active" status when ready
+
+## SDK Integration
+
+Once your custom domain is active, use these URLs in your external applications:
+
+### Authentication Endpoints
+
+#### Google OAuth
+```
+https://auth.yourcompany.com/api/auth/google
+```
+
+#### GitHub OAuth
+```
+https://auth.yourcompany.com/api/auth/github
+```
+
+#### Base Auth URL
+```
+https://auth.yourcompany.com
+```
+
+### Example SDK Configuration
+
+#### JavaScript SDK
+```javascript
+const gately = new GatelySDK({
+  baseURL: 'https://auth.yourcompany.com',
+  projectId: 'your-project-id'
+});
+
+// Google OAuth
+await gately.auth.google();
+
+// GitHub OAuth
+await gately.auth.github();
+```
+
+#### React Integration
+```jsx
+import { GatelyProvider } from '@gately/react';
+
+function App() {
+  return (
+    <GatelyProvider
+      baseURL="https://auth.yourcompany.com"
+      projectId="your-project-id"
+    >
+      <YourApp />
+    </GatelyProvider>
+  );
+}
+```
+
+## OAuth Provider Configuration
+
+### Google OAuth Setup
+
+1. Go to [Google Cloud Console](https://console.cloud.google.com/)
+2. Navigate to **APIs & Services** → **Credentials**
+3. Edit your OAuth 2.0 Client ID
+4. Add your custom domain to **Authorized redirect URIs**:
+   ```
+   https://auth.yourcompany.com/api/auth/google/callback
+   ```
+
+### GitHub OAuth Setup
+
+1. Go to [GitHub Developer Settings](https://github.com/settings/developers)
+2. Edit your OAuth App
+3. Update the **Authorization callback URL**:
+   ```
+   https://auth.yourcompany.com/api/auth/github/callback
+   ```
+
+## Domain Status Reference
+
+| Status | Description | Action Required |
+|--------|-------------|-----------------|
+| **Pending Verification** | DNS propagation in progress | Wait 5-15 minutes |
+| **Verifying** | Checking DNS configuration | No action needed |
+| **Active** | Domain verified and SSL provisioned | Ready to use |
+| **Verification Failed** | DNS configuration issue | Check DNS records |
+| **SSL Provisioning Failed** | SSL certificate issue | Contact support |
+| **Disabled** | Domain manually disabled | Re-enable if needed |
+
+## Troubleshooting
+
+### Common Issues
+
+#### DNS Propagation Delays
+- **Issue**: Domain stuck in "Pending Verification"
+- **Solution**: DNS changes can take up to 24 hours to propagate globally
+- **Check**: Use `dig` or online DNS checkers to verify CNAME record
+
+#### Incorrect DNS Configuration
+- **Issue**: "Verification Failed" status
+- **Solution**: Verify CNAME record points to `custom-domains.usegately.com`
+- **Common mistakes**:
+  - Using A record instead of CNAME
+  - Incorrect target domain
+  - Missing subdomain
+
+#### SSL Certificate Issues
+- **Issue**: "SSL Provisioning Failed" status
+- **Solution**: Contact Gately support
+- **Note**: This is rare and usually resolves automatically
+
+### DNS Verification Commands
+
+Check your DNS configuration:
+
+```bash
+# Check CNAME record
+dig auth.yourcompany.com CNAME
+
+# Check from different DNS servers
+dig @8.8.8.8 auth.yourcompany.com CNAME
+dig @1.1.1.1 auth.yourcompany.com CNAME
+```
+
+Expected output:
+```
+auth.yourcompany.com. 300 IN CNAME custom-domains.usegately.com.
+```
+
+## Security Considerations
+
+### SSL/TLS
+- All custom domains use TLS 1.2+ encryption
+- Automatic certificate renewal
+- HSTS headers enabled for security
+
+### Domain Validation
+- DNS-based domain ownership verification
+- Prevents unauthorized domain usage
+- Regular re-validation for active domains
+
+### Access Control
+- Only project owners can configure custom domains
+- Domain configuration requires authentication
+- Audit logs for domain changes
+
+## API Reference
+
+### Get Custom Domains
+```http
+GET /api/custom-domains?project_id={projectId}
+Authorization: Bearer {token}
+```
+
+### Add Custom Domain
+```http
+POST /api/custom-domains
+Authorization: Bearer {token}
+Content-Type: application/json
+
+{
+  "projectId": "uuid",
+  "domain": "auth.yourcompany.com"
+}
+```
+
+### Delete Custom Domain
+```http
+DELETE /api/custom-domains/{domainId}
+Authorization: Bearer {token}
+```
+
+## Limitations
+
+- **One domain per project**: Each project can have one active custom domain
+- **Subdomain only**: Root domains are not supported for security reasons
+- **DNS requirements**: Must be able to create CNAME records
+- **Paid plans only**: Feature requires Starter plan or higher
+
+## Best Practices
+
+### Domain Selection
+- Use a dedicated subdomain (e.g., `auth.`, `login.`, `sso.`)
+- Keep it short and memorable
+- Avoid special characters or numbers
+
+### DNS Management
+- Use a reliable DNS provider
+- Set appropriate TTL values (300-3600 seconds)
+- Monitor DNS propagation after changes
+
+### Security
+- Regularly monitor domain status
+- Keep OAuth provider configurations updated
+- Use HTTPS-only in your applications
+
+## Support
+
+### Getting Help
+- **Documentation**: Check this guide first
+- **Status Page**: Monitor service status at status.usegately.com
+- **Support**: Contact support@usegately.com for technical issues
+- **Community**: Join our Discord for community support
+
+### Common Support Requests
+1. DNS configuration assistance
+2. SSL certificate issues
+3. OAuth provider setup help
+4. Domain verification problems
+
+## Migration Guide
+
+### From Default Domain
+If you're migrating from Gately's default domain:
+
+1. **Set up custom domain** following this guide
+2. **Update OAuth providers** with new redirect URIs
+3. **Update SDK configuration** to use custom domain
+4. **Test authentication flows** thoroughly
+5. **Deploy changes** to production
+
+### Rollback Plan
+- Keep old OAuth configurations until migration is complete
+- Test with a staging environment first
+- Have DNS rollback plan ready
+
+## Changelog
+
+### Version 1.0 (Current)
+- Initial custom domain support
+- DNS verification
+- Automatic SSL provisioning
+- OAuth provider integration
+- Status monitoring
+
+### Planned Features
+- Multiple domains per project
+- Custom SSL certificate upload
+- Advanced DNS configuration options
+- Automated OAuth provider updates
+
+---
+
+For technical support or questions about custom domains, please contact our support team at support@usegately.com or visit our [help center](https://help.usegately.com).

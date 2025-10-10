@@ -69,6 +69,7 @@
           "authentication",
           "user-management",
           "sso",
+          "custom-domains",
           "livechat",
           "ui-components",
           "forms",
