@@ -109,6 +109,15 @@
         ]
       },
       {
+        "group": "Integrations",
+        "icon": "box",
+        "pages": [
+          "mailchimp-integration",
+          "google-sheets-integration",
+          "slack-integration"
+        ]
+      },
+      {
         "group": "Developers",
         "icon": "code",
         "pages": [
