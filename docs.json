@@ -6,7 +6,7 @@
     "dark": "https://funuyosmhysvgvcndrxh.supabase.co/storage/v1/object/public/blog-images/Gately_icon.png",
     "light": "https://funuyosmhysvgvcndrxh.supabase.co/storage/v1/object/public/blog-images/Gately_icon.png"
   },
-  "favicon": "/favicon.svg",
+  "favicon": "https://funuyosmhysvgvcndrxh.supabase.co/storage/v1/object/public/blog-images/Gately_icon.png",
   "colors": {
     "primary": "#FFC599",
     "light": "#FFB17A",
