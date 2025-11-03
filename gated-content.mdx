@@ -11,38 +11,33 @@ Our Gated Content System allows you to restrict access to certain parts of your 
 
 ## Key Features
 
-### 🔐 Content Access Control
+### Content Access Control
 Restrict access to your content based on a user's subscription plan or whether they are logged in. You can create rules that apply to specific pages, files, or links.
 
-### 🔗 URL Pattern Matching
+### URL Pattern Matching
 Our system supports URL pattern matching, allowing you to protect a group of pages with a single rule. For example, you can use a wildcard to protect all pages under a certain path.
 
-### 🎭 Multiple Access Types
+### Multiple Access Types
 You can choose from three access types:
 - **Plan-based**: Only users with a specific subscription plan can access the content.
 - **Auth-based**: Only logged-in users can access the content.
 - **Both**: Users must be logged in and have a specific subscription plan to access the content.
 
-###  redirects
+### Custom Redirect Messages
 Customize the message that is displayed to users who do not have permission to access the content. You can also redirect them to a different page, such as a sales page for the required subscription plan.
 
-### 📄 Content Type Support
+### Content Type Support
 You can protect three types of content:
 - **Links**: Hide links from users who do not have permission to see them.
 - **Pages**: Restrict access to entire pages.
 - **Files**: Protect your files from unauthorized access.
 
-###  toggles
+### Active/Inactive Toggle
 Easily activate or deactivate your content rules with a single click. This allows you to quickly enable or disable access to your content without having to delete and recreate your rules.
 
-### 💎 Plan-Based Restrictions
+### Plan-Based Restrictions
 Our system supports multiple subscription plans, allowing you to create different tiers of access for your users.
 
 ## New Page
 
 - **/dashboard/gated-content**: The main dashboard for managing your gated content rules.
-
-## Database
-
-The gated content system uses a new database table:
-- `member_content`: To store your gated content rules.
