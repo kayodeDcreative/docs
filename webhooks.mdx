@@ -1,0 +1,42 @@
+---
+title: Webhook System
+description: 'Integrate with third-party services and automate your workflows with our powerful webhook system.'
+sidebarTitle: Webhooks
+icon: 'anchor'
+---
+
+# Webhook System
+
+Our new Webhook System allows you to send automated messages from your Gately account to other applications. This is a powerful tool for integrating with third-party services, automating your workflows, and creating custom solutions.
+
+## Key Features
+
+### 🎣 Webhook Management with CRUD Operations
+Manage your webhooks with full CRUD (Create, Read, Update, Delete) operations. You can add new webhooks, update existing ones, and remove them as needed.
+
+### 🚀 Event-Based Triggers
+Our webhook system is event-based, meaning that webhooks are triggered when a specific event occurs in your Gately account. You can choose from a wide range of events, such as a new user signing up, a form being submitted, or a new order being placed.
+
+### 📦 Webhook Payload Tracking and History
+Track the payloads of your webhooks and view a history of all the webhooks that have been sent. This is useful for debugging and troubleshooting your integrations.
+
+### 🔄 Retry Mechanism for Failed Webhooks
+If a webhook fails to be delivered, our system will automatically retry sending it several times. This helps to ensure that your integrations are reliable and that you don't lose any data.
+
+### 🧪 Webhook Testing with Sample Payloads
+Test your webhooks with sample payloads to ensure that they are working correctly. This is a great way to debug your integrations without having to trigger the actual events.
+
+### 📜 Detailed Webhook Logs with Request/Response Data
+View detailed logs of all your webhooks, including the request and response data. This is useful for debugging and troubleshooting your integrations.
+
+## New Pages
+
+- **/dashboard/webhooks**: The main dashboard for managing your webhooks.
+- **/dashboard/webhooks/:id**: View the details of a specific webhook.
+- **/dashboard/webhooks/:id/payloads/:payloadId**: View the payload of a specific webhook.
+
+## Database
+
+The webhook system uses two new database tables:
+- `webhooks`: To store your webhooks.
+- `webhook_payloads`: To store the payloads of your webhooks.

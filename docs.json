@@ -3,8 +3,8 @@
   "theme": "maple",
   "name": "Gately SDK",
   "logo": {
-    "dark": "/logo/icon.png",
-    "light": "/logo/icon.png"
+    "dark": "https://funuyosmhysvgvcndrxh.supabase.co/storage/v1/object/public/blog-images/Gately_icon.png",
+    "light": "https://funuyosmhysvgvcndrxh.supabase.co/storage/v1/object/public/blog-images/Gately_icon.png"
   },
   "favicon": "/favicon.svg",
   "colors": {
@@ -22,12 +22,6 @@
     "name": "Get Started",
     "url": "/quickstart"
   },
-  "tabs": [
-    {
-      "name": "API Reference",
-      "url": "api-reference"
-    }
-  ],
   "anchors": [
     {
       "name": "Documentation",
@@ -57,7 +51,7 @@
       },
       {
         "group": "Framer Integration",
-        "icon": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" class=\"lucide lucide-framer-icon lucide-framer\"><path d=\"M5 16V9h14V2H5l14 14h-7m-7 0 7 7v-7m-7 0h7\"/></svg>",
+        "icon": "<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' class='lucide lucide-framer-icon lucide-framer'><path d='M5 16V9h14V2H5l14 14h-7m-7 0 7 7v-7m-7 0h7'/></svg>",
         "pages": [
           "framer-integrations"
         ]
@@ -118,6 +112,27 @@
         ]
       },
       {
+        "group": "Changelog",
+        "icon": "history",
+        "pages": [
+          "changelog",
+          "ai-agent",
+          "rich-text-editor",
+          "ecommerce",
+          "email-campaigns",
+          "form-builder",
+          "gated-content",
+          "community",
+          "webhooks",
+          "integration-hub",
+          "redirect-rules",
+          "referral-program",
+          "mobile-optimized",
+          "ai-article-drafts",
+          "customer-feedback"
+        ]
+      },
+      {
         "group": "Developers",
         "icon": "code",
         "pages": [
@@ -125,17 +140,6 @@
           "framework-adapters",
           "examples",
           "best-practices"
-        ]
-      },
-      {
-        "group": "API Documentation",
-        "icon": "book",
-        "pages": [
-          "api-reference/introduction",
-          "api-reference/authentication",
-          "api-reference/user-management",
-          "api-reference/sso",
-          "api-reference/types"
         ]
       }
     ]

@@ -126,6 +126,47 @@ The Gately Live Chat system provides real-time chat functionality with AI agent 
   </Tab>
 </Tabs>
 
+## Widget Icon System Migration
+
+We've migrated our widget icon system from Lucide Icons to Phosphor Icons to provide you with more customization options.
+
+<CardGroup cols={2}>
+  <Card title="Phosphor Icons Integration" icon="phosphor-react">
+    We now use Phosphor Icons for our widget and close icons.
+  </Card>
+  <Card title="6 Icon Style Options" icon="swatchbook">
+    You can choose from 6 different icon styles: Regular, Bold, Duotone, Fill, Light, and Thin.
+  </Card>
+</CardGroup>
+
+### PhosphorIconPicker Component
+We've also added a new `PhosphorIconPicker` component with style selection to make it easy to choose an icon for your widget.
+
+### Backward Compatibility
+For backward compatibility, the frontend includes fallbacks for existing widget configurations.
+
+### Breaking Change
+
+The widget icon configuration format has changed from a string to an object.
+
+**Before:**
+```json
+{
+  "widgetIcon": "MessageCircle",
+  "closeIcon": "X"
+}
+```
+
+**After:**
+```json
+{
+  "widgetIcon": { "name": "ChatCircle", "style": "regular" },
+  "closeIcon": { "name": "X", "style": "regular" }
+}
+```
+
+**Migration**: Run the backend migration script to convert existing widget configs.
+
 ## Ticket Management
 
 <CardGroup cols={2}>
