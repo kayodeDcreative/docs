@@ -127,7 +127,9 @@
           "redirect-rules",
           "mobile-optimized",
           "ai-article-drafts",
-          "customer-feedback"
+          "customer-feedback",
+          "helpdesk-inbound-email-v1",
+          "helpdesk-inbound-email-v1-1"
         ]
       },
       {
