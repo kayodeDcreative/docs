@@ -1,227 +1,76 @@
 ---
 title: Quick Start
-description: 'Get up and running with Gately in under 5 minutes'
+description: 'Get up and running with Gately in under 5 minutes.'
 icon: "puzzle-piece"
 ---
 
 # Quick Start
 
-Get up and running with Gately in minutes - no coding required!
+This guide will walk you through the essential steps to get Gately integrated with your website in less than five minutes.
 
-## Overview
+## Step 1: Create Your Gately Project
 
-This guide will help you set up Gately on your website in just a few simple steps. Whether you're using Framer, Webflow, or any other platform, the process is straightforward.
+First, you'll need a Gately account and a project to work with.
 
-<CardGroup cols={3}>
-  <Card title="1. Dashboard Setup" icon="settings">
-    Configure your Gately project settings
-  </Card>
-  <Card title="2. Add to Website" icon="code">
-    Add the embed script to your site
-  </Card>
-  <Card title="3. Test & Customize" icon="check">
-    Test authentication and customize appearance
-  </Card>
-</CardGroup>
+<Steps>
+  <Step title="Sign Up for Gately">
+    If you don't have an account, [sign up for free](https://app.usegately.com).
+  </Step>
+  <Step title="Create a New Project">
+    Once you're in the dashboard, create a new project and give it a name.
+  </Step>
+  <Step title="Note Your Project ID">
+    You'll find your Project ID on the project's main dashboard. Keep it handy, as you'll need it to connect your site to Gately.
+  </Step>
+</Steps>
 
-## Step 1: Dashboard Setup
+## Step 2: Install Gately on Your Site
 
-### Create Your Project
+Next, you'll add the Gately script to your website. This is a small, lightweight script that handles all the Gately functionality on your site.
 
-1. Go to [https://app.usegately.com](https://app.usegately.com)
-2. **Sign up** for a free account
-3. **Create a new project** with your site name
-4. **Note your Project ID** - you'll need this later
-
-### Configure Basic Settings
-
-1. Go to **Settings** → **General**
-2. Set your **site domain** (e.g., `yoursite.com`)
-3. Choose your **default language**
-4. Set your **timezone**
-
-### Enable Authentication
-
-1. Go to **Settings** → **Authentication**
-2. Enable **Email/Password** authentication
-3. Optionally enable **Magic Link** or **Social Login**
-4. Configure **sign-up fields** (name, email, etc.)
-
-## Step 2: Add to Your Website
-
-### Get Your Embed Script
-
-1. Go to **Settings** → **Installation**
-2. Select your platform (Framer, Webflow, etc.)
-3. Copy the generated embed script
-
-### Add to Your Platform
-
-#### For Framer:
-1. Go to **Settings** → **Custom Code**
-2. Paste the script into the **`<head>` section**
-3. **Publish your site**
-
-#### For Webflow:
-1. Go to **Project Settings** → **Custom Code**
-2. Paste the script into the **`<head>` section**
-3. **Publish your site**
-
-#### For Other Platforms:
-1. Find your platform's custom code section
-2. Paste the script into the **`<head>` section**
-3. **Publish your site**
+<Steps>
+  <Step title="Copy the Script">
+    In your Gately dashboard, go to **Settings → Installation** and copy the embed script.
+  </Step>
+  <Step title="Paste the Script in Your Site's <head>">
+    Open your website's settings in your platform of choice (Framer, Webflow, etc.) and paste the script into the custom code section, inside the `<head>` tag.
+  </Step>
+  <Step title="Publish Your Site">
+    Save your changes and publish your site. Gately is now installed!
+  </Step>
+</Steps>
 
 <Note>
-The embed script is lightweight and won't affect your site's performance. It automatically detects when authentication is needed and shows the appropriate forms.
+For platform-specific instructions, check out our detailed guides for [Framer](/framer-integrations) and [Webflow](/webflow-integrations).
 </Note>
 
-## Step 3: Test Your Setup
+## Step 3: Configure and Test
 
-### Test Authentication
+With Gately installed, you can now configure your authentication and branding.
 
-1. **Visit your published site** (not the editor)
-2. **Look for authentication elements** - they'll appear automatically
-3. **Try signing up** with a test email
-4. **Check your dashboard** - the user should appear in your user list
+<Steps>
+  <Step title="Set Up Authentication">
+    In your Gately dashboard, go to **Settings → Authentication** and enable the login methods you want to offer, such as email/password, magic links, or social logins.
+  </Step>
+  <Step title="Customize Your Branding">
+    Go to **Settings → Branding** to upload your logo and set your brand colors. Gately’s components will automatically match your site's styling.
+  </Step>
+  <Step title="Test the User Flow">
+    Open your published website and try signing up or logging in. You should see your test user appear in your Gately dashboard under the "Users" tab.
+  </Step>
+</Steps>
 
-### Test Different Flows
+## You're All Set!
 
-- **Sign up flow**: Create a new account
-- **Login flow**: Sign in with existing account
-- **Password reset**: Test the forgot password feature
-- **Email verification**: Check if verification emails are sent
+That's it! Gately is now live on your site, and you have a complete authentication and user management system up and running.
 
-## Step 4: Customize Appearance
-
-### Branding
-
-1. Go to **Settings** → **Branding**
-2. Upload your **logo**
-3. Set your **brand colors**
-4. Choose your **font family**
-
-### Authentication Forms
-
-1. Go to **Settings** → **Authentication**
-2. Customize **form fields** and **validation**
-3. Set **redirect URLs** for post-login/signup
-4. Configure **email templates**
-
-### User Experience
-
-1. Go to **Settings** → **User Experience**
-2. Set **success and error messages**
-3. Configure **session duration**
-4. Set up **security settings**
-
-## What You Get
-
-Once you complete the setup, your site will have:
+### Next Steps
 
 <CardGroup cols={2}>
-  <Card title="Authentication System" icon="shield">
-    Professional login and signup forms that automatically appear when needed.
-    
-    - Email/Password Authentication
-    - Magic Link Authentication
-    - Social Login (Google, GitHub)
-    - Password Reset
+  <Card title="Explore Authentication" icon="key" href="/authentication">
+    Dive deeper into our authentication options and customizations.
   </Card>
-  
-  <Card title="User Management" icon="users">
-    Complete user interface for managing accounts and subscriptions.
-    
-    - User Profiles
-    - Account Settings
-    - Membership Cards
-    - Plan Selection
-  </Card>
-  
-  <Card title="Form Collection" icon="file-text">
-    Collect and manage form submissions from your site.
-    
-    - Contact Forms
-    - Lead Generation
-    - File Uploads
-    - Data Export
-  </Card>
-  
-  <Card title="Analytics Dashboard" icon="bar-chart">
-    Track user behavior and site performance.
-    
-    - User Analytics
-    - Conversion Tracking
-    - Form Submissions
-    - Performance Insights
-  </Card>
-</CardGroup>
-
-## Platform-Specific Guides
-
-### Framer Integration
-For detailed Framer setup instructions, see our [Framer Integration Guide](/docs/framer).
-
-### Webflow Integration
-For detailed Webflow setup instructions, see our [Webflow Integration Guide](/docs/webflow-integration).
-
-### Other Platforms
-For other platforms, see our [Other Platforms Guide](/docs/other-platforms).
-
-## Troubleshooting
-
-<AccordionGroup>
-  <Accordion title="Script not loading">
-    - Check your project ID is correct
-    - Verify the script is in the `<head>` section
-    - Check browser console for errors
-    - Ensure your platform allows external scripts
-  </Accordion>
-  
-  <Accordion title="Authentication forms not appearing">
-    - Check your domain is whitelisted in dashboard
-    - Verify the script is loading correctly
-    - Test on the published site (not editor)
-    - Check browser console for errors
-  </Accordion>
-  
-  <Accordion title="Users not appearing in dashboard">
-    - Check your project ID is correct
-    - Verify domain settings in dashboard
-    - Test with a different email
-    - Check dashboard refresh
-  </Accordion>
-  
-  <Accordion title="Styling not applying">
-    - Check branding settings in dashboard
-    - Verify CSS is loading correctly
-    - Test with default theme first
-    - Check for CSS conflicts
-  </Accordion>
-</AccordionGroup>
-
-## Next Steps
-
-<CardGroup cols={3}>
-  <Card
-    title="Authentication"
-    icon="key"
-    href="/authentication"
-  >
-    Learn about authentication options and customization
-  </Card>
-  <Card
-    title="User Management"
-    icon="users"
-    href="/user-management"
-  >
-    Set up user profiles and account management
-  </Card>
-  <Card
-    title="Dashboard"
-    icon="settings"
-    href="https://app.usegately.com"
-  >
-    Configure your Gately project settings
+  <Card title="Manage Users" icon="users" href="/user-management">
+    Learn how to manage user profiles, plans, and permissions.
   </Card>
 </CardGroup>
