@@ -118,6 +118,7 @@
         "icon": "history",
         "pages": [
           "changelog",
+          "stripe-payments-in-forms",
           "ai-agent",
           "rich-text-editor",
           "ecommerce",
