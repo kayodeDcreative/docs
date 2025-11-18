@@ -115,29 +115,6 @@
         ]
       },
       {
-        "group": "Changelog",
-        "icon": "history",
-        "pages": [
-          "changelog",
-          "stripe-payments-in-forms",
-          "ai-agent",
-          "rich-text-editor",
-          "ecommerce",
-          "email-campaigns",
-          "form-builder",
-          "gated-content",
-          "community",
-          "webhooks",
-          "integration-hub",
-          "redirect-rules",
-          "mobile-optimized",
-          "ai-article-drafts",
-          "customer-feedback",
-          "helpdesk-inbound-email-v1",
-          "helpdesk-inbound-email-v1-1"
-        ]
-      },
-      {
         "group": "Developers",
         "icon": "code",
         "pages": [

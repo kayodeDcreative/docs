@@ -43,7 +43,6 @@ new GatelyClient(projectId: string, options?: GatelyOptions)
 
 ```typescript
 const gately = new GatelyClient('your-project-id', {
-  apiUrl: 'https://sdk.usegately.com',
   autoRefresh: true
 })
 ```
@@ -1129,7 +1128,6 @@ try {
 
 ```typescript
 interface GatelyOptions {
-  apiUrl?: string                    // Default: 'https://sdk.usegately.com'
   autoRefresh?: boolean              // Default: true
 }
 ```
