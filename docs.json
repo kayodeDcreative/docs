@@ -72,7 +72,9 @@
           "plans",
           "components",
           "analytics",
-          "testimonials"
+          "testimonials",
+          "team",
+          "task-management"
         ]
       },
       {
@@ -111,7 +113,8 @@
         "pages": [
           "mailchimp-integration",
           "google-sheets-integration",
-          "slack-integration"
+          "slack-integration",
+          "clickup-integration"
         ]
       },
       {
